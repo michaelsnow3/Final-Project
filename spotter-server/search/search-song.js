@@ -1,8 +1,9 @@
 var express = require('express'); // Express web server framework
+var express = require('express'); // Express web server framework
 var request = require('request'); // "Request" library
+var rp = require('request-promise')
 var cors = require('cors');
 var querystring = require('querystring');
-var cookieParser = require('cookie-parser');
 
 require('dotenv').config();
 
@@ -10,8 +11,9 @@ var app = express();
 var client_id = process.env.CLIENT_ID; // Your client id
 var client_secret = process.env.CLIENT_SECRET; // Your secret
 
-function search(song){
-  // your application requests authorization
+
+exports.getSongs = async function(song) {
+
   var authOptions = {
     url: 'https://accounts.spotify.com/api/token',
     headers: {
@@ -23,23 +25,25 @@ function search(song){
     json: true
   };
 
-  request.post(authOptions, function(error, response, body) {
-    if (!error && response.statusCode === 200) {
+  let getTokenResponse = await rp.post(authOptions)
+  let token = getTokenResponse.access_token
 
-      // use the access token to access the Spotify Web API
-      var token = body.access_token;
-      var options = {
-        url: `https://api.spotify.com/v1/search?q=Surrender&type=track`,
-        headers: {
-          'Authorization': 'Bearer ' + token
-        },
-        json: true
-      };
-      request.get(options, function(error, response, body) {
-        console.log(body.tracks.items.forEach(track => console.log(track.name)));
-      });
-    }
-  });
+  var options = {
+    url: `https://api.spotify.com/v1/search?q=${song}&type=track`,
+    headers: {
+      'Authorization': 'Bearer ' + token
+    },
+    json: true
+  };
+
+  let spotifySearchResponse = await rp.get(options);
+  let filteredSongs = [];
+  spotifySearchResponse.tracks.items.forEach(track => {
+    filteredSongs.push({
+      spotifyId: track.id,
+      name: track.name,
+      artists: track.artists
+    })
+  })
+  return filteredSongs
 }
-
-export{search}
