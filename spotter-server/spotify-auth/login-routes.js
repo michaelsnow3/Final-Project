@@ -24,7 +24,7 @@ module.exports = function(stateKey, querystring, redirect_uri) {
     res.cookie(stateKey, state);
   
     // your application requests authorization
-    var scope = 'user-read-private user-read-email playlist-read-private playlist-modify-public';
+    var scope = 'user-read-private user-read-email playlist-read-private playlist-modify-public user-top-read user-read-currently-playing';
     res.redirect('https://accounts.spotify.com/authorize?' +
       querystring.stringify({
         response_type: 'code',

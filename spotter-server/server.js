@@ -18,6 +18,7 @@ app.use(express.static(__dirname + '/public'))
    .use(cors())
    .use(cookieParser());
 
+//spotify Oauth endpoints
 const loginRoutes = require('./spotify-auth/login-routes.js')
 app.use('/login/', loginRoutes(stateKey, querystring, redirect_uri))
 

@@ -49,6 +49,28 @@ module.exports = function(stateKey, querystring, redirect_uri, request) {
             console.log(body);
           });
 
+          // get users top tracks
+          var userTopTracks = {
+            url: 'https://api.spotify.com/v1/me/top/tracks',
+            headers: { 'Authorization': 'Bearer ' + access_token },
+            json: true
+          };
+
+          request.get(userTopTracks, function(error, response, body) {
+            console.log(body);
+          });
+
+          // get users top artists
+          var userTopArtists = {
+            url: 'https://api.spotify.com/v1/me/top/artists',
+            headers: { 'Authorization': 'Bearer ' + access_token },
+            json: true
+          };
+
+          request.get(userTopArtists, function(error, response, body) {
+            console.log(body);
+          });
+
           // we can also pass the token to the browser to make requests from there
           res.redirect('/#' +
             querystring.stringify({
