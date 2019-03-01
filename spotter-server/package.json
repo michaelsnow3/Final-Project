@@ -3,8 +3,7 @@
   "version": "1.0.0",
   "main": "index.js",
   "scripts": {
-    "start": "nodemon search/search-song.js",
-    "test": "nodemon server.js"
+    "start": "nodemon server.js"
   },
   "license": "MIT",
   "dependencies": {
