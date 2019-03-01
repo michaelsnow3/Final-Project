@@ -1,0 +1,30 @@
+Wireframes
+  -Person profile page
+    -option to logout
+
+  -Friends page 
+    -filter/seach bar for existing friends 6
+
+  -Chat
+    -display new friends - accept/decline
+    -pin created playlists
+    -plus button
+      -suggest song
+      -create new playlist (rated or non-rated)
+    -view all suggested songs - as separate page
+
+  -Playlist window
+    -allow to add new songs to playlist
+    -edit title
+    -rating system (up or down) if playlist is rated
+    -button to upload the playlist to spotify
+
+  -Notification
+    -Michael found react-native-notification-banner
+
+  -Nearby
+    -connected user's picture
+    -display connection parameters (song, artist...)
+
+  -Meet page
+    -add connection paramters to potential friends (artis, song, ...)

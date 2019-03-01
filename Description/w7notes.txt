@@ -1,0 +1,5 @@
+avatars - preset, can set later - with permissions
+
+chat - websockets & react, for music suggestions and list commonalities in music
+
+notifications - chat, spotify api

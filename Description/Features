@@ -1,0 +1,94 @@
+Features
+
+Oauth 10
+  -spotify approved
+
+Profile 10
+  -setup 10
+    -favorite music (default to spotify, if cant access spotify, have user input manualy)
+      -spotify approved
+
+    -username (default placeholder imported from spotify)
+      -spotify approved
+
+    -avatar (preset default, can select from preset images **As a stretch constrcut avatar based on music prefs)
+  -edit 7
+    -ability to edit the same 3 things as above
+
+Friends 10
+  -display a list of friends with links to their profiles 10
+    (name and small avatar) 
+    ** song that a person is currently listening to 6
+  -filter/seach bar for existing friends 6
+
+Show profile 9
+  -display profile info (name, avatar, fav music) 9
+  -Add/remove option 9
+  -Message (only if friends) 9
+  -** mutual friends 5
+
+Suggest music 9
+  -Search side bar 9
+    -spotify approved
+
+    -pop up on clicking share/suggest plus icon 9
+    -returns a list of input criteria - songs 9
+    -** (suggested vocabulary, will render a search result list after every letter) 2
+  -sends a link thru chat window (to spotify's song) 9
+  -**listen thru built in music player 1
+
+Meet 9
+  -display users 9
+  -filter all user by music similarity (genre, artist, album, song -- binary search) 9
+  -filter by mutual friends (levels like linkedin) 8
+  -on scroll down will load more users 6
+  -load a set number of users 9
+
+Chat 9
+  -show all invites (one by one, with accept/decline) 8
+  -chatroom for private messages (1on1) 9
+  -chatroom for public/group 8
+  -**emojis 4
+
+Seed database with made up users that meet spotify's user object criteria 9
+  -factory function or manual input
+
+Notifications 8
+  -accept/deny friends request 8
+  -nearby finding another person currentyl listening to similar music (redirect to nearby page)
+  -new message (if not inside the chat) 7
+  -new suggestion 7
+
+Main page 8
+  -display something 8
+  -news stories regarding artists/genres, etc 7
+    - Google news api approved
+  -** news about friends' updates 2
+
+Nearby 8
+  -search for users in the vicinity who are currently listening to same song/artist/album/genre 8
+  -will continously search and display results of users who are in range and match music criteria
+    - spotify current song 
+  -will show just one user
+  -will trigger a new search every 10 sec
+  -will prioritize music pattern, then distance
+  -bluetooth activation? no bluetooth - no nearby 
+    -??
+  -or geolocation as back up in case bluetooth is too hard to implement
+    -built-in browser/dom geolocation
+
+Created a non-rated playlist 7
+  -upon creation prompt for a title 7
+  -users add songs using the search bar 7
+  -users can remove songs 7
+  -playlist added to all users' spotify 7
+    -spotify approved
+
+Create rated group playlist 6
+  -upon creation prompt for a title 6
+  -users add songs using search bar 6
+  -users rate songs (thumbs up or down) 6
+  -top 5 or 10 are then selected and finalized as playlist, everything else is discarded 6.5
+  -playlist added to all users' spotify 6
+
+  **Music player 1

@@ -1,0 +1,22 @@
+trello - user stories
+then on to
+erds
+
+redux for database?
+for users
+
+focus on creating a good demo
+cypress integration testing, automated testing
+
+names
+
+doccer - build os around the app and all tools - everything you need for one app - doccer container - 
+app will run the same on all platform
+
+build a hub that interfaces many different apis, frameworks, libraries
+showcase
+
+what to do with a library of songs?
+spotify already recomends music
+
+nontrivial
