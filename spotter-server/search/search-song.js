@@ -1,13 +1,6 @@
-var express = require('express'); // Express web server framework
-var express = require('express'); // Express web server framework
-var request = require('request'); // "Request" library
 var rp = require('request-promise')
-var cors = require('cors');
-var querystring = require('querystring');
-
 require('dotenv').config();
 
-var app = express();
 var client_id = process.env.CLIENT_ID; // Your client id
 var client_secret = process.env.CLIENT_SECRET; // Your secret
 
