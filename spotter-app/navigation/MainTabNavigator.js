@@ -3,58 +3,87 @@ import { Platform } from 'react-native';
 import { createStackNavigator, createBottomTabNavigator } from 'react-navigation';
 
 import TabBarIcon from '../components/TabBarIcon';
-import HomeScreen from '../screens/HomeScreen';
-import LinksScreen from '../screens/LinksScreen';
-import SettingsScreen from '../screens/SettingsScreen';
+import FriendScreen from '../screens/FriendScreen';
+import ChatScreen from '../screens/ChatScreen';
+import MeetScreen from '../screens/MeetScreen';
+import NearbyScreen from '../screens/NearbyScreen';
+import ProfileScreen from '../screens/ProfileScreen';
 
-const HomeStack = createStackNavigator({
-  Home: HomeScreen,
+const FriendStack = createStackNavigator({
+  Friend: FriendScreen,
 });
 
-HomeStack.navigationOptions = {
-  tabBarLabel: 'Home',
+FriendStack.navigationOptions = {
+  tabBarLabel: 'Friends',
   tabBarIcon: ({ focused }) => (
     <TabBarIcon
       focused={focused}
-      name={
-        Platform.OS === 'ios'
-          ? `ios-information-circle${focused ? '' : '-outline'}`
-          : 'md-information-circle'
-      }
+      name={Platform.OS === 'ios' ? 'ios-people' : 'md-people'}
     />
   ),
 };
 
-const LinksStack = createStackNavigator({
-  Links: LinksScreen,
+const ChatStack = createStackNavigator({
+  Chat: ChatScreen,
 });
 
-LinksStack.navigationOptions = {
-  tabBarLabel: 'Links',
+ChatStack.navigationOptions = {
+  tabBarLabel: 'Chat',
   tabBarIcon: ({ focused }) => (
     <TabBarIcon
       focused={focused}
-      name={Platform.OS === 'ios' ? 'ios-link' : 'md-link'}
+      name={Platform.OS === 'ios' ? 'ios-chatboxes' : 'md-chatboxes'}
     />
   ),
 };
 
-const SettingsStack = createStackNavigator({
-  Settings: SettingsScreen,
+const MeetStack = createStackNavigator({
+  Meet: MeetScreen,
 });
 
-SettingsStack.navigationOptions = {
-  tabBarLabel: 'Settings',
+MeetStack.navigationOptions = {
+  tabBarLabel: 'Meet',
   tabBarIcon: ({ focused }) => (
     <TabBarIcon
       focused={focused}
-      name={Platform.OS === 'ios' ? 'ios-options' : 'md-options'}
+      name={Platform.OS === 'ios' ? 'ios-musical-note' : 'md-musical-note'}
+      //name={Platform.OS === 'ios' ? 'ios-person-add' : 'md-person-add'}
+    />
+  ),
+};
+
+const NearbyStack = createStackNavigator({
+  Nearby: NearbyScreen,
+});
+
+NearbyStack.navigationOptions = {
+  tabBarLabel: 'Nearby',
+  tabBarIcon: ({ focused }) => (
+    <TabBarIcon
+      focused={focused}
+      name={Platform.OS === 'ios' ? 'ios-pin' : 'md-pin'}
+    />
+  ),
+};
+
+const ProfileStack = createStackNavigator({
+  Profile: ProfileScreen,
+});
+
+ProfileStack.navigationOptions = {
+  tabBarLabel: 'Me',
+  tabBarIcon: ({ focused }) => (
+    <TabBarIcon
+      focused={focused}
+      name={Platform.OS === 'ios' ? 'ios-list' : 'md-list'}
     />
   ),
 };
 
 export default createBottomTabNavigator({
-  HomeStack,
-  LinksStack,
-  SettingsStack,
+  FriendStack,
+  ChatStack,
+  MeetStack,
+  NearbyStack,
+  ProfileStack
 });
