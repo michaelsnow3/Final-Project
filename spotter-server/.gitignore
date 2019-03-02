@@ -1,5 +1,10 @@
+<<<<<<< HEAD
 node_modules/
 public/styles
 .env
 *.log
 *.sqlite3
+=======
+.env
+node_modules
+>>>>>>> 167e38a12ebd93a2983f87b023b78f72adb3f1f7
