@@ -1,7 +1,7 @@
 
 require('dotenv').config();
 
-const PORT = process.env.PORT || 3000;
+const PORT = process.env.PORT || 8888;
 const ENV = process.env.ENV || "development";
 const knexConfig = require("./knexfile");
 const knex = require("knex")(knexConfig[ENV]);
@@ -11,6 +11,8 @@ const request = require('request'); // "Request" library
 const cors = require('cors');
 const cookieParser = require('cookie-parser');
 const querystring = require('querystring');
+
+const routes = require("./routes");
 
 const client_id = process.env.CLIENT_ID; // Your client id
 const client_secret = process.env.CLIENT_SECRET; // Your secret
@@ -39,6 +41,9 @@ search.searchSpotify('track', 'Danger Zone').then(data => {
   console.log(data)
 })
 
-console.log('Listening on port' + PORT);
+app.use("/routes", routes(knex));
+
+
+console.log('Listening on port ' + PORT);
 app.listen(PORT);
 
