@@ -20,7 +20,7 @@ exports.seed = function(knex, Promise) {
       .then(function () {
         // Inserts seed entries
         return knex('users').insert([
-          {name: 'Yu-Ning'},q
+          {name: 'Yu-Ning'},
           {name: 'Michael'},
           {name: 'Stan'}]
           .concat(fakeEntries));

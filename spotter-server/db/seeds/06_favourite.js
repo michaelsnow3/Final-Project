@@ -13,10 +13,13 @@ exports.seed = function(knex, Promise) {
     randNumbers.push(entry());
   }
   // Deletes ALL existing entries
-  return knex('favourite').del()
-    .then(function () {
-      // Inserts seed entries
-      return knex('favourite').insert(randNumbers);
-  })
+  return Promise.all([
+    // Reset user ids to start with 1 again
+    knex.schema.raw('ALTER SEQUENCE favourite_id_seq RESTART WITH 1'),
+    knex('favourite').del()
+      .then(function () {
+        // Inserts seed entries
+        return knex('favourite').insert(randNumbers);
+    })
+  ])
 };
-
