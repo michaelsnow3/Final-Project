@@ -32,11 +32,18 @@ exports.searchSpotify = async function(type, title) {
   let spotifySearchResponse = await rp.get(options);
   let filteredItems = [];
   let filter = `${type}s`;
-  spotifySearchResponse[filter].items.forEach(item => {
+  spotifySearchResponse[filter].items.forEach((item, i) => {
     filteredItems.push({
       spotifyId: item.id,
       name: item.name
     })
+
+    // get artist spotify id search type is a song 
+    if(type === 'track'){
+      filteredItems[i].artistId = item.artists.map(artist => {
+        return artist.id
+      })
+    }
   })
   return filteredItems
 }

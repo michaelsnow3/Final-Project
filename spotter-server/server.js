@@ -19,19 +19,20 @@ app.use(express.static(__dirname + '/public'))
    .use(cookieParser());
 
 // //spotify Oauth endpoints
-// const loginRoutes = require('./spotify-auth/login-routes.js')
-// app.use('/login/', loginRoutes(stateKey, querystring, redirect_uri))
+const loginRoutes = require('./spotify-auth/login-routes.js')
+app.use('/login/', loginRoutes(stateKey, querystring, redirect_uri))
 
-// const callbackRoutes = require('./spotify-auth/callback-routes.js');
-// app.use('/callback/', callbackRoutes(stateKey, querystring, redirect_uri, request))
+const callbackRoutes = require('./spotify-auth/callback-routes.js');
+app.use('/callback/', callbackRoutes(stateKey, querystring, redirect_uri, request))
 
-// const refreshTokenRoutes = require('./spotify-auth/refresh-token-routes.js')
-// app.use('/refreshTokenRoutes/', refreshTokenRoutes())
+const refreshTokenRoutes = require('./spotify-auth/refresh-token-routes.js')
+app.use('/refreshTokenRoutes/', refreshTokenRoutes())
 
 const search = require('./search/search-spotify.js')
-search.searchSpotify('genre', 'rock').then(data => {
+search.searchSpotify('track', 'Danger Zone').then(data => {
   console.log(data)
 })
+
 
 console.log('Listening on 8888');
 app.listen(8888);
