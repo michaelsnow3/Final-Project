@@ -9,8 +9,6 @@ import {
   View,
 } from 'react-native';
 
-import { MonoText } from '../components/StyledText';
-
 export default class NearbyScreen extends React.Component {
   static navigationOptions = {
     header: null,

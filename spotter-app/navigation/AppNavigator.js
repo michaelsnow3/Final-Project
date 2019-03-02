@@ -9,26 +9,8 @@ import {
 } from 'react-native';
 import { createStackNavigator, createAppContainer, createSwitchNavigator } from 'react-navigation';
 
-import MainTabNavigator from './MainTabNavigator';
-
-class SignInScreen extends React.Component {
-  static navigationOptions = {
-    title: 'Please sign in',
-  };
-
-  render() {
-    return (
-      <View style={styles.container}>
-        <Button title="Login with spotify" onPress={this._signInAsync} />
-      </View>
-    );
-  }
-
-  _signInAsync = async () => {
-    await AsyncStorage.setItem('userToken', 'abc');
-    this.props.navigation.navigate('App');
-  };
-}
+import MainTabNavigator   from './MainTabNavigator';
+import SpotifyLoginScreen from '../screens/SpotifyLoginScreen';
 
 class AuthLoadingScreen extends React.Component {
   constructor() {
@@ -65,7 +47,7 @@ const styles = StyleSheet.create({
 });
 
 const AppStack = createStackNavigator({ Main: MainTabNavigator });
-const AuthStack = createStackNavigator({ SignIn: SignInScreen });
+const AuthStack = createStackNavigator({ SignIn: SpotifyLoginScreen });
 
 export default createAppContainer(createSwitchNavigator(
   {

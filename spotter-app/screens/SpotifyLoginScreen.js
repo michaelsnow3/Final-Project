@@ -1,53 +1,40 @@
 import React from 'react';
 import {
-  Image,
-  Platform,
-  ScrollView,
-  StyleSheet,
-  Text,
-  TouchableOpacity,
   View,
+  StyleSheet,
+  Button,
+  AsyncStorage,
 } from 'react-native';
 
-import { MonoText } from '../components/StyledText';
-
 export default class SpotifyLoginScreen extends React.Component {
+
+  constructor() {
+    super();
+    console.log(this);
+  }
+
   static navigationOptions = {
-    header: null,
+    title: 'Please sign in',
   };
 
   render() {
     return (
       <View style={styles.container}>
-        <Text>Spotify Login</Text>
+        <Button title="Login with spotify" onPress={this._signInAsync} />
       </View>
     );
   }
 
-  _maybeRenderDevelopmentModeWarning() {
-    if (__DEV__) {
-      const learnMoreButton = (
-        <Text onPress={this._handleLearnMorePress} style={styles.helpLinkText}>
-          Learn more
-        </Text>
-      );
-
-      return (
-        <Text style={styles.developmentModeText}>
-          Development mode is enabled, your app will be slower but you can use useful development
-          tools. {learnMoreButton}
-        </Text>
-      );
-    } else {
-      return (
-        <Text style={styles.developmentModeText}>
-          You are not in development mode, your app will run at full speed.
-        </Text>
-      );
-    }
-  }
+  _signInAsync = async () => {
+    await AsyncStorage.setItem('userToken', 'abc');
+    this.props.navigation.navigate('App');
+  };
 }
 
 const styles = StyleSheet.create({
-
+  container: {
+    flex: 1,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
 });
