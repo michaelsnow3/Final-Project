@@ -1,6 +1,6 @@
 var faker = require('faker');
 
-const fakeUser = () => ({
+const fakeEntry = () => ({
   name: faker.name.findName(),
   avatar: faker.internet.avatar(),
   email: faker.internet.email()
@@ -8,9 +8,9 @@ const fakeUser = () => ({
 
 exports.seed = function(knex, Promise) {
 
-  const fakeUsers = [];
+  const fakeEntries = [];
   for (let i = 0; i < 10; i++) {
-    fakeUsers.push(fakeUser());
+    fakeEntries.push(fakeEntry());
   }
   // Deletes ALL existing entries
   return Promise.all([
@@ -20,10 +20,10 @@ exports.seed = function(knex, Promise) {
       .then(function () {
         // Inserts seed entries
         return knex('users').insert([
-          {name: 'Yu-Ning'},
+          {name: 'Yu-Ning'},q
           {name: 'Michael'},
           {name: 'Stan'}]
-          .concat(fakeUsers));
+          .concat(fakeEntries));
     })
   ])
 };
