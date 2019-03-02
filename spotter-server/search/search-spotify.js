@@ -5,7 +5,7 @@ var client_id = process.env.CLIENT_ID; // Your client id
 var client_secret = process.env.CLIENT_SECRET; // Your secret
 
 
-exports.getSongs = async function(song) {
+exports.searchSpotify = async function(type, title) {
 
   var authOptions = {
     url: 'https://accounts.spotify.com/api/token',
@@ -22,7 +22,7 @@ exports.getSongs = async function(song) {
   let token = getTokenResponse.access_token
 
   var options = {
-    url: `https://api.spotify.com/v1/search?q=${song}&type=track`,
+    url: `https://api.spotify.com/v1/search?q=${title}&type=${type}`,
     headers: {
       'Authorization': 'Bearer ' + token
     },
@@ -30,13 +30,13 @@ exports.getSongs = async function(song) {
   };
 
   let spotifySearchResponse = await rp.get(options);
-  let filteredSongs = [];
-  spotifySearchResponse.tracks.items.forEach(track => {
-    filteredSongs.push({
-      spotifyId: track.id,
-      name: track.name,
-      artists: track.artists
+  let filteredItems = [];
+  let filter = `${type}s`;
+  spotifySearchResponse[filter].items.forEach(item => {
+    filteredItems.push({
+      spotifyId: item.id,
+      name: item.name
     })
   })
-  return filteredSongs
+  return filteredItems
 }
