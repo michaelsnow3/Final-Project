@@ -41,7 +41,7 @@ app.use(
 );
 
 const refreshTokenRoutes = require("./server-endpoints/spotify-auth/refresh-token-routes.js");
-app.use("/refreshToken/", refreshTokenRoutes());
+app.use("/refresh_token/", refreshTokenRoutes());
 
 // user profile endpoint
 const profileEditRoutes = require("./server-endpoints/profile-routes.js");
@@ -49,7 +49,7 @@ app.use("/profile/", profileEditRoutes());
 
 // add friend endpoint
 const addFriendRoutes = require("./server-endpoints/add-friend-routes");
-
+app.use('/add_friend')
 
 console.log("Listening on port 8888");
 app.listen(8888);
