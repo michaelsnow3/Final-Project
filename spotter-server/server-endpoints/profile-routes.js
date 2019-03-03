@@ -9,9 +9,8 @@ module.exports = function() {
 
     search.searchSpotify(inputType, inputTitle).then(searchList => {
       console.log(searchList);
+      res.json({ searchResults: searchList })
     })
-
-    res.redirect('/')
   });
 
   return profileEditRoutes

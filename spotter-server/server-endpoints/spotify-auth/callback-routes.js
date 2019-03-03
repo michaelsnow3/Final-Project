@@ -57,7 +57,16 @@ module.exports = function(stateKey, querystring, redirect_uri, request) {
           };
 
           request.get(userTopTracks, function(error, response, body) {
-            console.log(body);
+            let topTracks = body.items.map(track => {
+              return {
+                name: track.name,
+                spotifyId: track.id,
+                artistId: track.artists.map(artist => artist.id),
+                artistName: track.artists.map(artist => artist.name)
+              }
+            })
+          
+            console.log(topTracks);
           });
 
           // get users top artists
@@ -68,7 +77,14 @@ module.exports = function(stateKey, querystring, redirect_uri, request) {
           };
 
           request.get(userTopArtists, function(error, response, body) {
-            console.log(body);
+            let topArtists = body.items.map(artist => {
+              return {
+                name: artist.name,
+                spotifyId: artist.id
+              }
+            })
+          
+            console.log(topArtists);
           });
 
           // we can also pass the token to the browser to make requests from there
