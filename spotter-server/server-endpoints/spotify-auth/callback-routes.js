@@ -46,7 +46,12 @@ module.exports = function(stateKey, querystring, redirect_uri, request) {
 
           // use the access token to access the Spotify Web API
           request.get(options, function(error, response, body) {
-            console.log(body);
+            let userInfo = {
+              username: body.display_name,
+              avatar: body.images[0].url,
+              email: body.email
+            }
+            console.log(userInfo)
           });
 
           // get users top tracks
