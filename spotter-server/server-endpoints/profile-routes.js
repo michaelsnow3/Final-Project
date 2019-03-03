@@ -18,7 +18,6 @@ module.exports = function() {
       return;
     }
 
-
     // edit favourite song/artist
     let inputTitle = req.body.title;
 
