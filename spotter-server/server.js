@@ -19,29 +19,6 @@ const stateKey = "spotify_auth_state";
 
 const app = express();
 
-app.use(express.static(__dirname + '/public'))
-   .use(cors())
-   .use(cookieParser());
-
-// //spotify Oauth endpoints
-const loginRoutes = require('./spotify-auth/login-routes.js');
-app.use('/login/', loginRoutes(stateKey, querystring, redirect_uri));
-
-const callbackRoutes = require('./spotify-auth/callback-routes.js');
-app.use('/callback/', callbackRoutes(stateKey, querystring, redirect_uri, request))
-
-const refreshTokenRoutes = require('./spotify-auth/refresh-token-routes.js');
-app.use('/refreshTokenRoutes/', refreshTokenRoutes());
-
-const search = require('./search/search-spotify.js');
-search.searchSpotify('track', 'Danger Zone').then(data => {
-  console.log(data);
-})
-
-console.log('Listening on port' + PORT);
-app.listen(PORT);
-
-=======
 var bodyParser = require("body-parser");
 
 app
@@ -54,6 +31,7 @@ app
       extended: true
     })
   );
+  
 // spotify Oauth endpoints
 const loginRoutes = require("./server-endpoints/spotify-auth/login-routes.js");
 app.use("/login/", loginRoutes(stateKey, querystring, redirect_uri));
@@ -77,4 +55,4 @@ app.use('/add_friend', addFriendRoutes())
 
 console.log("Listening on port 8888");
 app.listen(8888);
->>>>>>> bc3e637471562c80f09e54a9ba00447805f2ec5f
+
