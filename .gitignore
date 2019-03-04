@@ -1,6 +1,10 @@
 /spotter-app/.expo
 /spotter-app/node_modules
 /spotter-app/yarn.lock
+spotter-app/.DS_Store
+.DS_Store
+yarn-error.log
+
 
 node_modules/**/*
 .expo/*

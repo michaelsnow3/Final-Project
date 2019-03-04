@@ -1,15 +1,11 @@
 import React from 'react';
 import {
-  Image,
-  Platform,
-  ScrollView,
+  View,
+  Button,
+  AsyncStorage,
   StyleSheet,
   Text,
-  TouchableOpacity,
-  View,
 } from 'react-native';
-
-import { MonoText } from '../components/StyledText';
 
 export default class ProfileScreen extends React.Component {
   static navigationOptions = {
@@ -20,34 +16,21 @@ export default class ProfileScreen extends React.Component {
     return (
       <View style={styles.container}>
         <Text>Profile</Text>
+        <Button title="Logout this amazing App :)" onPress={this._signOutAsync} />
       </View>
     );
   }
 
-  _maybeRenderDevelopmentModeWarning() {
-    if (__DEV__) {
-      const learnMoreButton = (
-        <Text onPress={this._handleLearnMorePress} style={styles.helpLinkText}>
-          Learn more
-        </Text>
-      );
-
-      return (
-        <Text style={styles.developmentModeText}>
-          Development mode is enabled, your app will be slower but you can use useful development
-          tools. {learnMoreButton}
-        </Text>
-      );
-    } else {
-      return (
-        <Text style={styles.developmentModeText}>
-          You are not in development mode, your app will run at full speed.
-        </Text>
-      );
-    }
-  }
+  _signOutAsync = async () => {
+    await AsyncStorage.clear();
+    this.props.navigation.navigate('Auth');
+  };
 }
 
 const styles = StyleSheet.create({
-
+  container: {
+    flex: 1,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
 });

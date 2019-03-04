@@ -1,53 +1,84 @@
 import React from 'react';
 import {
-  Image,
-  Platform,
-  ScrollView,
-  StyleSheet,
-  Text,
-  TouchableOpacity,
   View,
+  StyleSheet,
+  Button,
+  AsyncStorage,
+  WebView,
+  Linking,
 } from 'react-native';
 
-import { MonoText } from '../components/StyledText';
-
 export default class SpotifyLoginScreen extends React.Component {
+
+  constructor() {
+    super();
+    this.state = {
+      loginClicked: false
+    }
+  }
+
   static navigationOptions = {
-    header: null,
+    title: 'Please sign in',
   };
 
   render() {
-    return (
-      <View style={styles.container}>
-        <Text>Spotify Login</Text>
-      </View>
-    );
+    const linkOrLoginPage = (this.state.loginClicked) ?
+            (<WebView
+               source={
+                 { uri: `http://05dc7bba.ngrok.io/login/`,
+                   method: 'GET',
+                   headers: { 'Cache-Control':'no-cache'}
+                 }
+               }
+               style={{marginTop: 20}}
+               isDefaultPrevented={true}
+               onLoadEnd={this.onLoadEnd}
+             />) :
+            (<View style={styles.container}>
+               <Button title="Login with spotify" onPress={this._clickLogin} />
+             </View>);
+
+    return linkOrLoginPage;
   }
 
-  _maybeRenderDevelopmentModeWarning() {
-    if (__DEV__) {
-      const learnMoreButton = (
-        <Text onPress={this._handleLearnMorePress} style={styles.helpLinkText}>
-          Learn more
-        </Text>
-      );
-
-      return (
-        <Text style={styles.developmentModeText}>
-          Development mode is enabled, your app will be slower but you can use useful development
-          tools. {learnMoreButton}
-        </Text>
-      );
+  onLoadEnd = (data) => {
+    const userTokenIndex = data.nativeEvent.url.indexOf('#access_token=');
+    if (userTokenIndex > 0) {
+      const userToken = data.nativeEvent.url.substring(userTokenIndex + 14);
+      console.log("userToken:");
+      console.log(userToken);
+      this._signInAsync(userToken);
+      this.props.navigation.navigate('App');
     } else {
-      return (
-        <Text style={styles.developmentModeText}>
-          You are not in development mode, your app will run at full speed.
-        </Text>
+      this.props.navigation.navigate('Auth');
+    }
+  }
+
+  _clickLogin = () => {
+    this.setState({loginClicked: true});
+  }
+
+  _signInAsync = async (userToken) => {
+    await AsyncStorage.setItem('userToken', "userToken");
+    this.props.navigation.navigate('App');
+  }
+
+  _oAuthSpotify = async () => {
+    try {
+      let response = await fetch(
+        'http://14374d31.ngrok.io/login/',
       );
+      return responseJson = await response.json();
+    } catch (error) {
+      console.error(error);
     }
   }
 }
 
 const styles = StyleSheet.create({
-
+  container: {
+    flex: 1,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
 });

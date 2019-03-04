@@ -30,6 +30,7 @@ exports.searchSpotify = async function(type, title) {
   };
 
   let spotifySearchResponse = await rp.get(options);
+  // console.log(spotifySearchResponse.artists.items[0])
   let filteredItems = [];
   let filter = `${type}s`;
   spotifySearchResponse[filter].items.forEach((item, i) => {
@@ -40,8 +41,11 @@ exports.searchSpotify = async function(type, title) {
 
     // get artist spotify id search type is a song 
     if(type === 'track'){
-      filteredItems[i].artistId = item.artists.map(artist => {
-        return artist.id
+      item.artists.forEach(artist => {
+        filteredItems[i].artistId = [];
+        filteredItems[i].artistName = [];
+        filteredItems[i].artistId.push(artist.id)
+        filteredItems[i].artistName.push(artist.name)
       })
     }
   })
