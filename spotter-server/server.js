@@ -18,8 +18,7 @@ const redirect_uri = `http://localhost:8888/callback/`; // Your redirect uri
 const stateKey = "spotify_auth_state";
 
 const app = express();
-
-var bodyParser = require("body-parser");
+const bodyParser = require("body-parser");
 
 app
   .use(express.static(__dirname + "/public"))
@@ -51,8 +50,7 @@ app.use("/profile/", profileEditRoutes());
 
 // add friend endpoint
 const addFriendRoutes = require("./server-endpoints/add-friend-routes");
-app.use('/add_friend', addFriendRoutes())
+app.use('/add_friend', addFriendRoutes)
 
-console.log("Listening on port 8888");
-app.listen(8888);
-
+console.log('Listening on port:' + PORT);
+app.listen(PORT);
