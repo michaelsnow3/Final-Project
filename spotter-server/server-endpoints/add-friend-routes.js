@@ -1,5 +1,5 @@
 const express = require("express");
-const profileEditRoutes = express.Router();
+const addFriend = express.Router();
 
 module.exports = function() {
   addFriend.post("/", function(req, res) {

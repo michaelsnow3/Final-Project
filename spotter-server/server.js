@@ -49,7 +49,7 @@ app.use("/profile/", profileEditRoutes());
 
 // add friend endpoint
 const addFriendRoutes = require("./server-endpoints/add-friend-routes");
-app.use('/add_friend')
+app.use('/add_friend', addFriendRoutes())
 
 console.log("Listening on port 8888");
 app.listen(8888);
