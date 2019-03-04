@@ -1,11 +1,12 @@
 var app = require('http').createServer()
 var io = module.exports.io = require('socket.io')(app)
 
-const PORT = process.env.PORT || 3001
+require("dotenv").config();
+const PORT = process.env.SOCKET_PORT || 3005
 
 const SocketManager = require('./SocketManager')
 
-io.onconnection('connection', SocketManager)
+io.on('connection', SocketManager)
 
 app.listen(PORT, () => {
   console.log(`Connected to port ${PORT}`)

@@ -1,5 +1,5 @@
-const io = require('./index.js')
+const io = require('./socket-server.js').io
 
-module.exoprts = function(socket) {
+module.exports = function(socket) {
   console.log('socket id' + socket.id)
 }
