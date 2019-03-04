@@ -50,9 +50,10 @@ module.exports = function(stateKey, querystring, redirect_uri, request) {
 
           // use the access token to access the Spotify Web API
           request.get(options, function(error, response, body) {
+            let avatar = (body.images.length === 0) ? null : body.images[0].url;
             let userInfo = {
               username: body.display_name,
-              avatar: body.images[0].url,
+              avatar: avatar,
               email: body.email
             };
             console.log(userInfo);
