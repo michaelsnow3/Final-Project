@@ -14,7 +14,7 @@ const querystring = require('querystring');
 
 const client_id = process.env.CLIENT_ID; // Your client id
 const client_secret = process.env.CLIENT_SECRET; // Your secret
-const redirect_uri = 'http://localhost:8888/callback/'; // Your redirect uri
+const redirect_uri = `http://05dc7bba.ngrok.io/callback/`; // Your redirect uri
 
 const stateKey = 'spotify_auth_state';
 
@@ -25,18 +25,18 @@ app.use(express.static(__dirname + '/public'))
    .use(cookieParser());
 
 // //spotify Oauth endpoints
-const loginRoutes = require('./spotify-auth/login-routes.js')
-app.use('/login/', loginRoutes(stateKey, querystring, redirect_uri))
+const loginRoutes = require('./spotify-auth/login-routes.js');
+app.use('/login/', loginRoutes(stateKey, querystring, redirect_uri));
 
 const callbackRoutes = require('./spotify-auth/callback-routes.js');
 app.use('/callback/', callbackRoutes(stateKey, querystring, redirect_uri, request))
 
-const refreshTokenRoutes = require('./spotify-auth/refresh-token-routes.js')
-app.use('/refreshTokenRoutes/', refreshTokenRoutes())
+const refreshTokenRoutes = require('./spotify-auth/refresh-token-routes.js');
+app.use('/refreshTokenRoutes/', refreshTokenRoutes());
 
-const search = require('./search/search-spotify.js')
+const search = require('./search/search-spotify.js');
 search.searchSpotify('track', 'Danger Zone').then(data => {
-  console.log(data)
+  console.log(data);
 })
 
 console.log('Listening on port' + PORT);
