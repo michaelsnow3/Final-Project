@@ -6,6 +6,14 @@
             <h1>This is an example of the Authorization Code flow</h1>
             <a href="/login" class="btn btn-primary">Log in with Spotify</a>
           </div>
+          <div>
+            <form action = '/4/user' method='POST'>
+              <input type='text' name='name'>
+              <input type='text' name='avatar'>
+              <input type='text' name='email'>
+              <input type='submit'>
+            </form> 
+          </div>
         </div>
   </body>
 </html>

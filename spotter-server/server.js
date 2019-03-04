@@ -12,11 +12,11 @@ const cors = require('cors');
 const cookieParser = require('cookie-parser');
 const querystring = require('querystring');
 
-const routes = require("./routes");
+const routes = require("routes");
 
 const client_id = process.env.CLIENT_ID; // Your client id
 const client_secret = process.env.CLIENT_SECRET; // Your secret
-const redirect_uri = 'http://localhost:8888/callback/'; // Your redirect uri
+const redirect_uri = 'http://d5b3d9ee.ngrok.io/callback/'; // Your redirect uri
 
 const stateKey = 'spotify_auth_state';
 

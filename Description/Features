@@ -12,6 +12,10 @@ Profile 10
       -spotify approved
 
     -avatar (preset default, can select from preset images **As a stretch constrcut avatar based on music prefs)
+    
+*** extra column in table users for spotify uid?
+*** response send or JSON?
+
   -edit 7
     -ability to edit the same 3 things as above
 
