@@ -46,14 +46,14 @@ const styles = StyleSheet.create({
   },
 });
 
-const AppStack = createStackNavigator({ Main: MainTabNavigator });
 const AuthStack = createStackNavigator({ SignIn: SpotifyLoginScreen });
+const AppStack = createStackNavigator({ Main: MainTabNavigator });
 
 export default createAppContainer(createSwitchNavigator(
   {
     AuthLoading: AuthLoadingScreen,
-    App: AppStack,
     Auth: AuthStack,
+    App: AppStack,
   },
   {
     initialRouteName: 'AuthLoading',

@@ -10,10 +10,11 @@ import {
 
 export default class SpotifyLoginScreen extends React.Component {
 
-  constructor() {
-    super();
+  constructor(props) {
+    super(props);
     this.state = {
-      loginClicked: false
+      loginClicked: false,
+      serverUrl: "http://65b5900c.ngrok.io"
     }
   }
 
@@ -22,10 +23,11 @@ export default class SpotifyLoginScreen extends React.Component {
   };
 
   render() {
+    console.log(this.props);
     const linkOrLoginPage = (this.state.loginClicked) ?
             (<WebView
                source={
-                 { uri: `http://05dc7bba.ngrok.io/login/`,
+                 { uri: `${this.state.serverUrl}/login/`,
                    method: 'GET',
                    headers: { 'Cache-Control':'no-cache'}
                  }
@@ -44,11 +46,8 @@ export default class SpotifyLoginScreen extends React.Component {
   onLoadEnd = (data) => {
     const userTokenIndex = data.nativeEvent.url.indexOf('#access_token=');
     if (userTokenIndex > 0) {
-      const userToken = data.nativeEvent.url.substring(userTokenIndex + 14);
-      console.log("userToken:");
-      console.log(userToken);
+      const userToken = data.nativeEvent.url.substring(userTokenIndex + 14); // 14 is the length of "#access_token="
       this._signInAsync(userToken);
-      this.props.navigation.navigate('App');
     } else {
       this.props.navigation.navigate('Auth');
     }
@@ -59,19 +58,10 @@ export default class SpotifyLoginScreen extends React.Component {
   }
 
   _signInAsync = async (userToken) => {
-    await AsyncStorage.setItem('userToken', "userToken");
+    console.log("userToken::::::::::" + userToken);
+    await AsyncStorage.setItem('userToken', userToken);
+    await AsyncStorage.setItem('serverUrl', this.state.serverUrl);
     this.props.navigation.navigate('App');
-  }
-
-  _oAuthSpotify = async () => {
-    try {
-      let response = await fetch(
-        'http://14374d31.ngrok.io/login/',
-      );
-      return responseJson = await response.json();
-    } catch (error) {
-      console.error(error);
-    }
   }
 }
 
