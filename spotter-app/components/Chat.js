@@ -13,13 +13,23 @@ import {
 } from 'react-native';
 import FriendScreen from '../screens/FriendScreen';
 
-function Chat({ sendOnPress, onChangeText, inChatWith }) {
+function Chat({ sendOnPress, onChangeText, inChatWith, handleChatWithFriend }) {
+  backToShowFriends = () => {
+    handleChatWithFriend(null);
+  }
   return (
     <KeyboardAvoidingView behavior="padding" enabled>
 
       <View>
         <Text>{inChatWith.name}</Text>
       </View>
+
+      <Button
+          onPress={backToShowFriends}
+          title="Back"
+          color="#841584"
+          accessibilityLabel="Show friends"
+        />
 
       <View style={styles.container}>
         <TextInput

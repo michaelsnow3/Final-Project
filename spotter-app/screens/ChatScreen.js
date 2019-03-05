@@ -81,14 +81,13 @@ export default class ChatScreen extends React.Component {
     this.setState({inChatWith: friend})
   }
 
-  
-
   render() {
 
     if(this.state.inChatWith) {
       return <Chat 
         sendOnPress={this.sendOnPress} 
         inChatWith={this.state.inChatWith}
+        handleChatWithFriend={this.handleChatWithFriend}
       />
     }else {
       return <ShowFriends 
