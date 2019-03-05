@@ -1,6 +1,6 @@
 import React from 'react';
 import io from 'socket.io-client'
-import UserCard from '../components/UserCard'
+import ShowFriends from '../components/ShowFriends'
 
 const socketUrl = 'http://172.46.0.236:3005'
 import {
@@ -33,7 +33,8 @@ export default class ChatScreen extends React.Component {
     this.state = {
       text: '',
       socket: null,
-      friends: []
+      friends: [],
+      inChat: null
     };
   }
 
@@ -78,12 +79,6 @@ export default class ChatScreen extends React.Component {
 
   render() {
 
-    console.log(this.state.friends)
-
-    const friendsList = this.state.friends.map(friend => {
-      return <UserCard name={friend.name} id={friend.id} key={Math.random().toString()} />
-    });
-
     // console.log(friendsList)
     
     return (
@@ -91,7 +86,7 @@ export default class ChatScreen extends React.Component {
         style={styles.container} 
         behavior="padding" enabled
         >
-        { friendsList }
+        <ShowFriends friends={this.state.friends} />
         <View style={{
           flexDirection: 'row'
         }}>
