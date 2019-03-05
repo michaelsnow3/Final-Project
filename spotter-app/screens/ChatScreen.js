@@ -1,6 +1,7 @@
 import React from 'react';
-import io from 'socket.io-client'
-import ShowFriends from '../components/ShowFriends'
+import io from 'socket.io-client';
+import ShowFriends from '../components/ShowFriends';
+import Chat from '../components/Chat';
 
 const socketUrl = 'http://172.46.0.236:3005'
 import {
@@ -34,7 +35,7 @@ export default class ChatScreen extends React.Component {
       text: '',
       socket: null,
       friends: [],
-      inChat: null
+      inChatWith: null
     };
   }
 
@@ -60,6 +61,8 @@ export default class ChatScreen extends React.Component {
     })
   }
 
+
+
   initSocket = () => {
     const socket = io(socketUrl);
 
@@ -73,44 +76,26 @@ export default class ChatScreen extends React.Component {
   }
 
   sendOnPress = () => {
-    console.log('send button clicked')
-    
+    console.log('send message button pressed!')
+  }
+
+  onChangeText = (text) => {
+    this.setState({text})
+  }
+
+  handleChatWithFriend = (friend) => {
+    this.setState({inChatWith: friend})
   }
 
   render() {
 
-    // console.log(friendsList)
+    if(this.state.inChatWith) {
+      return <Chat sendOnPress={this.sendOnPress} />
+    }else {
+      return <ShowFriends friends={this.state.friends} handleChatWithFriend={this.handleChatWithFriend} />
+    }
     
-    return (
-      <KeyboardAvoidingView 
-        style={styles.container} 
-        behavior="padding" enabled
-        >
-        <ShowFriends friends={this.state.friends} />
-        <View style={{
-          flexDirection: 'row'
-        }}>
-
-        <TextInput
-          style={{
-            height: 40,
-            backgroundColor: 'lightblue',
-            width: '70%'
-          }}
-          placeholder="Type here to translate!"
-          onChangeText={(text) => this.setState({text})}
-        />
-
-        <Button
-          onPress={this.sendOnPress}
-          title="Send"
-          color="#841584"
-          accessibilityLabel="Send Message"
-        />
-
-        </View>
-      </KeyboardAvoidingView>
-    );
+    
   }
 
   _maybeRenderDevelopmentModeWarning() {

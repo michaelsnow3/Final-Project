@@ -9,9 +9,12 @@ import {
   View,
 } from 'react-native';
 
-function UserCard({name, id}) {
+function UserCard({name, id, handleChatWithFriend}) {
   handleFriendPress = () => {
-    console.log(name, id)
+    handleChatWithFriend({
+      name: name,
+      id: id
+    })
   }
   return (
     <TouchableOpacity style={styles.container} onPress={handleFriendPress}>
@@ -29,7 +32,8 @@ const styles = StyleSheet.create({
     backgroundColor: '#adccff'
   },
   name: {
-    fontSize: 30
+    fontSize: 30,
+    textAlignVertical: 'center'
   }
 });
 
