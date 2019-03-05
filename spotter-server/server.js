@@ -55,10 +55,7 @@ app.use("/profile/", profileEditRoutes());
 const addFriendRoutes = require("./server-endpoints/add-friend-routes");
 app.use('/add_friend', addFriendRoutes)
 
-
-app.use("/routes", routes(knex));
-
+//app.use("/routes", routes(knex));
 
 console.log('Listening on port ' + PORT);
-
 app.listen(PORT);
