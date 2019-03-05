@@ -11,12 +11,12 @@ const cors = require("cors");
 const cookieParser = require("cookie-parser");
 const querystring = require("querystring");
 
-const routes = require("routes");
+const routes = require("./routes");
 
 const client_id = process.env.CLIENT_ID; // Your client id
 const client_secret = process.env.CLIENT_SECRET; // Your secret
 
-const redirect_uri = 'https://sleepy-plateau-86995.herokuapp.com/callback/'; // Your redirect uri
+const redirect_uri = 'https://mysterious-gorge-24322.herokuapp.com/callback/'; // Your redirect uri
 
 const stateKey = "spotify_auth_state";
 
@@ -48,14 +48,14 @@ const refreshTokenRoutes = require("./server-endpoints/spotify-auth/refresh-toke
 app.use("/refresh_token/", refreshTokenRoutes());
 
 // user profile endpoint
-const profileEditRoutes = require("./server-endpoints/profile-routes.js");
-app.use("/profile/", profileEditRoutes());
+// const profileEditRoutes = require("./server-endpoints/profile-routes.js");
+// app.use("/profile/", profileEditRoutes());
 
 // add friend endpoint
 const addFriendRoutes = require("./server-endpoints/add-friend-routes");
 app.use('/add_friend', addFriendRoutes)
 
-//app.use("/routes", routes(knex));
+app.use("/", routes(knex));
 
 console.log('Listening on port ' + PORT);
 app.listen(PORT);

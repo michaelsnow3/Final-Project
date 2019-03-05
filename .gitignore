@@ -5,7 +5,7 @@ spotter-app/.DS_Store
 .DS_Store
 yarn-error.log
 
-
+changes.txt
 node_modules/**/*
 .expo/*
 npm-debug.*

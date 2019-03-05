@@ -25,7 +25,7 @@ export default class SpotifyLoginScreen extends React.Component {
     const linkOrLoginPage = (this.state.loginClicked) ?
             (<WebView
                source={
-                 { uri: `https://sleepy-plateau-86995.herokuapp.com/login/`,
+                 { uri: `https://mysterious-gorge-24322.herokuapp.com/login/`,
                    method: 'GET',
                    headers: { 'Cache-Control':'no-cache'}
                  }
@@ -66,7 +66,7 @@ export default class SpotifyLoginScreen extends React.Component {
   _oAuthSpotify = async () => {
     try {
       let response = await fetch(
-        'http://14374d31.ngrok.io/login/',
+        'http://mysterious-gorge-24322.herokuapp.com/login/',
       );
       return responseJson = await response.json();
     } catch (error) {
@@ -74,6 +74,7 @@ export default class SpotifyLoginScreen extends React.Component {
     }
   }
 }
+//asdsd
 
 const styles = StyleSheet.create({
   container: {

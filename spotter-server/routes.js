@@ -9,7 +9,8 @@ module.exports = (knex) => {
   
   // SETUP USER PROFILE
   // takes input params, inserts into users table, redirects to ...
-  router.post('/:id/user', (req, res) => {
+  router.post('/profile/edit', (req, res) => {
+    console.log(2222)
     knex('users')
       .insert({
         name: req.body.name,
@@ -17,7 +18,7 @@ module.exports = (knex) => {
         email: req.body.email
       })
       .then(() => {
-        res.redirect(`/main`);
+        res.redirect(`/`);
       })
       .catch((err) => {
         console.log(err);
