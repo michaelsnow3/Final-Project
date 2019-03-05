@@ -1,9 +1,11 @@
 const express = require("express");
-const profileEditRoutes = express.Router();
+const profileRoutes = express.Router();
 const search = require("../search/search-spotify.js");
 
-module.exports = function() {
-  profileEditRoutes.post("/edit/:type", function(req, res) {
+
+module.exports = function(selectQueries) {
+
+  profileRoutes.post("/edit/:type", function(req, res) {
     let inputType = req.params.type;
 
     // edit username
@@ -27,5 +29,17 @@ module.exports = function() {
     });
   });
 
-  return profileEditRoutes;
+  profileRoutes.post("/friends", function(req, res) {
+    console.log('in friends post request')
+    const userId = req.body.userId;
+    selectQueries.selectFriends(userId).then((friends) => {
+      res.json({ friends: friends })
+    })
+    .catch((e) => {
+      console.log('error with select friends async function', e)
+    })
+  });
+
+  return profileRoutes;
 };
+

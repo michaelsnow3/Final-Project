@@ -1,5 +1,6 @@
 import React from 'react';
 import io from 'socket.io-client'
+import UserCard from '../components/UserCard'
 
 const socketUrl = 'http://172.46.0.236:3005'
 import {
@@ -31,12 +32,31 @@ export default class ChatScreen extends React.Component {
     super(props);
     this.state = {
       text: '',
-      socket: null
+      socket: null,
+      friends: []
     };
   }
 
   componentWillMount() {
     this.initSocket();
+  }
+
+  // save current user's friends to state when page renders
+  componentDidMount() {
+    fetch('http://172.46.0.236:8888/profile/friends', {
+      method: 'POST',
+      headers: {
+        'Accept': 'application/json',
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        userId: 7
+      })
+    }).then(data => {
+      // console.log(JSON.parse(data._bodyInit).friends);
+      let friends = JSON.parse(data._bodyInit).friends
+      this.setState({ friends })
+    })
   }
 
   initSocket = () => {
@@ -51,29 +71,27 @@ export default class ChatScreen extends React.Component {
     this.setState({ socket })
   }
 
-  sendOnClick = () => {
+  sendOnPress = () => {
     console.log('send button clicked')
-    // fetch('https://sleepy-plateau-86995.herokuapp.com/profile/edit/track', {
-    //   method: 'POST',
-    //   headers: {
-    //     'Accept': 'application/json',
-    //     'Content-Type': 'application/json',
-    //   },
-    //   body: JSON.stringify({
-    //     title: 'test'
-    //   })
-    // }).then(data => {
-    //   console.log(JSON.parse(data._bodyInit))
-    // })
+    
   }
 
   render() {
+
+    console.log(this.state.friends)
+
+    const friendsList = this.state.friends.map(friend => {
+      return <UserCard name={friend.name} id={friend.id} key={Math.random().toString()} />
+    });
+
+    // console.log(friendsList)
     
     return (
       <KeyboardAvoidingView 
         style={styles.container} 
         behavior="padding" enabled
         >
+        { friendsList }
         <View style={{
           flexDirection: 'row'
         }}>
@@ -89,7 +107,7 @@ export default class ChatScreen extends React.Component {
         />
 
         <Button
-          onPress={this.sendOnClick}
+          onPress={this.sendOnPress}
           title="Send"
           color="#841584"
           accessibilityLabel="Send Message"
