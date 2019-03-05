@@ -5,17 +5,11 @@ import Chat from '../components/Chat';
 
 const socketUrl = 'http://172.46.0.236:3005'
 import {
+  StyleSheet,
   Image,
   Platform,
   ScrollView,
-  StyleSheet,
-  Text,
-  TouchableOpacity,
-  View,
-  TextInput,
-  KeyboardAvoidingView,
   YellowBox,
-  Button,
 } from 'react-native';
 
 import { MonoText } from '../components/StyledText';
@@ -87,12 +81,20 @@ export default class ChatScreen extends React.Component {
     this.setState({inChatWith: friend})
   }
 
+  
+
   render() {
 
     if(this.state.inChatWith) {
-      return <Chat sendOnPress={this.sendOnPress} />
+      return <Chat 
+        sendOnPress={this.sendOnPress} 
+        inChatWith={this.state.inChatWith}
+      />
     }else {
-      return <ShowFriends friends={this.state.friends} handleChatWithFriend={this.handleChatWithFriend} />
+      return <ShowFriends 
+        friends={this.state.friends} 
+        handleChatWithFriend={this.handleChatWithFriend} 
+      />
     }
     
     

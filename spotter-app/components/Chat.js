@@ -7,23 +7,33 @@ import {
   Text,
   TouchableOpacity,
   View,
+  KeyboardAvoidingView,
+  TextInput,
+  Button,
 } from 'react-native';
+import FriendScreen from '../screens/FriendScreen';
 
-function Chat({ sendOnPress, onChangeText }) {
+function Chat({ sendOnPress, onChangeText, inChatWith }) {
   return (
-    <KeyboardAvoidingView style={styles.container} behavior="padding" enabled>
+    <KeyboardAvoidingView behavior="padding" enabled>
 
-      <TextInput
-        placeholder="Type here to translate!"
-        onChangeText={onChangeText}
-      />
+      <View>
+        <Text>{inChatWith.name}</Text>
+      </View>
 
-      <Button
-        onPress={sendOnPress}
-        title="Send"
-        color="#841584"
-        accessibilityLabel="Send Message"
-      />
+      <View style={styles.container}>
+        <TextInput
+          placeholder="Type here to translate!"
+          style={styles.textInput}
+          onChangeText={onChangeText}
+        />
+        <Button
+          onPress={sendOnPress}
+          title="Send"
+          color="#841584"
+          accessibilityLabel="Send Message"
+        />
+      </View>
 
     </KeyboardAvoidingView>
   );
@@ -33,10 +43,13 @@ const styles = StyleSheet.create({
   container: {
     flexDirection: 'row'
   },
-  text: {
+  textInput: {
     height: 40,
     backgroundColor: 'lightblue',
     width: '70%'
+  },
+  text: {
+    fontSize: 50
   }
 });
 
