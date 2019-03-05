@@ -20,16 +20,13 @@ function Chat({ sendOnPress, onChangeText, inChatWith, handleChatWithFriend }) {
   return (
     <KeyboardAvoidingView behavior="padding" enabled>
 
-      <View>
-        <Text>{inChatWith.name}</Text>
-      </View>
+      <TouchableOpacity style={styles.back} onPress={backToShowFriends}>
+        <Text style={styles.backButtonText}>Back</Text>
+      </TouchableOpacity>
 
-      <Button
-          onPress={backToShowFriends}
-          title="Back"
-          color="#841584"
-          accessibilityLabel="Show friends"
-        />
+      <View>
+        <Text style={styles.text}>{inChatWith.name}</Text>
+      </View>
 
       <View style={styles.container}>
         <TextInput
@@ -58,8 +55,18 @@ const styles = StyleSheet.create({
     backgroundColor: 'lightblue',
     width: '70%'
   },
+  backButtonText: {
+    fontSize: 20,
+    textAlign: 'center'
+  },
   text: {
-    fontSize: 50
+    fontSize: 40
+  },
+  back: {
+    height: 40,
+    width: 100,
+    backgroundColor: 'blue',
+    borderRadius: 20
   }
 });
 

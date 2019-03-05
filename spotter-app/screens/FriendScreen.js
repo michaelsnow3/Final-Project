@@ -9,16 +9,48 @@ import {
   View,
 } from 'react-native';
 
+import ShowFriends from '../components/ShowFriends';
+
 import { MonoText } from '../components/StyledText';
 
 export default class FriendScreen extends React.Component {
+
+  constructor(props) {
+    super(props)
+
+    this.state = {
+      friends: []
+    }
+  }
+  
   static navigationOptions = {
     header: null,
   };
 
+  componentDidMount() {
+    fetch('http://172.46.0.236:8888/profile/friends', {
+      method: 'POST',
+      headers: {
+        'Accept': 'application/json',
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        userId: 7
+      })
+    }).then(data => {
+      // console.log(JSON.parse(data._bodyInit).friends);
+      let friends = JSON.parse(data._bodyInit).friends
+      this.setState({ friends })
+    })
+  }
+
   render() {
     return (
       <View style={styles.container}>
+        <ShowFriends 
+          friends={this.state.friends} 
+          handleChatWithFriend={() => {}} 
+        />
         <Text>Friends</Text>
       </View>
     );
@@ -33,6 +65,7 @@ export default class FriendScreen extends React.Component {
       );
 
       return (
+
         <Text style={styles.developmentModeText}>
           Development mode is enabled, your app will be slower but you can use useful development
           tools. {learnMoreButton}
