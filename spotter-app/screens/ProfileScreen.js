@@ -9,26 +9,25 @@ import {
 
 export default class ProfileScreen extends React.Component {
 
-  state = {
-    userToken: null,
-    serverUrl: null
-  };
-
   constructor(props) {
     super(props);
+    this._getUserInfo();
   }
+
+  state = {
+    userToken: null,
+    serverUrl: null,
+    userId: null
+  };
 
   static navigationOptions = {
     header: null,
   };
 
   render() {
-
-    this._getUserInfo();
-
     return (
       <View style={styles.container}>
-        <Text>Profile</Text>
+        <Text>Id: {this.state.userId}</Text>
         <Button title="Logout this amazing App :)" onPress={this._signOutAsync} />
       </View>
     );
@@ -41,17 +40,29 @@ export default class ProfileScreen extends React.Component {
     const serverUrl = await AsyncStorage.getItem('serverUrl');
     this.setState({serverUrl: serverUrl});
 
-    // fetch('https://mywebsite.com/endpoint/', {
-    //   method: 'POST',
-    //   headers: {
-    //     Accept: 'application/json',
-    //     'Content-Type': 'application/json',
-    //   },
-    //   body: JSON.stringify({
-    //     firstParam: 'yourValue',
-    //     secondParam: 'yourOtherValue',
-    //   }),
+    // // use the access token to access the Spotify Web API
+    // request.get(options, function(error, response, body) {
+    //   let avatar = (body.images.length === 0) ? null : body.images[0].url;
+    //   let userInfo = {
+    //     username: body.display_name,
+    //     avatar: avatar,
+    //     email: body.email
+    //   };
+    //   console.log(userInfo);
     // });
+    console.log("Going to fetch:");
+    fetch('https://api.spotify.com/v1/me', {
+      method: 'GET',
+      headers: { Authorization: "Bearer " + userToken }
+    })
+    .then((response) => response.json())
+    .then((responseJson) => {
+      console.log(responseJson);
+      this.setState({userId: responseJson.id});
+    })
+    .catch((error) => {
+      console.error(error);
+    });
   };
 
   _signOutAsync = async () => {
@@ -61,9 +72,5 @@ export default class ProfileScreen extends React.Component {
 }
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
+
 });

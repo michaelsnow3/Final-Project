@@ -13,8 +13,7 @@ export default class SpotifyLoginScreen extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      loginClicked: false,
-      serverUrl: "http://65b5900c.ngrok.io"
+      loginClicked: false
     }
   }
 
@@ -27,7 +26,7 @@ export default class SpotifyLoginScreen extends React.Component {
     const linkOrLoginPage = (this.state.loginClicked) ?
             (<WebView
                source={
-                 { uri: `${this.state.serverUrl}/login/`,
+                 { uri: `https://sleepy-plateau-86995.herokuapp.com/login/`,
                    method: 'GET',
                    headers: { 'Cache-Control':'no-cache'}
                  }
@@ -58,7 +57,6 @@ export default class SpotifyLoginScreen extends React.Component {
   }
 
   _signInAsync = async (userToken) => {
-    console.log("userToken::::::::::" + userToken);
     await AsyncStorage.setItem('userToken', userToken);
     await AsyncStorage.setItem('serverUrl', this.state.serverUrl);
     this.props.navigation.navigate('App');
