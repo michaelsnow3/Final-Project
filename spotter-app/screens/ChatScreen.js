@@ -84,9 +84,6 @@ export default class ChatScreen extends React.Component {
             userId: 6,
             chatroomId: chatroomId
           })
-        }).then(data => {
-          let messages = JSON.parse(data._bodyInit).messages;
-          this.setState({ messages });
         })
   }
 

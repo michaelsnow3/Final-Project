@@ -7,7 +7,7 @@ module.exports = function returnQueries(knex) {
           .where({ id: userId });
         return user[0];
       } catch (e) {
-        console.log("error selecting user by id");
+        console.log("error selecting user by id", e);
       }
     },
 
@@ -23,7 +23,7 @@ module.exports = function returnQueries(knex) {
         }
         return friends;
       } catch (e) {
-        console.log("error selecting user's friends");
+        console.log("error selecting user's friends", e);
       }
     },
 
@@ -45,7 +45,7 @@ module.exports = function returnQueries(knex) {
         }
         return chatrooms
       } catch (e) {
-        console.log("error selecting all friends user has chats with");
+        console.log("error selecting all friends user has chats with", e);
       }
     },
 

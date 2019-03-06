@@ -16,5 +16,14 @@ module.exports = function(selectQueries, insertQueries) {
     })
   })
 
+  chatRoutes.post("/message/create", function(req, res) {
+    let { content, type, userId, chatroomId } = req.body
+
+    insertQueries.addMessage(content, type, userId, chatroomId).then(data => {
+      res.json({ data })
+    })
+
+  })
+
   return chatRoutes;
 };
