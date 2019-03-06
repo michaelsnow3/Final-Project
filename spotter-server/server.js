@@ -14,6 +14,7 @@ const knex = require("knex")(knexConfig[ENV]);
 
 // import query functions
 const selectQueries = require("./knexQueries/selectQueries.js")(knex);
+const insertQueries = require("./knexQueries/insertQueries.js")(knex);
 
 // const routes = require("./routes");
 
@@ -57,7 +58,7 @@ app.use("/profile/", profileRoutes(selectQueries));
 
 // chat endpoints
 const chatRoutes = require("./server-endpoints/chat-routes.js");
-app.use("/chat/", chatRoutes(selectQueries));
+app.use("/chat/", chatRoutes(selectQueries, insertQueries));
 
 // message endpoint
 const messageEditRoutes = require("./server-endpoints/message-routes.js");

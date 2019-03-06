@@ -13,37 +13,68 @@ import {
 } from 'react-native';
 import FriendScreen from '../screens/FriendScreen';
 
-function Chat({ sendOnPress, onChangeText, inChatWith, handleChatWithFriend }) {
-  backToShowFriends = () => {
-    handleChatWithFriend(null);
+class Chat extends React.Component {
+  constructor(props) {
+    super(props)
+
+    this.state = {
+      messages: []
+    }
   }
-  return (
-    <KeyboardAvoidingView behavior="padding" enabled>
+  componentDidMount() {
+    fetch('http://192.168.0.22:8888/chat/message/view', {
+          method: 'POST',
+          headers: {
+            'Accept': 'application/json',
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            chatroomId: 10
+          })
+        }).then(data => {
+          let messages = JSON.parse(data._bodyInit).messages;
+          this.setState({ messages });
+        })
+  }
+  render(){
+    let { sendOnPress, onChangeText, inChatWith, handleChatWithFriend } = this.props;
+    backToShowFriends = () => {
+      handleChatWithFriend(null);
+    }
+    let messageList = this.state.messages.map(message => {
+      return <Text>{message.content}</Text>
+    })
+    return (
+      <KeyboardAvoidingView behavior="padding" enabled>
+  
+        <TouchableOpacity style={styles.back} onPress={backToShowFriends}>
+          <Text style={styles.backButtonText}>Back</Text>
+        </TouchableOpacity>
+  
+        <View>
+          <Text style={styles.text}>{inChatWith.name}</Text>
+        </View>
 
-      <TouchableOpacity style={styles.back} onPress={backToShowFriends}>
-        <Text style={styles.backButtonText}>Back</Text>
-      </TouchableOpacity>
-
-      <View>
-        <Text style={styles.text}>{inChatWith.name}</Text>
-      </View>
-
-      <View style={styles.container}>
-        <TextInput
-          placeholder="Type here to translate!"
-          style={styles.textInput}
-          onChangeText={onChangeText}
-        />
-        <Button
-          onPress={sendOnPress}
-          title="Send"
-          color="#841584"
-          accessibilityLabel="Send Message"
-        />
-      </View>
-
-    </KeyboardAvoidingView>
-  );
+        {messageList}
+  
+        <View style={styles.container}>
+          <TextInput
+            placeholder="Type here to translate!"
+            style={styles.textInput}
+            onChangeText={onChangeText}
+          />
+          <Button
+            onPress={sendOnPress}
+            title="Send"
+            color="#841584"
+            accessibilityLabel="Send Message"
+          />
+        </View>
+  
+      </KeyboardAvoidingView>
+    );
+  }
+  
 }
 
 const styles = StyleSheet.create({

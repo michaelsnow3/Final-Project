@@ -1,5 +1,16 @@
 module.exports = function returnQueries(knex) {
   return {
+    selectUserById: async function(userId) {
+      try {
+        let user = await knex("users")
+          .select("name", "id")
+          .where({ id: userId });
+        return user[0];
+      } catch (e) {
+        console.log("error selecting user by id");
+      }
+    },
+
     selectFriends: async function(userId) {
       try {
         let friendIds = await knex("friend")
@@ -38,15 +49,12 @@ module.exports = function returnQueries(knex) {
       }
     },
 
-    selectUserById: async function(userId) {
-      try {
-        let user = await knex("users")
-          .select("name", "id")
-          .where({ id: userId });
-        return user[0];
-      } catch (e) {
-        console.log("error selecting user by id");
-      }
+    selectMessages: async function(chatroomId) {
+      let messages = await knex().select('content')
+        .from('message')
+        .where({'chatroom_id': chatroomId})
+      return messages
     }
+
   };
 };
