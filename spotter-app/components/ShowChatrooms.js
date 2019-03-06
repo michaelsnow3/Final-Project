@@ -15,7 +15,7 @@ class ShowChatrooms extends React.Component {
   render(){
     let { chatrooms, handleChatWithFriend } = this.props;
     const chatroomList = chatrooms.map(chatroom => {
-      return <Chatroom name={chatroom.name} id={chatroom.id} handleChatWithFriend={handleChatWithFriend} key={Math.random().toString()} />
+      return <Chatroom name={chatroom.name} chatroomId={chatroom.chatroom_id} handleChatWithFriend={handleChatWithFriend} key={Math.random().toString()} />
     });
     return(
       <View>

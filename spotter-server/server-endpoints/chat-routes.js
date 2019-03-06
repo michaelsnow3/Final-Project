@@ -12,7 +12,6 @@ module.exports = function(selectQueries, insertQueries) {
   chatRoutes.post("/message/view", function(req, res) {
     let chatroomId = req.body.chatroomId;
     selectQueries.selectMessages(chatroomId).then(messages => {
-      console.log(messages)
       res.json({ messages })
     })
   })

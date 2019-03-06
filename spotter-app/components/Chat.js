@@ -17,7 +17,6 @@ import Message from './Message';
 class Chat extends React.Component {
   constructor(props) {
     super(props)
-
     this.state = {
       messages: []
     }
@@ -30,7 +29,7 @@ class Chat extends React.Component {
             'Content-Type': 'application/json',
           },
           body: JSON.stringify({
-            chatroomId: 10
+            chatroomId: this.props.inChatWith.chatroomId
           })
         }).then(data => {
           let messages = JSON.parse(data._bodyInit).messages;
@@ -65,7 +64,7 @@ class Chat extends React.Component {
             onChangeText={onChangeText}
           />
           <Button
-            onPress={sendOnPress}
+            onPress={() => sendOnPress()}
             title="Send"
             color="#841584"
             accessibilityLabel="Send Message"

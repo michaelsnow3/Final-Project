@@ -9,11 +9,11 @@ import {
   View,
 } from 'react-native';
 
-function Chatroom({name, id, handleChatWithFriend}) {
+function Chatroom({name, chatroomId, handleChatWithFriend}) {
   handleFriendPress = () => {
     handleChatWithFriend({
       name: name,
-      id: id
+      chatroomId: chatroomId
     })
   }
   return (

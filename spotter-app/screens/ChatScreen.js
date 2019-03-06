@@ -70,7 +70,24 @@ export default class ChatScreen extends React.Component {
   }
 
   sendOnPress = () => {
-    console.log('send message button pressed!')
+    let chatroomId = this.state.inChatWith.chatroomId
+    if(!this.state.text) return
+    fetch('http://172.46.0.236:8888/chat/message/create', {
+          method: 'POST',
+          headers: {
+            'Accept': 'application/json',
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            content: this.state.text,
+            type: 'message',
+            userId: 6,
+            chatroomId: chatroomId
+          })
+        }).then(data => {
+          let messages = JSON.parse(data._bodyInit).messages;
+          this.setState({ messages });
+        })
   }
 
   onChangeText = (text) => {
@@ -87,6 +104,7 @@ export default class ChatScreen extends React.Component {
         sendOnPress={this.sendOnPress} 
         inChatWith={this.state.inChatWith}
         handleChatWithFriend={this.handleChatWithFriend}
+        onChangeText={this.onChangeText}
       />
     }else {
       return <ShowChatrooms 
