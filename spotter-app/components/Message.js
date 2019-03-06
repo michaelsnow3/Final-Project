@@ -8,10 +8,18 @@ import {
 
 function Message({ content, date, userId }) {
   let messageStyle = userId === 7 ? styles.userMessage : styles.friendMessage
+
+  let dateObj = new Date(date);
+  var month = dateObj.getUTCMonth() + 1; //months from 1-12
+  var day = dateObj.getUTCDate();
+  var year = dateObj.getUTCFullYear();
+
+  newdate = year + "/" + month + "/" + day;
+
   return(
     <View style={messageStyle}>
-      <Text style={styles.date}>{date}</Text>
-      <Text style={styles.text}>{content}</Text>
+      <Text style={styles.date}>{newdate}</Text>
+      <Text style={styles.content}>{content}</Text>
     </View>
   )
 }
@@ -36,7 +44,7 @@ const styles = StyleSheet.create({
     alignSelf: 'flex-end'
   },
   content: {
-    fontSize: 30,
+    fontSize: 20,
     textAlignVertical: 'center'
   },
   date: {
