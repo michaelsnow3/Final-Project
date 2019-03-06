@@ -12,6 +12,7 @@ import {
   Button,
 } from 'react-native';
 import FriendScreen from '../screens/FriendScreen';
+import Message from './Message';
 
 class Chat extends React.Component {
   constructor(props) {
@@ -22,7 +23,7 @@ class Chat extends React.Component {
     }
   }
   componentDidMount() {
-    fetch('http://192.168.0.22:8888/chat/message/view', {
+    fetch('http://172.46.0.236:8888/chat/message/view', {
           method: 'POST',
           headers: {
             'Accept': 'application/json',
@@ -42,7 +43,7 @@ class Chat extends React.Component {
       handleChatWithFriend(null);
     }
     let messageList = this.state.messages.map(message => {
-      return <Text>{message.content}</Text>
+      return <Message content={message.content} date={message.date} key={Math.random().toString()} />
     })
     return (
       <KeyboardAvoidingView behavior="padding" enabled>

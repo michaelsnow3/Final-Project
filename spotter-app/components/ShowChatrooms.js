@@ -9,13 +9,13 @@ import {
   View,
 } from 'react-native';
 
-import UserCard from '../components/UserCard'
+import Chatroom from '../components/Chatroom.js'
 
 class ShowChatrooms extends React.Component {
   render(){
     let { chatrooms, handleChatWithFriend } = this.props;
     const chatroomList = chatrooms.map(chatroom => {
-      return <UserCard name={chatroom.name} id={chatroom.id} handleChatWithFriend={handleChatWithFriend} key={Math.random().toString()} />
+      return <Chatroom name={chatroom.name} id={chatroom.id} handleChatWithFriend={handleChatWithFriend} key={Math.random().toString()} />
     });
     return(
       <View>

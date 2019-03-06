@@ -40,7 +40,7 @@ export default class ChatScreen extends React.Component {
 
   // save current user's chatrooms to state when page renders
   componentDidMount() {
-    fetch('http://192.168.0.22:8888/chat/chatrooms', {
+    fetch('http://172.46.0.236:8888/chat/chatrooms', {
       method: 'POST',
       headers: {
         'Accept': 'application/json',
