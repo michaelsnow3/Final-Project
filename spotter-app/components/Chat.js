@@ -11,6 +11,7 @@ import {
   TextInput,
   Button,
 } from 'react-native';
+import io from 'socket.io-client';
 import FriendScreen from '../screens/FriendScreen';
 import Message from './Message';
 
@@ -22,6 +23,14 @@ class Chat extends React.Component {
     }
   }
   componentDidMount() {
+    this.fetchMessages();
+  }
+
+  componentWillMount() {
+    this.initSocket();
+  }
+
+  fetchMessages = () => {
     fetch('http://172.46.0.236:8888/chat/message/view', {
           method: 'POST',
           headers: {
@@ -36,6 +45,26 @@ class Chat extends React.Component {
           this.setState({ messages });
         })
   }
+
+  initSocket = () => {
+    this.socket = io.connect(`http://172.46.0.236:3005`)
+
+    console.log('in insocket')
+
+    this.socket.on('connect', () => {
+      console.log('connected')
+      this.socket.on(this.props.inChatWith.chatroomId, (data) => {
+        this.props.clearTextInput()
+      })
+    })
+  }
+
+  sendMessageToSocketServer = () => {
+    this.socket.emit('message', {
+      chatroomId: this.props.inChatWith.chatroomId
+    })
+  }
+
   render(){
     let { sendOnPress, onChangeText, inChatWith, handleChatWithFriend } = this.props;
     backToShowFriends = () => {
@@ -45,7 +74,7 @@ class Chat extends React.Component {
       return <Message content={message.content} date={message.date} key={Math.random().toString()} />
     })
     return (
-      <KeyboardAvoidingView behavior="padding" enabled>
+      <View>
   
         <TouchableOpacity style={styles.back} onPress={backToShowFriends}>
           <Text style={styles.backButtonText}>Back</Text>
@@ -55,23 +84,24 @@ class Chat extends React.Component {
           <Text style={styles.text}>{inChatWith.name}</Text>
         </View>
 
-        {messageList}
+        <ScrollView style={styles.messageList}>{messageList}</ScrollView>
   
-        <View style={styles.container}>
+        <KeyboardAvoidingView style={styles.container} behavior="padding" enabled>
           <TextInput
-            placeholder="Type here to translate!"
+            placeholder="Send a message"
+            value={this.props.text}
             style={styles.textInput}
             onChangeText={onChangeText}
           />
           <Button
-            onPress={() => sendOnPress()}
+            onPress={() => sendOnPress(this.sendMessageToSocketServer, this.fetchMessages)}
             title="Send"
             color="#841584"
             accessibilityLabel="Send Message"
           />
-        </View>
+        </KeyboardAvoidingView>
   
-      </KeyboardAvoidingView>
+      </View>
     );
   }
   
@@ -98,6 +128,9 @@ const styles = StyleSheet.create({
     width: 100,
     backgroundColor: 'blue',
     borderRadius: 20
+  },
+  messageList: {
+    height: '60%'
   }
 });
 

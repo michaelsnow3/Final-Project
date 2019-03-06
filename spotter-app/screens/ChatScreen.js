@@ -1,9 +1,7 @@
 import React from 'react';
-import io from 'socket.io-client';
 import ShowChatrooms from '../components/ShowChatrooms';
 import Chat from '../components/Chat';
 
-const socketUrl = 'http://172.46.0.236:3005'
 import {
   StyleSheet,
   Button,
@@ -28,14 +26,9 @@ export default class ChatScreen extends React.Component {
     super(props);
     this.state = {
       text: '',
-      socket: null,
       chatrooms: [],
       inChatWith: null
     };
-  }
-
-  componentWillMount() {
-    this.initSocket();
   }
 
   // save current user's chatrooms to state when page renders
@@ -55,23 +48,9 @@ export default class ChatScreen extends React.Component {
     })
   }
 
-
-
-  initSocket = () => {
-    const socket = io(socketUrl);
-
-    console.log('in insocket')
-
-    socket.on('connect', () => {
-      console.log('connected')
-    })
-
-    this.setState({ socket })
-  }
-
-  sendOnPress = () => {
+  sendOnPress = (sendMessageToSocketServer, fetchMessages) => {
     let chatroomId = this.state.inChatWith.chatroomId
-    if(!this.state.text) return
+    if(this.state.text === '') return
     fetch('http://172.46.0.236:8888/chat/message/create', {
           method: 'POST',
           headers: {
@@ -84,11 +63,22 @@ export default class ChatScreen extends React.Component {
             userId: 6,
             chatroomId: chatroomId
           })
+
+        })
+        .then(() => {
+          fetchMessages()
+          sendMessageToSocketServer()
         })
   }
 
   onChangeText = (text) => {
     this.setState({text})
+  }
+
+  clearTextInput = () => {
+    console.log(this.state.text)
+    this.setState({text: ''});
+    console.log(this.state.text)
   }
 
   handleChatWithFriend = (friend) => {
@@ -98,10 +88,12 @@ export default class ChatScreen extends React.Component {
   render() {
     if(this.state.inChatWith) {
       return <Chat 
+        text={this.state.text}
         sendOnPress={this.sendOnPress} 
         inChatWith={this.state.inChatWith}
         handleChatWithFriend={this.handleChatWithFriend}
         onChangeText={this.onChangeText}
+        clearTextInput={this.clearTextInput}
       />
     }else {
       return <ShowChatrooms 
