@@ -71,37 +71,43 @@ class Chat extends React.Component {
       handleChatWithFriend(null);
     }
     let messageList = this.state.messages.map(message => {
-      return <Message content={message.content} date={message.date} key={Math.random().toString()} />
+      return <Message content={message.content} date={message.date} userId={message.user_id} key={Math.random().toString()} />
     })
     return (
-      <View>
-  
-        <TouchableOpacity style={styles.back} onPress={backToShowFriends}>
-          <Text style={styles.backButtonText}>Back</Text>
-        </TouchableOpacity>
-  
-        <View>
+      <KeyboardAvoidingView keyboardVerticalOffset = {60} behavior="padding" style={styles.container}>
+      
+        <View style={styles.header}>
+          <TouchableOpacity style={styles.back} onPress={backToShowFriends}>
+            <Text style={styles.backButtonText}>{'<'}</Text>
+          </TouchableOpacity>
+
           <Text style={styles.text}>{inChatWith.name}</Text>
         </View>
 
-        <ScrollView style={styles.messageList}>{messageList}</ScrollView>
+        <ScrollView
+          ref={ref => this.scrollView = ref}
+          onContentSizeChange={(contentWidth, contentHeight)=>{        
+            this.scrollView.scrollToEnd({animated: true});
+          }}
+          style={styles.messageList}
+        >
+          {messageList}
+        </ScrollView>
   
-        <KeyboardAvoidingView style={styles.container} behavior="padding" enabled>
+        <View style={styles.input}>
           <TextInput
             placeholder="Send a message"
             value={this.props.text}
             style={styles.textInput}
             onChangeText={onChangeText}
           />
-          <Button
-            onPress={() => sendOnPress(this.sendMessageToSocketServer, this.fetchMessages)}
-            title="Send"
-            color="#841584"
-            accessibilityLabel="Send Message"
-          />
-        </KeyboardAvoidingView>
+          <TouchableOpacity onPress={() => sendOnPress(this.sendMessageToSocketServer, this.fetchMessages)}>
+            <Text style={styles.sendText}>Send</Text>
+          </TouchableOpacity>
+
+        </View>
   
-      </View>
+      </KeyboardAvoidingView>
     );
   }
   
@@ -109,28 +115,47 @@ class Chat extends React.Component {
 
 const styles = StyleSheet.create({
   container: {
-    flexDirection: 'row'
+    flex: 1,
+  },
+  sendText: {
+    fontSize: 20,
+  },
+  header: {
+    flex: 1,
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    height: 5,
+    alignItems: 'center',
+  },
+  input: {
+    flex: 1,
+    flexDirection: 'row',
+    justifyContent: 'space-around',
+    alignItems: 'center'
   },
   textInput: {
     height: 40,
-    backgroundColor: 'lightblue',
-    width: '70%'
+    borderRadius: 10,
+    borderWidth: 2,
+    width: '70%',
+    alignSelf: 'center',
   },
   backButtonText: {
     fontSize: 20,
     textAlign: 'center'
   },
   text: {
-    fontSize: 40
+    fontSize: 40,
+    marginEnd: 20,
   },
   back: {
-    height: 40,
-    width: 100,
-    backgroundColor: 'blue',
-    borderRadius: 20
+    height: 30,
+    width: 60,
+    backgroundColor: '#d5dae2',
+    borderRadius: 20,
   },
   messageList: {
-    height: '60%'
+    maxHeight: '70%'
   }
 });
 

@@ -9,7 +9,6 @@ io.on('connection', function (socket) {
   console.log('user connected')
 
   socket.on('message', function (data) {
-    console.log(data.chatroomId);
     socket.emit(data.chatroomId, {
       messageSend: true
     })

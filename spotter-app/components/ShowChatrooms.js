@@ -19,8 +19,9 @@ class ShowChatrooms extends React.Component {
     });
     return(
       <View>
-        <Text style={styles.name}>chatrooms:</Text>
-        {chatroomList}
+        <Text style={styles.name}>Chats</Text>
+        <Text>{"\n"}</Text>
+        <ScrollView>{chatroomList}</ScrollView>
       </View>
     )
   }

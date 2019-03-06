@@ -6,9 +6,10 @@ import {
   View,
 } from 'react-native';
 
-function Message({ content, date }) {
+function Message({ content, date, userId }) {
+  let messageStyle = userId === 7 ? styles.userMessage : styles.friendMessage
   return(
-    <View style={styles.container}>
+    <View style={messageStyle}>
       <Text style={styles.date}>{date}</Text>
       <Text style={styles.text}>{content}</Text>
     </View>
@@ -16,12 +17,23 @@ function Message({ content, date }) {
 }
 
 const styles = StyleSheet.create({
-  container: {
-    height: 60,
+  userMessage: {
     borderRadius: 10,
     borderWidth: 0.5,
     borderColor: '#d6d7da',
-    backgroundColor: 'lightgreen'
+    backgroundColor: 'lightgreen',
+    width: '50%',
+    marginBottom: 15,
+    alignSelf: 'flex-start'
+  },
+  friendMessage: {
+    borderRadius: 10,
+    borderWidth: 0.5,
+    borderColor: '#d6d7da',
+    backgroundColor: 'lightblue',
+    width: '50%',
+    marginBottom: 15,
+    alignSelf: 'flex-end'
   },
   content: {
     fontSize: 30,

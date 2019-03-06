@@ -40,7 +40,7 @@ export default class ChatScreen extends React.Component {
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
-        userId: 6
+        userId: 7
       })
     }).then(data => {
       let chatrooms = JSON.parse(data._bodyInit).chatrooms;
@@ -60,7 +60,7 @@ export default class ChatScreen extends React.Component {
           body: JSON.stringify({
             content: this.state.text,
             type: 'message',
-            userId: 6,
+            userId: 7,
             chatroomId: chatroomId
           })
 
@@ -76,9 +76,7 @@ export default class ChatScreen extends React.Component {
   }
 
   clearTextInput = () => {
-    console.log(this.state.text)
     this.setState({text: ''});
-    console.log(this.state.text)
   }
 
   handleChatWithFriend = (friend) => {
