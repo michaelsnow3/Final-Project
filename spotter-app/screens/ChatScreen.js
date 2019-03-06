@@ -6,6 +6,7 @@ import Chat from '../components/Chat';
 const socketUrl = 'http://172.46.0.236:3005'
 import {
   StyleSheet,
+  Button,
   Image,
   Platform,
   ScrollView,
@@ -39,20 +40,20 @@ export default class ChatScreen extends React.Component {
 
   // save current user's friends to state when page renders
   componentDidMount() {
-    fetch('http://172.46.0.236:8888/profile/friends', {
-      method: 'POST',
-      headers: {
-        'Accept': 'application/json',
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        userId: 7
-      })
-    }).then(data => {
-      // console.log(JSON.parse(data._bodyInit).friends);
-      let friends = JSON.parse(data._bodyInit).friends
-      this.setState({ friends })
-    })
+    // fetch('http://172.46.0.236:8888/chat/chatrooms', {
+    //   method: 'POST',
+    //   headers: {
+    //     'Accept': 'application/json',
+    //     'Content-Type': 'application/json',
+    //   },
+    //   body: JSON.stringify({
+    //     userId: 7
+    //   })
+    // }).then(data => {
+    //   // console.log(JSON.parse(data._bodyInit).friends);
+    //   // let friends = JSON.parse(data._bodyInit).friends
+    //   // this.setState({ friends })
+    // })
   }
 
 
@@ -83,6 +84,26 @@ export default class ChatScreen extends React.Component {
 
   render() {
 
+    return <Button
+    onPress={() => {
+      fetch('http://192.168.0.22:8888/chat/chatrooms', {
+      method: 'POST',
+      headers: {
+        'Accept': 'application/json',
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        userId: 6
+      })
+    }).then(data => {
+      console.log(data._bodyInit)
+    })
+    }}
+    title="Send"
+    color="#841584"
+    accessibilityLabel="Send Message"
+  />
+
     if(this.state.inChatWith) {
       return <Chat 
         sendOnPress={this.sendOnPress} 
@@ -95,7 +116,6 @@ export default class ChatScreen extends React.Component {
         handleChatWithFriend={this.handleChatWithFriend} 
       />
     }
-    
     
   }
 

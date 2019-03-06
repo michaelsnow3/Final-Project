@@ -13,14 +13,14 @@ const knexConfig = require("./knexfile");
 const knex = require("knex")(knexConfig[ENV]);
 
 // import query functions
-const selectQueries = require('./knexQueries/selectQueries.js')(knex);
+const selectQueries = require("./knexQueries/selectQueries.js")(knex);
 
 // const routes = require("./routes");
 
 const client_id = process.env.CLIENT_ID; // Your client id
 const client_secret = process.env.CLIENT_SECRET; // Your secret
 
-const redirect_uri = 'https://sleepy-plateau-86995.herokuapp.com/callback/'; // Your redirect uri
+const redirect_uri = "https://sleepy-plateau-86995.herokuapp.com/callback/"; // Your redirect uri
 
 const stateKey = "spotify_auth_state";
 
@@ -37,7 +37,7 @@ app
       extended: true
     })
   );
-  
+
 // spotify Oauth endpoints
 const loginRoutes = require("./server-endpoints/spotify-auth/login-routes.js");
 app.use("/login/", loginRoutes(stateKey, querystring, redirect_uri));
@@ -55,16 +55,19 @@ app.use("/refresh_token/", refreshTokenRoutes());
 const profileRoutes = require("./server-endpoints/profile-routes.js");
 app.use("/profile/", profileRoutes(selectQueries));
 
+// chat endpoints
+const chatRoutes = require("./server-endpoints/chat-routes.js");
+app.use("/chat/", chatRoutes(selectQueries));
+
 // message endpoint
 const messageEditRoutes = require("./server-endpoints/message-routes.js");
 app.use("/message/", messageEditRoutes());
 
-
 // add friend endpoint
 const addFriendRoutes = require("./server-endpoints/add-friend-routes");
-app.use('/add_friend', addFriendRoutes)
+app.use("/add_friend", addFriendRoutes);
 
 // app.use("/routes", routes(knex));
 
-console.log('Listening on port ' + PORT);
+console.log("Listening on port " + PORT);
 app.listen(PORT);
