@@ -32,7 +32,7 @@ module.exports = function returnQueries(knex) {
             .whereNot({'user_id': userId});
           chatroom[0] && chatrooms.push(chatroom[0]);
         }
-        console.log(chatrooms)
+        return chatrooms
       } catch (e) {
         console.log("error selecting all friends user has chats with");
       }

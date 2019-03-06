@@ -1,6 +1,6 @@
 import React from 'react';
 import io from 'socket.io-client';
-import ShowFriends from '../components/ShowFriends';
+import ShowChatrooms from '../components/ShowChatrooms';
 import Chat from '../components/Chat';
 
 const socketUrl = 'http://172.46.0.236:3005'
@@ -29,7 +29,7 @@ export default class ChatScreen extends React.Component {
     this.state = {
       text: '',
       socket: null,
-      friends: [],
+      chatrooms: [],
       inChatWith: null
     };
   }
@@ -38,22 +38,21 @@ export default class ChatScreen extends React.Component {
     this.initSocket();
   }
 
-  // save current user's friends to state when page renders
+  // save current user's chatrooms to state when page renders
   componentDidMount() {
-    // fetch('http://172.46.0.236:8888/chat/chatrooms', {
-    //   method: 'POST',
-    //   headers: {
-    //     'Accept': 'application/json',
-    //     'Content-Type': 'application/json',
-    //   },
-    //   body: JSON.stringify({
-    //     userId: 7
-    //   })
-    // }).then(data => {
-    //   // console.log(JSON.parse(data._bodyInit).friends);
-    //   // let friends = JSON.parse(data._bodyInit).friends
-    //   // this.setState({ friends })
-    // })
+    fetch('http://192.168.0.22:8888/chat/chatrooms', {
+      method: 'POST',
+      headers: {
+        'Accept': 'application/json',
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        userId: 6
+      })
+    }).then(data => {
+      let chatrooms = JSON.parse(data._bodyInit).chatrooms;
+      this.setState({ chatrooms });
+    })
   }
 
 
@@ -83,27 +82,6 @@ export default class ChatScreen extends React.Component {
   }
 
   render() {
-
-    return <Button
-    onPress={() => {
-      fetch('http://192.168.0.22:8888/chat/chatrooms', {
-      method: 'POST',
-      headers: {
-        'Accept': 'application/json',
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        userId: 6
-      })
-    }).then(data => {
-      console.log(data._bodyInit)
-    })
-    }}
-    title="Send"
-    color="#841584"
-    accessibilityLabel="Send Message"
-  />
-
     if(this.state.inChatWith) {
       return <Chat 
         sendOnPress={this.sendOnPress} 
@@ -111,8 +89,8 @@ export default class ChatScreen extends React.Component {
         handleChatWithFriend={this.handleChatWithFriend}
       />
     }else {
-      return <ShowFriends 
-        friends={this.state.friends} 
+      return <ShowChatrooms 
+        chatrooms={this.state.chatrooms} 
         handleChatWithFriend={this.handleChatWithFriend} 
       />
     }

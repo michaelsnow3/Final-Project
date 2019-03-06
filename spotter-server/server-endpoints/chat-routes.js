@@ -5,7 +5,7 @@ module.exports = function(selectQueries) {
   chatRoutes.post("/chatrooms", function(req, res) {
     let userId = req.body.userId;
     selectQueries.selectFriendChats(userId).then(chatrooms => {
-      res.json({ test: "worked" });
+      res.json({ chatrooms });
     });
   });
 
