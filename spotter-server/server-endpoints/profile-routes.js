@@ -1,5 +1,5 @@
 const express = require("express");
-const profileRoutes = express.Router();
+const profileEditRoutes = express.Router();
 const search = require("../search/search-spotify.js");
 const ENV = process.env.ENV || "development";
 const knexConfig = require("../knexfile");
@@ -237,7 +237,7 @@ module.exports = function(request) {
     }
   });
 
-  profileRoutes.post("/friends", function(req, res) {
+  profileEditRoutes.post("/friends", function(req, res) {
     const userId = req.body.userId;
     selectQueries
       .selectFriends(userId)
@@ -249,5 +249,5 @@ module.exports = function(request) {
       });
   });
 
-  return profileRoutes;
+  return profileEditRoutes;
 };
