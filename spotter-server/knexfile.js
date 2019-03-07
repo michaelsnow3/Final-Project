@@ -23,14 +23,20 @@ module.exports = {
 
   production: {
     client: 'postgresql',
-    connection: process.env.DATABASE_URL + '?ssl=true',
-    pool: {
-      min: 2,
-      max: 10
+    connection: {
+      host     : process.env.HEROKU_DB_HOST,
+      user     : process.env.HEROKU_DB_USER,
+      password : process.env.HEROKU_DB_PASS,
+      database : process.env.HEROKU_DB_NAME,
+      port     : process.env.HEROKU_DB_PORT
     },
+    ssl        : true,
     migrations: {
+      directory: './db/migrations',
       tableName: 'migrations'
+    },
+    seeds: {
+      directory: './db/seeds'
     }
   }
-
 };
