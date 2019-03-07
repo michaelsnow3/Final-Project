@@ -20,9 +20,9 @@ export default class ProfileScreen extends React.Component {
       serverUrl: null,
       userId: null,
       email: null,
-      favoriteGenres: null,
-      favoriteArtists: null,
-      favoriteSongs: null,
+      favoriteGenres: [],
+      favoriteArtists: [],
+      favoriteSongs: [],
       favoriteType: "Genre",
       displayInfo: true,
       favoriteContent: ''
@@ -281,9 +281,17 @@ export default class ProfileScreen extends React.Component {
       console.log(jsonData);
       this.setState({userId: jsonData.name});
       this.setState({email: jsonData.email});
-      this.setState({favoriteGenres: jsonData.favoriteGenres});
-      this.setState({favoriteArtists: jsonData.favoriteArtists});
-      this.setState({favoriteSongs: jsonData.favoriteSongs});
+      if (jsonData.favoriteGenres) {
+        this.setState({favoriteGenres: jsonData.favoriteGenres});
+      }
+
+      if (jsonData.favoriteArtists) {
+        this.setState({favoriteArtists: jsonData.favoriteArtists});
+      }
+
+      if (jsonData.favoriteSongs) {
+        this.setState({favoriteSongs: jsonData.favoriteSongs});
+      }
     })
     .catch((error) => {
       console.error(error);
