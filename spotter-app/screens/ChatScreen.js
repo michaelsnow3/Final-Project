@@ -1,7 +1,7 @@
-import React from 'react';
-import ShowChatrooms from '../components/ShowChatrooms';
-import Chat from '../components/Chat';
-import SuggestSong from '../components/SuggestSong'
+import React from "react";
+import ShowChatrooms from "../components/ShowChatrooms";
+import Chat from "../components/Chat";
+import SuggestSong from "../components/SuggestSong";
 
 import {
   StyleSheet,
@@ -10,35 +10,34 @@ import {
   Platform,
   ScrollView,
   AsyncStorage
-} from 'react-native';
+} from "react-native";
 
-import { MonoText } from '../components/StyledText';
+import { MonoText } from "../components/StyledText";
 
 export default class ChatScreen extends React.Component {
   static navigationOptions = {
-    header: null,
+    header: null
   };
 
   constructor(props) {
     super(props);
     this.state = {
-      text: '',
+      text: "",
       chatrooms: [],
-      page: 'showChatrooms',
+      page: "showChatrooms",
       suggestedSong: {},
-      url: 'http://172.46.0.236',
+      url: "http://172.46.0.236",
       inChatWith: null
     };
   }
 
   // save current user's chatrooms to state when page renders
   componentDidMount() {
-    
     fetch(`${this.state.url}:8888/chat/chatrooms`, {
-      method: 'POST',
+      method: "POST",
       headers: {
-        'Accept': 'application/json',
-        'Content-Type': 'application/json',
+        Accept: "application/json",
+        "Content-Type": "application/json"
       },
       body: JSON.stringify({
         userId: 9
@@ -46,78 +45,80 @@ export default class ChatScreen extends React.Component {
     }).then(data => {
       let chatrooms = JSON.parse(data._bodyInit).chatrooms;
       this.setState({ chatrooms });
-    })
+    });
   }
 
   sendOnPress = (sendMessageToSocketServer, fetchMessages) => {
-    if(this.state.text === '') return
+    if (this.state.text === "") return;
     fetch(`${this.state.url}:8888/chat/message/create`, {
-          method: 'POST',
-          headers: {
-            'Accept': 'application/json',
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({
-            content: this.state.text,
-            type: 'message',
-            userId: 9,
-            chatroomId: this.state.inChatWith.chatroomId
-          })
+      method: "POST",
+      headers: {
+        Accept: "application/json",
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({
+        content: this.state.text,
+        type: "message",
+        userId: 9,
+        chatroomId: this.state.inChatWith.chatroomId
+      })
+    }).then(() => {
+      fetchMessages();
+      sendMessageToSocketServer();
+    });
+  };
 
-        })
-        .then(() => {
-          fetchMessages()
-          sendMessageToSocketServer()
-        })
-  }
-
-  onChangeText = (text) => {
-    this.setState({text})
-  }
+  onChangeText = text => {
+    this.setState({ text });
+  };
 
   clearTextInput = () => {
-    this.setState({text: ''});
-  }
+    this.setState({ text: "" });
+  };
 
   handleChatWithFriend = (friend, page) => {
     this.setState({
       inChatWith: friend,
       page: page
-    })
-  }
+    });
+  };
 
-  handleTrackSuggestion = (track) => {
-    console.log(track)
-  }
+  handleTrackSuggestion = track => {
+    console.log(track);
+  };
 
   render() {
     switch (this.state.page) {
-      case 'showChat':
-        return <Chat 
-          text={this.state.text}
-          sendOnPress={this.sendOnPress} 
-          inChatWith={this.state.inChatWith}
-          handleChatWithFriend={this.handleChatWithFriend}
-          onChangeText={this.onChangeText}
-          clearTextInput={this.clearTextInput}
-          url={this.state.url}
-          navigation={this.props.navigation}
-        />
-      case 'showChatrooms': 
-        return <ShowChatrooms 
-          chatrooms={this.state.chatrooms} 
-          handleChatWithFriend={this.handleChatWithFriend} 
-        />
-      case 'suggestSong':
-        return <SuggestSong
-        handleChatWithFriend={this.handleChatWithFriend} 
-        inChatWith={this.state.inChatWith}
-        handleTrackSuggestion={this.handleTrackSuggestion}
-        url={this.state.url}
-        />
+      case "showChat":
+        return (
+          <Chat
+            text={this.state.text}
+            sendOnPress={this.sendOnPress}
+            inChatWith={this.state.inChatWith}
+            handleChatWithFriend={this.handleChatWithFriend}
+            onChangeText={this.onChangeText}
+            clearTextInput={this.clearTextInput}
+            url={this.state.url}
+            navigation={this.props.navigation}
+          />
+        );
+      case "showChatrooms":
+        return (
+          <ShowChatrooms
+            chatrooms={this.state.chatrooms}
+            handleChatWithFriend={this.handleChatWithFriend}
+          />
+        );
+      case "suggestSong":
+        return (
+          <SuggestSong
+            handleChatWithFriend={this.handleChatWithFriend}
+            inChatWith={this.state.inChatWith}
+            handleTrackSuggestion={this.handleTrackSuggestion}
+            url={this.state.url}
+          />
+        );
     }
-
-    
   }
 
   _maybeRenderDevelopmentModeWarning() {
@@ -130,8 +131,8 @@ export default class ChatScreen extends React.Component {
 
       return (
         <Text style={styles.developmentModeText}>
-          Development mode is enabled, your app will be slower but you can use useful development
-          tools. {learnMoreButton}
+          Development mode is enabled, your app will be slower but you can use
+          useful development tools. {learnMoreButton}
         </Text>
       );
     } else {
@@ -144,6 +145,4 @@ export default class ChatScreen extends React.Component {
   }
 }
 
-const styles = StyleSheet.create({
-
-});
+const styles = StyleSheet.create({});

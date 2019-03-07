@@ -44,7 +44,22 @@ export default class SuggestSong extends React.Component {
   };
   
   handleTrackPress = (track) => {
-    console.log(track)
+    fetch(`${this.props.url}:8888/chat/message/create`, {
+      method: 'POST',
+      headers: {
+        'Accept': 'application/json',
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        content: track.spotifyId,
+        type: 'suggest',
+        userId: 9,
+        chatroomId: this.props.inChatWith.chatroomId
+      })
+
+    }).then(data => {
+      this.props.handleChatWithFriend(this.props.inChatWith, 'showChat')
+    })
   }
 
   render() {
