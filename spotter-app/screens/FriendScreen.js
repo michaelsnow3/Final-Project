@@ -31,7 +31,7 @@ export default class FriendScreen extends React.Component {
   };
 
   componentDidMount() {
-    fetch('http://172.46.0.236:8888/profile/friends', {
+    fetch('https://mysterious-gorge-24322.herokuapp.com:8888/profile/friends', {
       method: 'POST',
       headers: {
         'Accept': 'application/json',

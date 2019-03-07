@@ -37,7 +37,7 @@ class Chat extends React.Component {
   }
 
   fetchMessages = () => {
-    fetch('http://172.46.0.236:8888/chat/message/view', {
+    fetch('https://mysterious-gorge-24322.herokuapp.com:8888/chat/message/view', {
           method: 'POST',
           headers: {
             'Accept': 'application/json',
@@ -54,7 +54,7 @@ class Chat extends React.Component {
   
 
   initSocket = () => {
-    this.socket = io.connect(`http://172.46.0.236:3005`)
+    this.socket = io.connect(`https://mysterious-gorge-24322.herokuapp.com:3005`)
 
     console.log('in insocket')
 

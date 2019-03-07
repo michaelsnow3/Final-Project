@@ -29,7 +29,7 @@ export default class ChatScreen extends React.Component {
 
   // save current user's chatrooms to state when page renders
   componentDidMount() {
-    fetch('http://172.46.0.236:8888/chat/chatrooms', {
+    fetch('https://mysterious-gorge-24322.herokuapp.com:8888/chat/chatrooms', {
       method: 'POST',
       headers: {
         'Accept': 'application/json',
@@ -47,7 +47,7 @@ export default class ChatScreen extends React.Component {
   sendOnPress = (sendMessageToSocketServer, fetchMessages) => {
     let chatroomId = this.state.inChatWith.chatroomId
     if(this.state.text === '') return
-    fetch('http://172.46.0.236:8888/chat/message/create', {
+    fetch('https://mysterious-gorge-24322.herokuapp.com:8888/chat/message/create', {
           method: 'POST',
           headers: {
             'Accept': 'application/json',
