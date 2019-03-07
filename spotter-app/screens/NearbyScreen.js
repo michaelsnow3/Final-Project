@@ -7,43 +7,92 @@ import {
   Text,
   TouchableOpacity,
   View,
+  AsyncStorage,
 } from 'react-native';
 
+import { Icon } from 'expo';
+
 export default class NearbyScreen extends React.Component {
+
+  constructor(props) {
+    super(props);
+    this.state = {
+      searching: true,
+      searchingDot: "",
+      userToken: null,
+      serverUrl: null,
+    }
+  }
+
+  componentDidMount() {
+    this._interval = setInterval(() => {
+      this.setSearchingText();
+    }, 1000);
+
+    this._getUserInfoAndSendFindRequest();
+  }
+
+  _getUserInfoAndSendFindRequest = async() => {
+    const userToken = await AsyncStorage.getItem('userToken');
+    this.setState({userToken: userToken});
+    const serverUrl = await AsyncStorage.getItem('serverUrl');
+    this.setState({serverUrl: serverUrl});
+
+    console.log(`${serverUrl}/nearby/${userToken}`);
+    fetch(`${serverUrl}/nearby/${userToken}`, {
+       method: 'GET',
+       headers: {
+           'Content-Type': 'application/json'
+       }
+     })
+    .then((response) => response.json())
+    .then((jsonData) => {
+      console.log(jsonData);
+    });
+  };
+
   static navigationOptions = {
     header: null,
   };
 
+  setSearchingText = () => {
+    if (this.state.searchingDot.length > 30) {
+      this.setState({searchingDot: ""});
+    } else {
+      this.setState({searchingDot: this.state.searchingDot + " . "});
+    }
+  };
+
   render() {
+    const searchingOrFind = this._showSearchingOrFind();
+
     return (
-      <View style={styles.container}>
-        <Text>Nearby</Text>
+      <View>
+        {searchingOrFind}
       </View>
     );
   }
 
-  _maybeRenderDevelopmentModeWarning() {
-    if (__DEV__) {
-      const learnMoreButton = (
-        <Text onPress={this._handleLearnMorePress} style={styles.helpLinkText}>
-          Learn more
-        </Text>
-      );
-
+  _showSearchingOrFind = () => {
+    if (this.state.searching) {
       return (
-        <Text style={styles.developmentModeText}>
-          Development mode is enabled, your app will be slower but you can use useful development
-          tools. {learnMoreButton}
-        </Text>
+        <View>
+          <View style={{alignItems: 'center'}}>
+          <Icon.Ionicons
+            name={Platform.OS === 'ios' ? 'ios-pin' : 'md-pin'}
+            size={256}
+          />
+          </View>
+          <View style={{flexDirection: 'row'}}>
+            <Text style={{fontSize: 32}}>  Search</Text>
+            <Text style={{fontSize: 32}}>{this.state.searchingDot}</Text>
+          </View>
+        </View>
       );
     } else {
-      return (
-        <Text style={styles.developmentModeText}>
-          You are not in development mode, your app will run at full speed.
-        </Text>
-      );
+
     }
-  }
+  };
 }
 
 const styles = StyleSheet.create({
