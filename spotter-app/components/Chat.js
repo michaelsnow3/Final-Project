@@ -9,17 +9,23 @@ import {
   View,
   KeyboardAvoidingView,
   TextInput,
-  Button,
+  YellowBox
 } from 'react-native';
+YellowBox.ignoreWarnings(['Unrecognized WebSocket connection option(s) `agent`, `perMessageDeflate`, `pfx`, `key`, `passphrase`, `cert`, `ca`, `ciphers`, `rejectUnauthorized`. Did you mean to put these under `headers`?'])
+
 import io from 'socket.io-client';
+
 import FriendScreen from '../screens/FriendScreen';
 import Message from './Message';
+import SuggestMusicMenu from './SuggestMusicMenu';
+import ChatInput from './ChatInput'
 
 class Chat extends React.Component {
   constructor(props) {
     super(props)
     this.state = {
-      messages: []
+      messages: [],
+      suggestMenuState: false
     }
   }
   componentDidMount() {
@@ -45,6 +51,7 @@ class Chat extends React.Component {
           this.setState({ messages });
         })
   }
+  
 
   initSocket = () => {
     this.socket = io.connect(`http://172.46.0.236:3005`)
@@ -65,6 +72,12 @@ class Chat extends React.Component {
     })
   }
 
+  suggestMusicButtonHandler = () => {
+    this.setState({
+      suggestMenuState: !this.state.suggestMenuState
+    })
+  }
+
   render(){
     let { sendOnPress, onChangeText, inChatWith, handleChatWithFriend } = this.props;
     backToShowFriends = () => {
@@ -73,6 +86,21 @@ class Chat extends React.Component {
     let messageList = this.state.messages.map(message => {
       return <Message content={message.content} date={message.date} userId={message.user_id} key={Math.random().toString()} />
     })
+
+    // only render suggest music menu if suggest music button is clicked
+    let suggestMusicMenu = <ChatInput 
+      suggestMusicButtonHandler={this.suggestMusicButtonHandler} 
+      text={this.props.text} 
+      onChangeText={onChangeText}
+      sendMessageToSocketServer={this.sendMessageToSocketServer}
+      fetchMessages={this.fetchMessages}
+      sendOnPress={sendOnPress}
+    />
+
+    if(this.state.suggestMenuState) {
+      suggestMusicMenu = <SuggestMusicMenu suggestMusicButtonHandler={this.suggestMusicButtonHandler} />
+    }
+
     return (
       <KeyboardAvoidingView keyboardVerticalOffset = {60} behavior="padding" style={styles.container}>
       
@@ -93,19 +121,8 @@ class Chat extends React.Component {
         >
           {messageList}
         </ScrollView>
-  
-        <View style={styles.input}>
-          <TextInput
-            placeholder="Send a message"
-            value={this.props.text}
-            style={styles.textInput}
-            onChangeText={onChangeText}
-          />
-          <TouchableOpacity onPress={() => sendOnPress(this.sendMessageToSocketServer, this.fetchMessages)}>
-            <Text style={styles.sendText}>Send</Text>
-          </TouchableOpacity>
-
-        </View>
+        {suggestMusicMenu}
+        
   
       </KeyboardAvoidingView>
     );
@@ -117,28 +134,12 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
   },
-  sendText: {
-    fontSize: 20,
-  },
   header: {
     flex: 1,
     flexDirection: 'row',
     justifyContent: 'space-between',
     height: 5,
     alignItems: 'center',
-  },
-  input: {
-    flex: 1,
-    flexDirection: 'row',
-    justifyContent: 'space-around',
-    alignItems: 'center'
-  },
-  textInput: {
-    height: 40,
-    borderRadius: 10,
-    borderWidth: 2,
-    width: '70%',
-    alignSelf: 'center',
   },
   backButtonText: {
     fontSize: 20,
@@ -156,7 +157,7 @@ const styles = StyleSheet.create({
   },
   messageList: {
     maxHeight: '70%'
-  }
+  },
 });
 
 export default Chat

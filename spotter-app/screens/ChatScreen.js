@@ -8,14 +8,9 @@ import {
   Image,
   Platform,
   ScrollView,
-  YellowBox,
 } from 'react-native';
 
 import { MonoText } from '../components/StyledText';
-
-YellowBox.ignoreWarnings([
-  'Unrecognized WebSocket connection option(s) `agent`, `perMessageDeflate`, `pfx`, `key`, `passphrase`, `cert`, `ca`, `ciphers`, `rejectUnauthorized`. Did you mean to put these under `headers`?'
-]);
 
 export default class ChatScreen extends React.Component {
   static navigationOptions = {
@@ -27,7 +22,8 @@ export default class ChatScreen extends React.Component {
     this.state = {
       text: '',
       chatrooms: [],
-      inChatWith: null
+      inChatWith: null,
+      showSuggestMusic: false
     };
   }
 
@@ -40,7 +36,7 @@ export default class ChatScreen extends React.Component {
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
-        userId: 7
+        userId: 9
       })
     }).then(data => {
       let chatrooms = JSON.parse(data._bodyInit).chatrooms;
@@ -60,7 +56,7 @@ export default class ChatScreen extends React.Component {
           body: JSON.stringify({
             content: this.state.text,
             type: 'message',
-            userId: 7,
+            userId: 9,
             chatroomId: chatroomId
           })
 

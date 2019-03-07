@@ -29,11 +29,12 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     borderWidth: 0.5,
     borderColor: '#d6d7da',
-    backgroundColor: '#adccff'
+    backgroundColor: '#adccff',
+    justifyContent: 'center',
+    marginBottom: 10
   },
   name: {
     fontSize: 30,
-    textAlignVertical: 'center'
   }
 });
 

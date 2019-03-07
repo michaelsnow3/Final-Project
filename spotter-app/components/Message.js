@@ -7,7 +7,7 @@ import {
 } from 'react-native';
 
 function Message({ content, date, userId }) {
-  let messageStyle = userId === 7 ? styles.userMessage : styles.friendMessage
+  let messageStyle = userId === 9 ? styles.userMessage : styles.friendMessage
 
   let dateObj = new Date(date);
   var month = dateObj.getUTCMonth() + 1; //months from 1-12
