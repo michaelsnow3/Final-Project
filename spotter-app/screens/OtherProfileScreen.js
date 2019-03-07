@@ -34,24 +34,24 @@ export default class OtherProfileScreen extends React.Component {
       friend: false,
       user_id : 4,//this.props.user_id,
       name : "A",
-      avatar : "B",
+      avatar : null,
       top3 : "C",
       primary_id : "3"
     }
   }
 
   // get primary user id from async storage????????????????????
-  getPrimaryId = async () => {
-    try {
-      const value_id = await AsyncStorage.getItem('user_id');
-      if (value_id !== null) {
-        console.log(`Primary user id : ${value_id}`);
-        return value_id;
-      }
-    } catch (error) { 
-      console.log(error);
-      }
-  };
+  // getPrimaryId = async () => {
+  //   try {
+  //     const value_id = await AsyncStorage.getItem('user_id');
+  //     if (value_id !== null) {
+  //       console.log(`Primary user id : ${value_id}`);
+  //       return value_id;
+  //     }
+  //   } catch (error) { 
+  //     console.log(error);
+  //     }
+  // };
  
   getUser = async (user_id) => {
     console.log(user_id)
@@ -60,37 +60,28 @@ export default class OtherProfileScreen extends React.Component {
       headers: {
         'Accept': 'application/json',
         'Content-Type': 'application/json',
-      },
+      }, 
       body: JSON.stringify({
         id : user_id 
       })
-    })  
+    })
     .then(data => data.json())
     .then(json => { 
+      console.log(json)
       this.setState({ 
         name : json.name,
         avatar : json.avatar 
       })
     })
+    .catch((err) => {
+      console.log(err);
+    });
   }
     
     
     
     
-    
-  //   .then((data) => {
-  //     console.log(data)
-  //     const user = {
-  //       name: data.name,
-  //       avatar: data.avatar
-  //     }
-  //     cb(user);
-  //   })
-  //   .catch((err) => {
-  //     console.log(err);
-  //   });
-  // }  
-
+  
   // getFav = (user_id) => {
   //   fetch(`http://172.46.0.173:8888/show_profile/:${user_id}/fav`, {
   //     method: 'GET',
@@ -108,53 +99,53 @@ export default class OtherProfileScreen extends React.Component {
   //     }
   //     return fav;
   //   })
+    // .catch((err) => {
+    //   console.log(err);
+    // });
+  // }  
+// PARSING ERROR 
+  // checkFriend = (primary_id, user_id) => {
+  //   fetch(`http://172.46.0.173:8888/show_profile/friend_status/:${primary_id}/:${user_id}`, {
+  //   method: 'POST',
+  //   headers: {
+  //     'Accept': 'application/json',
+  //     'Content-Type': 'application/json',
+  //   },
+  //   body: JSON.stringify({
+  //     user_id : primary_id,
+  //     friend_id : user_id
+  //   }),
+  //   })
+  //   .then((data) => {
+  //     console.log(data.json())
+  //     // if access data element that is true of false, and then set that in the if statement
+  //     // return data?this.setState({friend: true}):this.setState({friend: false});
+  //   })
   //   .catch((err) => {
   //     console.log(err);
   //   });
-  // }  
+  // }
 
-  checkFriend = (primary_id, user_id) => {
-    fetch(`http://172.46.0.173:8888/show_profile/friend_status/:${primary_id}/:${user_id}`, {
-    method: 'POST',
-    headers: {
-      'Accept': 'application/json',
-      'Content-Type': 'application/json',
-    },
-    body: JSON.stringify({
-      user_id : primary_id,
-      friend_id : user_id
-    }),
-    })
-    .then((data) => {
-      console.log(data)
-      // if access data element that is true of false, and then set that in the if statement
-      // return data?this.setState({friend: true}):this.setState({friend: false});
-    })
-    .catch((err) => {
-      console.log(err);
-    });
-  }
-
-  addFriend = () => {
-    fetch(`http://172.46.0.173:8888/show_profile/add_friend/:${primary_id}/:${user_id}`, {
-      method: 'POST',
-      headers: {
-        'Accept': 'application/json',
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        user_id : primary_id,
-        friend_id : user_id
-      }),
-      })
-      .then(() => {
-        console.log(`Primary user # ${primary_id} added a friend # ${user_id}`)
-      })
-      .catch((err) => {
-        console.log(err);
-      });
-    this.props.navigation.navigate(`/show_profile/${this.user_id}`);
-  }
+  // addFriend = () => {
+  //   fetch(`http://172.46.0.173:8888/show_profile/add_friend/:${primary_id}/:${user_id}`, {
+  //     method: 'POST',
+  //     headers: {
+  //       'Accept': 'application/json',
+  //       'Content-Type': 'application/json',
+  //     },
+  //     body: JSON.stringify({
+  //       user_id : primary_id,
+  //       friend_id : user_id
+  //     }),
+  //     })
+  //     .then(() => {
+  //       console.log(`Primary user # ${primary_id} added a friend # ${user_id}`)
+  //     })
+  //     .catch((err) => {
+  //       console.log(err);
+  //     });
+  //   this.props.navigation.navigate(`/show_profile/${this.user_id}`);
+  // }
 
   message = () => { 
     this.props.navigation.navigate(`/chat/`);
@@ -175,24 +166,24 @@ export default class OtherProfileScreen extends React.Component {
     // }) 
 
   }
-//<Image source={this.state.avatar} />
   render() {
     console.log("RENDERS")
+    console.log()
+    const avatar = (this.state.avatar === null ) ? <Text> No Image </Text> : <Image style={{width: 50, height: 50}} source={{uri: this.state.avatar}} />
 
-    const addOrMsg = (this.checkFriend(this.state.primary_id, this.state.user_id)) ?
-            (<Button title="Message" onPress={this.message} />) :
-            (<Button title="Add Friend" onPress={this.addFriend} />);
-
+    // const addOrMsg = (this.checkFriend(this.state.primary_id, this.state.user_id)) ?
+    // (<Button title="Message" onPress={this.message} />) :
+    // (<Button title="Add Friend" onPress={this.addFriend} />); 
+    // {addOrMsg}
     return (
-      <View style={styles}>
-          
-          <Text>
-            {this.state.name}
-          </Text>
-          <Text>
-            {this.state.top3}
-          </Text>
-          {addOrMsg}
+      <View> 
+        {avatar}
+        <Text>
+          {this.state.name}
+        </Text>
+        <Text>
+          {this.state.top3}
+        </Text>
       </View>
     );
   }

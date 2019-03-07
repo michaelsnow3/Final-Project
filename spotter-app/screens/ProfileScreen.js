@@ -17,12 +17,12 @@ export default class ProfileScreen extends React.Component {
     super(props);
     this.state = {
       userToken: null,
-      serverUrl: null,
+      serverUrl: 'http://172.46.0.173:8888/',
       userId: null,
       email: null,
-      favoriteGenres: [],
+      favoriteGenres: [], 
       favoriteArtists: [],
-      favoriteSongs: [],
+      favoriteSongs: [], 
       favoriteType: "Genre",
       displayInfo: true,
       favoriteContent: ''
