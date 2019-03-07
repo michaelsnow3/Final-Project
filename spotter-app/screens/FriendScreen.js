@@ -7,11 +7,17 @@ import {
   Text,
   TouchableOpacity,
   View,
+  AsyncStorage,
 } from 'react-native';
 
 import { MonoText } from '../components/StyledText';
 
 export default class FriendScreen extends React.Component {
+
+  constructor() {
+    super();
+  }
+
   static navigationOptions = {
     header: null,
   };

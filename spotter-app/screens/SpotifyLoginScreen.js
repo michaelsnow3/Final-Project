@@ -13,7 +13,9 @@ export default class SpotifyLoginScreen extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      loginClicked: false
+      loginClicked: false,
+      //serverUrl: "https://mysterious-gorge-24322.herokuapp.com"
+      serverUrl: "http://430e2178.ngrok.io"
     }
   }
 
@@ -22,22 +24,20 @@ export default class SpotifyLoginScreen extends React.Component {
   };
 
   render() {
-    console.log(this.props);
     const linkOrLoginPage = (this.state.loginClicked) ?
-            (<WebView
-               source={
-                 { uri: `https://mysterious-gorge-24322.herokuapp.com/login/`,
-                   method: 'GET',
-                   headers: { 'Cache-Control':'no-cache'}
-                 }
-               }
-               style={{marginTop: 20}}
-               isDefaultPrevented={true}
-               onLoadEnd={this.onLoadEnd}
-             />) :
-            (<View style={styles.container}>
-               <Button title="Login with spotify" onPress={this._clickLogin} />
-             </View>);
+      (<WebView
+         source={
+           { uri: `${this.state.serverUrl}/login/`,
+             method: 'GET',
+             headers: { 'Cache-Control':'no-cache'}
+           }
+         }
+         style={{marginTop: 20}}
+         onLoadEnd={this.onLoadEnd}
+       />) :
+      (<View style={styles.container}>
+         <Button title="Login with spotify" onPress={this._clickLogin} />
+       </View>);
 
     return linkOrLoginPage;
   }

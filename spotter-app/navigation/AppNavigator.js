@@ -13,6 +13,7 @@ import MainTabNavigator   from './MainTabNavigator';
 import SpotifyLoginScreen from '../screens/SpotifyLoginScreen';
 
 class AuthLoadingScreen extends React.Component {
+
   constructor() {
     super();
     this._bootstrapAsync();
