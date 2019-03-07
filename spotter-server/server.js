@@ -15,7 +15,8 @@ const routes = require("routes");
 
 const client_id = process.env.CLIENT_ID; // Your client id
 const client_secret = process.env.CLIENT_SECRET; // Your secret
-const redirect_uri = 'https://sleepy-plateau-86995.herokuapp.com/callback/'; // Your redirect uri
+//const redirect_uri = 'https://mysterious-gorge-24322.herokuapp.com/callback/'; // Your redirect uri
+const redirect_uri = 'http://430e2178.ngrok.io/callback/';
 
 const stateKey = "spotify_auth_state";
 
@@ -48,7 +49,7 @@ app.use("/refresh_token/", refreshTokenRoutes());
 
 // user profile endpoint
 const profileEditRoutes = require("./server-endpoints/profile-routes.js");
-app.use("/profile/", profileEditRoutes());
+app.use("/profile/", profileEditRoutes(request));
 
 // add friend endpoint
 const addFriendRoutes = require("./server-endpoints/add-friend-routes");

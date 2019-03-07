@@ -26,7 +26,7 @@ export default class SpotifyLoginScreen extends React.Component {
     const linkOrLoginPage = (this.state.loginClicked) ?
             (<WebView
                source={
-                 { uri: `https://sleepy-plateau-86995.herokuapp.com/login/`,
+                 { uri: `https://mysterious-gorge-24322.herokuapp.com/login/`,
                    method: 'GET',
                    headers: { 'Cache-Control':'no-cache'}
                  }
