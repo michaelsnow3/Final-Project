@@ -11,7 +11,7 @@ const cors = require("cors");
 const cookieParser = require("cookie-parser");
 const querystring = require("querystring");
 
-const routes = require("routes");
+// const routes = require("routes");
 
 const client_id = process.env.CLIENT_ID; // Your client id
 const client_secret = process.env.CLIENT_SECRET; // Your secret
@@ -54,6 +54,10 @@ app.use("/profile/", profileEditRoutes());
 // add friend endpoint
 const addFriendRoutes = require("./server-endpoints/add-friend-routes");
 app.use('/add_friend', addFriendRoutes)
+
+// show profile endpoint
+const showProfileRoutes = require("./server-endpoints/show-profile-routes")
+app.use('/show_profile', showProfileRoutes(knex))
 
 //app.use("/routes", routes(knex));
 

@@ -11,6 +11,8 @@ import {
 
 import { MonoText } from '../components/StyledText';
 
+import OtherProfileScreen from './OtherProfileScreen.js';
+
 export default class FriendScreen extends React.Component {
   static navigationOptions = {
     header: null,
@@ -19,7 +21,7 @@ export default class FriendScreen extends React.Component {
   render() {
     return (
       <View style={styles.container}>
-        <Text>Friends</Text>
+        <OtherProfileScreen />
       </View>
     );
   }
