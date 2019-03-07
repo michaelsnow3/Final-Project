@@ -10,7 +10,7 @@ function Message({ content, date, userId }) {
   let messageStyle = userId === 9 ? styles.userMessage : styles.friendMessage
 
   let dateObj = new Date(date);
-  var month = dateObj.getUTCMonth() + 1; //months from 1-12
+  var month = dateObj.getUTCMonth() + 1;
   var day = dateObj.getUTCDate();
   var year = dateObj.getUTCFullYear();
 

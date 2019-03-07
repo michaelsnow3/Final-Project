@@ -14,7 +14,7 @@ function Chatroom({name, chatroomId, handleChatWithFriend}) {
     handleChatWithFriend({
       name: name,
       chatroomId: chatroomId
-    })
+    }, 'showChat')
   }
   return (
     <TouchableOpacity style={styles.container} onPress={handleFriendPress}>

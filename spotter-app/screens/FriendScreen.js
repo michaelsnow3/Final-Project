@@ -31,20 +31,20 @@ export default class FriendScreen extends React.Component {
   };
 
   componentDidMount() {
-    fetch('https://mysterious-gorge-24322.herokuapp.com:8888/profile/friends', {
-      method: 'POST',
-      headers: {
-        'Accept': 'application/json',
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        userId: 7
-      })
-    }).then(data => {
-      // console.log(JSON.parse(data._bodyInit).friends);
-      let friends = JSON.parse(data._bodyInit).friends
-      this.setState({ friends })
-    })
+    // fetch('http://172.46.0.236:8888/profile/friends', {
+    //   method: 'POST',
+    //   headers: {
+    //     'Accept': 'application/json',
+    //     'Content-Type': 'application/json',
+    //   },
+    //   body: JSON.stringify({
+    //     userId: 7
+    //   })
+    // }).then(data => {
+    //   // console.log(JSON.parse(data._bodyInit).friends);
+    //   let friends = JSON.parse(data._bodyInit).friends
+    //   this.setState({ friends })
+    // })
   }
 
   render() {

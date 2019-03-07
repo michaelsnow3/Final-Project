@@ -1,6 +1,7 @@
 import React from 'react';
 import ShowChatrooms from '../components/ShowChatrooms';
 import Chat from '../components/Chat';
+import SuggestSong from '../components/SuggestSong'
 
 import {
   StyleSheet,
@@ -8,6 +9,7 @@ import {
   Image,
   Platform,
   ScrollView,
+  AsyncStorage
 } from 'react-native';
 
 import { MonoText } from '../components/StyledText';
@@ -22,14 +24,17 @@ export default class ChatScreen extends React.Component {
     this.state = {
       text: '',
       chatrooms: [],
-      inChatWith: null,
-      showSuggestMusic: false
+      page: 'showChatrooms',
+      suggestedSong: {},
+      url: 'http://172.46.0.236',
+      inChatWith: null
     };
   }
 
   // save current user's chatrooms to state when page renders
   componentDidMount() {
-    fetch('https://mysterious-gorge-24322.herokuapp.com:8888/chat/chatrooms', {
+    
+    fetch(`${this.state.url}:8888/chat/chatrooms`, {
       method: 'POST',
       headers: {
         'Accept': 'application/json',
@@ -45,9 +50,8 @@ export default class ChatScreen extends React.Component {
   }
 
   sendOnPress = (sendMessageToSocketServer, fetchMessages) => {
-    let chatroomId = this.state.inChatWith.chatroomId
     if(this.state.text === '') return
-    fetch('https://mysterious-gorge-24322.herokuapp.com:8888/chat/message/create', {
+    fetch(`${this.state.url}:8888/chat/message/create`, {
           method: 'POST',
           headers: {
             'Accept': 'application/json',
@@ -57,7 +61,7 @@ export default class ChatScreen extends React.Component {
             content: this.state.text,
             type: 'message',
             userId: 9,
-            chatroomId: chatroomId
+            chatroomId: this.state.inChatWith.chatroomId
           })
 
         })
@@ -75,26 +79,44 @@ export default class ChatScreen extends React.Component {
     this.setState({text: ''});
   }
 
-  handleChatWithFriend = (friend) => {
-    this.setState({inChatWith: friend})
+  handleChatWithFriend = (friend, page) => {
+    this.setState({
+      inChatWith: friend,
+      page: page
+    })
+  }
+
+  handleTrackSuggestion = (track) => {
+    console.log(track)
   }
 
   render() {
-    if(this.state.inChatWith) {
-      return <Chat 
-        text={this.state.text}
-        sendOnPress={this.sendOnPress} 
-        inChatWith={this.state.inChatWith}
-        handleChatWithFriend={this.handleChatWithFriend}
-        onChangeText={this.onChangeText}
-        clearTextInput={this.clearTextInput}
-      />
-    }else {
-      return <ShowChatrooms 
-        chatrooms={this.state.chatrooms} 
+    switch (this.state.page) {
+      case 'showChat':
+        return <Chat 
+          text={this.state.text}
+          sendOnPress={this.sendOnPress} 
+          inChatWith={this.state.inChatWith}
+          handleChatWithFriend={this.handleChatWithFriend}
+          onChangeText={this.onChangeText}
+          clearTextInput={this.clearTextInput}
+          url={this.state.url}
+          navigation={this.props.navigation}
+        />
+      case 'showChatrooms': 
+        return <ShowChatrooms 
+          chatrooms={this.state.chatrooms} 
+          handleChatWithFriend={this.handleChatWithFriend} 
+        />
+      case 'suggestSong':
+        return <SuggestSong
         handleChatWithFriend={this.handleChatWithFriend} 
-      />
+        inChatWith={this.state.inChatWith}
+        handleTrackSuggestion={this.handleTrackSuggestion}
+        url={this.state.url}
+        />
     }
+
     
   }
 

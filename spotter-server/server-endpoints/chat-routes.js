@@ -1,5 +1,6 @@
 const express = require("express");
 const chatRoutes = express.Router();
+const search = require("../search/search-spotify.js")
 
 module.exports = function(selectQueries, insertQueries) {
   chatRoutes.post("/chatrooms", function(req, res) {
@@ -23,6 +24,14 @@ module.exports = function(selectQueries, insertQueries) {
       res.json({ data })
     })
 
+  })
+
+  chatRoutes.post("/track/suggest", function(req, res) {
+    let { title } = req.body;
+    let type = 'track';
+    search.searchSpotify(type, title).then(searchResults =>{
+      res.json({searchResults})
+    });
   })
 
   return chatRoutes;

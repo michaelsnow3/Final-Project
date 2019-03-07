@@ -25,7 +25,7 @@ class Chat extends React.Component {
     super(props)
     this.state = {
       messages: [],
-      suggestMenuState: false
+      suggestMenuState: false,
     }
   }
   componentDidMount() {
@@ -37,7 +37,7 @@ class Chat extends React.Component {
   }
 
   fetchMessages = () => {
-    fetch('https://mysterious-gorge-24322.herokuapp.com:8888/chat/message/view', {
+    fetch(`${this.props.url}:8888/chat/message/view`, {
           method: 'POST',
           headers: {
             'Accept': 'application/json',
@@ -54,7 +54,7 @@ class Chat extends React.Component {
   
 
   initSocket = () => {
-    this.socket = io.connect(`https://mysterious-gorge-24322.herokuapp.com:3005`)
+    this.socket = io.connect(`${this.props.url}:3005`)
 
     console.log('in insocket')
 
@@ -79,9 +79,9 @@ class Chat extends React.Component {
   }
 
   render(){
-    let { sendOnPress, onChangeText, inChatWith, handleChatWithFriend } = this.props;
+    let { sendOnPress, onChangeText, inChatWith, handleChatWithFriend, navigation } = this.props;
     backToShowFriends = () => {
-      handleChatWithFriend(null);
+      handleChatWithFriend(null, 'showChatrooms');
     }
     let messageList = this.state.messages.map(message => {
       return <Message content={message.content} date={message.date} userId={message.user_id} key={Math.random().toString()} />
@@ -98,7 +98,12 @@ class Chat extends React.Component {
     />
 
     if(this.state.suggestMenuState) {
-      suggestMusicMenu = <SuggestMusicMenu suggestMusicButtonHandler={this.suggestMusicButtonHandler} />
+      suggestMusicMenu = <SuggestMusicMenu 
+        suggestMusicButtonHandler={this.suggestMusicButtonHandler} 
+        navigation={navigation} 
+        handleChatWithFriend={handleChatWithFriend}
+        inChatWith={inChatWith}
+      />
     }
 
     return (
