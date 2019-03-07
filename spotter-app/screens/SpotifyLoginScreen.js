@@ -10,10 +10,11 @@ import {
 
 export default class SpotifyLoginScreen extends React.Component {
 
-  constructor() {
-    super();
+  constructor(props) {
+    super(props);
     this.state = {
-      loginClicked: false
+      loginClicked: false,
+      serverUrl: "https://mysterious-gorge-24322.herokuapp.com"
     }
   }
 
@@ -23,20 +24,19 @@ export default class SpotifyLoginScreen extends React.Component {
 
   render() {
     const linkOrLoginPage = (this.state.loginClicked) ?
-            (<WebView
-               source={
-                 { uri: `https://mysterious-gorge-24322.herokuapp.com/login/`,
-                   method: 'GET',
-                   headers: { 'Cache-Control':'no-cache'}
-                 }
-               }
-               style={{marginTop: 20}}
-               isDefaultPrevented={true}
-               onLoadEnd={this.onLoadEnd}
-             />) :
-            (<View style={styles.container}>
-               <Button title="Login with spotify" onPress={this._clickLogin} />
-             </View>);
+      (<WebView
+         source={
+           { uri: `${this.state.serverUrl}/login/`,
+             method: 'GET',
+             headers: { 'Cache-Control':'no-cache'}
+           }
+         }
+         style={{marginTop: 20}}
+         onLoadEnd={this.onLoadEnd}
+       />) :
+      (<View style={styles.container}>
+         <Button title="Login with spotify" onPress={this._clickLogin} />
+       </View>);
 
     return linkOrLoginPage;
   }
@@ -44,11 +44,8 @@ export default class SpotifyLoginScreen extends React.Component {
   onLoadEnd = (data) => {
     const userTokenIndex = data.nativeEvent.url.indexOf('#access_token=');
     if (userTokenIndex > 0) {
-      const userToken = data.nativeEvent.url.substring(userTokenIndex + 14);
-      console.log("userToken:");
-      console.log(userToken);
+      const userToken = data.nativeEvent.url.substring(userTokenIndex + 14); // 14 is the length of "#access_token="
       this._signInAsync(userToken);
-      this.props.navigation.navigate('App');
     } else {
       this.props.navigation.navigate('Auth');
     }
@@ -59,19 +56,9 @@ export default class SpotifyLoginScreen extends React.Component {
   }
 
   _signInAsync = async (userToken) => {
-    await AsyncStorage.setItem('userToken', "userToken");
+    await AsyncStorage.setItem('userToken', userToken);
+    await AsyncStorage.setItem('serverUrl', this.state.serverUrl);
     this.props.navigation.navigate('App');
-  }
-
-  _oAuthSpotify = async () => {
-    try {
-      let response = await fetch(
-        'http://14374d31.ngrok.io/login/',
-      );
-      return responseJson = await response.json();
-    } catch (error) {
-      console.error(error);
-    }
   }
 }
 
