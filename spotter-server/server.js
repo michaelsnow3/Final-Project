@@ -53,8 +53,8 @@ const refreshTokenRoutes = require("./server-endpoints/spotify-auth/refresh-toke
 app.use("/refresh_token/", refreshTokenRoutes());
 
 // user profile endpoint
-const profileRoutes = require("./server-endpoints/profile-routes.js");
-app.use("/profile/", profileRoutes(selectQueries));
+const profileEditRoutes = require("./server-endpoints/profile-routes.js");
+app.use("/profile/", profileEditRoutes(request));
 
 // chat endpoints
 const chatRoutes = require("./server-endpoints/chat-routes.js");
