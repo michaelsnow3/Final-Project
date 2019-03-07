@@ -7,7 +7,7 @@ import {
   StyleSheet,
   View,
 } from 'react-native';
-import { createStackNavigator, createAppContainer, createSwitchNavigator } from 'react-navigation';
+import { createStackNavigator, createAppContainer, createSwitchNavigator, DrawerNavigator, StackNavigator } from 'react-navigation';
 
 import MainTabNavigator   from './MainTabNavigator';
 import SpotifyLoginScreen from '../screens/SpotifyLoginScreen';

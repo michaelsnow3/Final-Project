@@ -1,5 +1,5 @@
 const express = require("express");
-const profileEditRoutes = express.Router();
+const profileRoutes = express.Router();
 const search = require("../search/search-spotify.js");
 const ENV = process.env.ENV || "development";
 const knexConfig = require("../knexfile");
@@ -237,5 +237,17 @@ module.exports = function(request) {
     }
   });
 
-  return profileEditRoutes;
+  profileRoutes.post("/friends", function(req, res) {
+    const userId = req.body.userId;
+    selectQueries
+      .selectFriends(userId)
+      .then(friends => {
+        res.json({ friends: friends });
+      })
+      .catch(e => {
+        console.log("error with select friends async function", e);
+      });
+  });
+
+  return profileRoutes;
 };

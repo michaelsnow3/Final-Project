@@ -1,9 +1,9 @@
 {
   "name": "spotter-server",
   "version": "1.0.0",
-  "main": "index.js",
   "scripts": {
     "start": "nodemon server.js",
+    "server": "nodemon socket-server/socket-server.js",
     "knex": "node_modules/.bin/knex"
   },
   "license": "MIT",
@@ -22,6 +22,11 @@
     "querystring": "~0.2.0",
     "request": "~2.83.0",
     "request-promise": "^4.2.4",
+    "socket.io": "^2.2.0",
+    "uuid": "^3.3.2"
+  },
+  "devDependencies": {
+    "nodemon": "^1.18.10",
     "routes": "^2.1.0"
   }
 }

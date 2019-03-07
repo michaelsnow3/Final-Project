@@ -9,11 +9,11 @@ import {
   View,
 } from 'react-native';
 
-function UserCard({name, id, handleChatWithFriend}) {
+function Chatroom({name, chatroomId, handleChatWithFriend}) {
   handleFriendPress = () => {
     handleChatWithFriend({
       name: name,
-      id: id
+      chatroomId: chatroomId
     })
   }
   return (
@@ -29,12 +29,13 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     borderWidth: 0.5,
     borderColor: '#d6d7da',
-    backgroundColor: '#adccff'
+    backgroundColor: '#adccff',
+    justifyContent: 'center',
+    marginBottom: 10
   },
   name: {
     fontSize: 30,
-    textAlignVertical: 'center'
   }
 });
 
-export default UserCard;
+export default Chatroom;

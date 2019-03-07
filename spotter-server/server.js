@@ -2,8 +2,6 @@ require("dotenv").config();
 
 const PORT = process.env.PORT || 8888;
 const ENV = process.env.ENV || "development";
-const knexConfig = require("./knexfile");
-const knex = require("knex")(knexConfig[ENV]);
 
 const express = require("express"); // Express web server framework
 const request = require("request"); // "Request" library
@@ -11,17 +9,19 @@ const cors = require("cors");
 const cookieParser = require("cookie-parser");
 const querystring = require("querystring");
 
-// const routes = require("routes");
+const knexConfig = require("./knexfile");
+const knex = require("knex")(knexConfig[ENV]);
+
+// import query functions
+const selectQueries = require("./knexQueries/selectQueries.js")(knex);
+const insertQueries = require("./knexQueries/insertQueries.js")(knex);
+
+// const routes = require("./routes");
 
 const client_id = process.env.CLIENT_ID; // Your client id
 const client_secret = process.env.CLIENT_SECRET; // Your secret
-<<<<<<< HEAD
 
 const redirect_uri = 'https://mysterious-gorge-24322.herokuapp.com/callback/'; // Your redirect uri
-=======
-//const redirect_uri = 'https://mysterious-gorge-24322.herokuapp.com/callback/'; // Your redirect uri
-const redirect_uri = 'http://430e2178.ngrok.io/callback/';
->>>>>>> fd49aa58bca2c6d9d80308319c3eaaf423b3172c
 
 const stateKey = "spotify_auth_state";
 
@@ -53,12 +53,20 @@ const refreshTokenRoutes = require("./server-endpoints/spotify-auth/refresh-toke
 app.use("/refresh_token/", refreshTokenRoutes());
 
 // user profile endpoint
-const profileEditRoutes = require("./server-endpoints/profile-routes.js");
-app.use("/profile/", profileEditRoutes(request));
+const profileRoutes = require("./server-endpoints/profile-routes.js");
+app.use("/profile/", profileRoutes(selectQueries));
+
+// chat endpoints
+const chatRoutes = require("./server-endpoints/chat-routes.js");
+app.use("/chat/", chatRoutes(selectQueries, insertQueries));
+
+// message endpoint
+const messageEditRoutes = require("./server-endpoints/message-routes.js");
+app.use("/message/", messageEditRoutes());
 
 // add friend endpoint
 const addFriendRoutes = require("./server-endpoints/add-friend-routes");
-app.use('/add_friend', addFriendRoutes)
+app.use("/add_friend", addFriendRoutes);
 
 // show profile endpoint
 const showProfileRoutes = require("./server-endpoints/show-profile-routes")
@@ -66,5 +74,5 @@ app.use('/show_profile', showProfileRoutes(knex))
 
 //app.use("/routes", routes(knex));
 
-console.log('Listening on port ' + PORT);
+console.log("Listening on port " + PORT);
 app.listen(PORT);

@@ -11,17 +11,22 @@ import {
 
 import UserCard from '../components/UserCard'
 
-function ShowFriends({friends}) {
+function ShowFriends({friends, handleChatWithFriend}) {
   const friendsList = friends.map(friend => {
-    return <UserCard name={friend.name} id={friend.id} key={Math.random().toString()} />
+    return <UserCard name={friend.name} id={friend.id} handleChatWithFriend={handleChatWithFriend} key={Math.random().toString()} />
   });
 
   return(
     <View>
-      <Text>Friends:</Text>
+      <Text style={styles.name}>Friends:</Text>
       {friendsList}
     </View>
   )
 }
-
+const styles = StyleSheet.create({
+  name: {
+    fontSize: 50,
+    textAlign: 'center'
+  }
+});
 export default ShowFriends

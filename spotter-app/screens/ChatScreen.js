@@ -1,12 +1,13 @@
 import React from 'react';
+import ShowChatrooms from '../components/ShowChatrooms';
+import Chat from '../components/Chat';
+
 import {
+  StyleSheet,
+  Button,
   Image,
   Platform,
   ScrollView,
-  StyleSheet,
-  Text,
-  TouchableOpacity,
-  View,
 } from 'react-native';
 
 import { MonoText } from '../components/StyledText';
@@ -16,12 +17,85 @@ export default class ChatScreen extends React.Component {
     header: null,
   };
 
+  constructor(props) {
+    super(props);
+    this.state = {
+      text: '',
+      chatrooms: [],
+      inChatWith: null,
+      showSuggestMusic: false
+    };
+  }
+
+  // save current user's chatrooms to state when page renders
+  componentDidMount() {
+    fetch('http://172.46.0.236:8888/chat/chatrooms', {
+      method: 'POST',
+      headers: {
+        'Accept': 'application/json',
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        userId: 9
+      })
+    }).then(data => {
+      let chatrooms = JSON.parse(data._bodyInit).chatrooms;
+      this.setState({ chatrooms });
+    })
+  }
+
+  sendOnPress = (sendMessageToSocketServer, fetchMessages) => {
+    let chatroomId = this.state.inChatWith.chatroomId
+    if(this.state.text === '') return
+    fetch('http://172.46.0.236:8888/chat/message/create', {
+          method: 'POST',
+          headers: {
+            'Accept': 'application/json',
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            content: this.state.text,
+            type: 'message',
+            userId: 9,
+            chatroomId: chatroomId
+          })
+
+        })
+        .then(() => {
+          fetchMessages()
+          sendMessageToSocketServer()
+        })
+  }
+
+  onChangeText = (text) => {
+    this.setState({text})
+  }
+
+  clearTextInput = () => {
+    this.setState({text: ''});
+  }
+
+  handleChatWithFriend = (friend) => {
+    this.setState({inChatWith: friend})
+  }
+
   render() {
-    return (
-      <View style={styles.container}>
-        <Text>Chat</Text>
-      </View>
-    );
+    if(this.state.inChatWith) {
+      return <Chat 
+        text={this.state.text}
+        sendOnPress={this.sendOnPress} 
+        inChatWith={this.state.inChatWith}
+        handleChatWithFriend={this.handleChatWithFriend}
+        onChangeText={this.onChangeText}
+        clearTextInput={this.clearTextInput}
+      />
+    }else {
+      return <ShowChatrooms 
+        chatrooms={this.state.chatrooms} 
+        handleChatWithFriend={this.handleChatWithFriend} 
+      />
+    }
+    
   }
 
   _maybeRenderDevelopmentModeWarning() {
