@@ -22,7 +22,7 @@ const insertQueries = require("./knexQueries/insertQueries.js")(knex);
 const client_id = process.env.CLIENT_ID; // Your client id
 const client_secret = process.env.CLIENT_SECRET; // Your secret
 
-const redirect_uri = 'https://mysterious-gorge-24322.herokuapp.com/callback/'; // Your redirect uri
+const redirect_uri = 'http://e3901f89.ngrok.io/callback/'; // Your redirect uri
 
 const stateKey = "spotify_auth_state";
 
@@ -60,6 +60,10 @@ app.use("/profile/", profileEditRoutes(request, rp));
 // chat endpoints
 const chatRoutes = require("./server-endpoints/chat-routes.js");
 app.use("/chat/", chatRoutes(selectQueries, insertQueries));
+
+// show friends routes
+const friendRoutes = require("./server-endpoints/show-friends-routes.js");
+app.use("/show-friends/", friendRoutes(selectQueries));
 
 // message endpoint
 const messageEditRoutes = require("./server-endpoints/message-routes.js");

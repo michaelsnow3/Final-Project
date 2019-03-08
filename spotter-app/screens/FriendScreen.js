@@ -22,7 +22,10 @@ export default class FriendScreen extends React.Component {
     super(props)
 
     this.state = {
-      friends: []
+      friends: [],
+      page: 'ShowFriends',
+      friend_id : null
+      
     }
   }
   
@@ -30,33 +33,55 @@ export default class FriendScreen extends React.Component {
     header: null,
   };
 
-  componentDidMount() {
-    // fetch('http://172.46.0.236:8888/profile/friends', {
-    //   method: 'POST',
-    //   headers: {
-    //     'Accept': 'application/json',
-    //     'Content-Type': 'application/json',
-    //   },
-    //   body: JSON.stringify({
-    //     userId: 7
-    //   })
-    // }).then(data => {
-    //   // console.log(JSON.parse(data._bodyInit).friends);
-    //   let friends = JSON.parse(data._bodyInit).friends
-    //   this.setState({ friends })
-    // })
+  handler = (friend_id, page) => {
+    this.setState({
+      page : page,
+      friend_id : friend_id
+    })
   }
-
+  // https://mysterious-gorge-24322.herokuapp.com:8888/profile/friends
+  componentDidMount() {
+    fetch('http://172.46.0.236:8888/show-friends/', {
+      method: 'POST',
+      headers: {
+        'Accept': 'application/json',
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        id : 7
+      })
+    }).then(data => {
+      console.log('data: ', data)
+      // console.log(JSON.parse(data._bodyInit).friends);
+      let friends = JSON.parse(data._bodyInit)
+      this.setState({ friends })
+    })
+  }
+  
   render() {
-    return (
-      <View style={styles.container}>
-        <ShowFriends 
-          friends={this.state.friends} 
-          handleChatWithFriend={() => {}} 
-        />
-        <Text>Friends</Text>
-      </View>
-    );
+    switch (this.state.page) {
+      case 'ShowFriends':
+        return (
+          <ScrollView style={styles.container}>
+              <ShowFriends 
+                friends={this.state.friends} 
+                handler={this.handler}
+                handleChatWithFriend={() => {}} 
+              />
+              <Text>Friends</Text>
+            </ScrollView>
+          );
+    case 'OtherProfileScreen':
+      return ( 
+        <OtherProfileScreen 
+        handler={this.handler}
+        id={this.state.friend_id}
+        navigation={this.props.navigation}
+        handleChatWithFriend={() => {
+            console.log(111111)
+          }} />
+        )
+      }
   }
 
   _maybeRenderDevelopmentModeWarning() {

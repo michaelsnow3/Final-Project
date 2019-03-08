@@ -27,21 +27,30 @@ module.exports = function(request, rp) {
         };
 
         knex('users').where('name', userInfo.name)
-          .then(function(rows) {
-            if (rows.length === 0) {
-              knex('users').insert(userInfo);
-              res.status(200).send(userInfo);
-            } else {
-              _getUserInfoFromDbSendBackApp(userInfo, res);
-            }
-          })
-          .then(() => {
-            console.log("Get User Info");
-          })
-          .catch((err) => {
-            console.log(err);
-          });
-
+        .then(function(rows) {
+          if (rows.length === 0) {
+            knex('users')
+            .insert(userInfo)
+            .returning('id')
+            .then((id) => {
+              console.log(id[0]);
+              knex('favourite')
+              .insert({"user_id": id[0]})
+              .then(()=> {
+                console.log("Insert New User");
+                res.status(200).send(userInfo);
+              });
+            });
+          } else {
+            _getUserInfoFromDbSendBackApp(userInfo, res);
+          }
+        })
+        .then(() => {
+          console.log("Get User Info");
+        })
+        .catch((err) => {
+          console.log(err);
+        });
       } else {
         console.log("profileEditRoutes get error:");
         console.log(error);
@@ -203,7 +212,7 @@ module.exports = function(request, rp) {
                 } else {
                   console.log("Insert New Content:", item);
                   knex(dbContent)
-                  .insert({name: item})
+                  .insert({name: item}) 
                   .returning('id')
                   .then(function (id) {
                     console.log("id:", id[0]);

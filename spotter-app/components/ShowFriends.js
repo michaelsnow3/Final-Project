@@ -9,11 +9,12 @@ import {
   View,
 } from 'react-native';
 
+
 import UserCard from '../components/UserCard'
 
-function ShowFriends({friends, handleChatWithFriend}) {
+function ShowFriends({friends, handler, handleChatWithFriend}) {
   const friendsList = friends.map(friend => {
-    return <UserCard name={friend.name} id={friend.id} handleChatWithFriend={handleChatWithFriend} key={Math.random().toString()} />
+    return <UserCard name={friend.name} id={friend.id} handler={handler} handleChatWithFriend={handleChatWithFriend} key={Math.random().toString()} />
   });
 
   return(

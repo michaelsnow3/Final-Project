@@ -27,7 +27,7 @@ export default class ProfileScreen extends React.Component {
       displayInfo: true,
       favoriteContent: ''
     };
-
+ 
     this._getUserInfo();
   }
 
