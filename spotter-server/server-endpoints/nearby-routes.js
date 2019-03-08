@@ -3,7 +3,6 @@ const nearbyRoutes = express.Router();
 
 module.exports = function(request) {
 
-
   nearbyRoutes.get("/:user_token", function(req, res) {
     console.log("Start Finding People");
     console.log("UserToken:");

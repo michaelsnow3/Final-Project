@@ -48,8 +48,9 @@ module.exports = function(request) {
         .then(() => {
           console.log("Get User Info");
         })
-        .catch((err) => {
-          console.log(err);
+        .catch((error) => {
+          console.log(error);
+          res.status(500).send({error: error});
         });
       } else {
         console.log("profileEditRoutes get error:");
@@ -81,7 +82,8 @@ module.exports = function(request) {
             resolve(genreArr);
           })
           .catch((err) => {
-            console.log(err);
+            console.log(error);
+            res.status(500).send({error: error});
           });
         }),
 
@@ -99,8 +101,9 @@ module.exports = function(request) {
             }
             resolve(artistArr);
           })
-          .catch((err) => {
-            console.log(err);
+          .catch((error) => {
+            console.log(error);
+            res.status(500).send({error: error});
           });
         }),
 
@@ -118,8 +121,9 @@ module.exports = function(request) {
             }
             resolve(songArr);
           })
-          .catch((err) => {
-            console.log(err);
+          .catch((error) => {
+            console.log(error);
+            res.status(500).send({error: error});
           });
         }),
       ]).then(function(values) {
@@ -225,6 +229,7 @@ module.exports = function(request) {
                     .then((results) => {
                       console.log("results:");
                       console.log(results);
+                      res.status(200).send({results: "Insert Success."});
                     });
                   });
                 }

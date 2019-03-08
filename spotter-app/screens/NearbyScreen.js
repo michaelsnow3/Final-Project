@@ -20,99 +20,43 @@ export default class NearbyScreen extends React.Component {
     this.state = {
       searching: true,
       searchingDot: "",
-      userToken: null,
-      serverUrl: null,
+      userToken: null
     }
-  }
 
-  componentWillMount() {
     this.initSocket();
   }
 
   componentDidMount() {
-
     this._interval = setInterval(() => {
       this.setSearchingText();
     }, 1000);
 
-    this.props.navigation.addListener('willFocus', this._getUserInfo)
+    this.props.navigation.addListener('willFocus', this._sendFindRequest);
   }
 
-  initSocket = () => {
-    this.socket = io.connect(`http://192.168.1.41:3005`)
+  initSocket = async () => {
 
-    console.log('in insocket')
+    const userToken       = await AsyncStorage.getItem('userToken');
+    const nodeServerUrl   = await AsyncStorage.getItem('nodeServerUrl');
+    const socketServerUrl = await AsyncStorage.getItem('socketServerUrl');
 
+    this.socket = io.connect(`${socketServerUrl}:3005`);
     this.socket.on('connect', () => {
-      console.log('connected');
-
-
+      console.log('connected at Nearby');
+      this._sendFindRequest(userToken);
     });
-  };
-
-  _getUserInfo = async() => {
-
-    const userToken = await AsyncStorage.getItem('userToken');
-    this.setState({userToken: userToken});
-
-    fetch(`https://api.spotify.com/v1/me/player/`, {
-       method: 'GET',
-       headers: {
-          'Authorization': "Bearer " + userToken
-       }
-     })
-    .then((response) => response.json())
-    .then((jsonData) => {
-      if (jsonData.item !== undefined) {
-        let currentAlbum  = jsonData.item.album.name;
-        let currentArtist = jsonData.item.album.artists[0].name;
-        let currentSong   = jsonData.item.name;
-
-        let userCurrentMusic = {
-          album: currentAlbum,
-          artist: currentArtist,
-          song: currentSong
-        };
-        console.log(`${currentAlbum} / ${currentArtist} / ${currentSong}`);
-
-        _sendFindRequest(userCurrentMusic);
-      }
-    }).catch(function(error) {
-      console.log('There has been a problem with your fetch operation: ' + error.message);
-      throw error;
-    });
-
-    /*
-    const userToken = await AsyncStorage.getItem('userToken');
-    this.setState({userToken: userToken});
-    const serverUrl = await AsyncStorage.getItem('serverUrl');
-    this.setState({serverUrl: serverUrl});
-
-    console.log(`${serverUrl}/nearby/${userToken}`);
-    fetch(`${serverUrl}/profile/user_info/${userToken}`, {
-       method: 'GET',
-       headers: {
-           'Content-Type': 'application/json'
-       }
-     })
-    .then((response) => response.json())
-    .then((jsonData) => {
-      console.log(jsonData);
-    }).catch(function(error) {
-      console.log('There has been a problem with your fetch operation: ' + error.message);
-      throw error;
-    });
-    */
-
-
   };
 
   static navigationOptions = {
     header: null,
   };
 
-  _sendFindRequest = (currentMusic) => {
-
+  _sendFindRequest = (userToken) => {
+    if (this.socket && this.socket.connected) {
+      this.socket.emit("findPeople", {
+        myUserToken: userToken
+      });
+    }
   };
 
   setSearchingText = () => {
@@ -124,6 +68,7 @@ export default class NearbyScreen extends React.Component {
   };
 
   render() {
+
     const searchingOrFind = this._showSearchingOrFind();
 
     return (

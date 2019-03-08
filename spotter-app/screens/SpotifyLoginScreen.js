@@ -14,7 +14,8 @@ export default class SpotifyLoginScreen extends React.Component {
     super(props);
     this.state = {
       loginClicked: false,
-      serverUrl: "http://90644d4a.ngrok.io"
+      nodeServerUrl: "http://f81f3112.ngrok.io",
+      socketServerUrl: "http://172.46.1.177"
     }
   }
 
@@ -26,13 +27,14 @@ export default class SpotifyLoginScreen extends React.Component {
     const linkOrLoginPage = (this.state.loginClicked) ?
       (<WebView
          source={
-           { uri: `${this.state.serverUrl}/login/`,
+           { uri: `${this.state.nodeServerUrl}/login/`,
              method: 'GET',
              headers: { 'Cache-Control':'no-cache'}
            }
          }
          style={{marginTop: 20}}
          onLoadEnd={this.onLoadEnd}
+         onError={this.onLoadError}
        />) :
       (<View style={styles.container}>
          <Button title="Login with spotify" onPress={this._clickLogin} />
@@ -49,17 +51,22 @@ export default class SpotifyLoginScreen extends React.Component {
     } else {
       this.props.navigation.navigate('Auth');
     }
-  }
+  };
+
+  onLoadError = (data) => {
+    console.log("OnloadError at Login Screen:", data);
+  };
 
   _clickLogin = () => {
     this.setState({loginClicked: true});
-  }
+  };
 
   _signInAsync = async (userToken) => {
     await AsyncStorage.setItem('userToken', userToken);
-    await AsyncStorage.setItem('serverUrl', this.state.serverUrl);
+    await AsyncStorage.setItem('nodeServerUrl', this.state.nodeServerUrl);
+    await AsyncStorage.setItem('socketServerUrl', this.state.socketServerUrl);
     this.props.navigation.navigate('App');
-  }
+  };
 }
 
 const styles = StyleSheet.create({

@@ -17,7 +17,8 @@ export default class ProfileScreen extends React.Component {
     super(props);
     this.state = {
       userToken: null,
-      serverUrl: null,
+      nodeServerUrl: null,
+      socketServerUrl: null,
       userId: null,
       email: null,
       favoriteGenres: [],
@@ -33,7 +34,7 @@ export default class ProfileScreen extends React.Component {
 
   componentDidMount() {
     this._interval = setInterval(() => {
-      this.setSearchingText();
+
     }, 30000);
   }
 
@@ -203,7 +204,7 @@ export default class ProfileScreen extends React.Component {
 
   _updateFavoriteDb = async (favoriteType, newData) => {
 
-    fetch(`${this.state.serverUrl}/profile/edit/`, {
+    fetch(`${this.state.nodeServerUrl}/profile/edit/`, {
       method: 'POST',
       headers: {
         Accept: 'application/json',
@@ -276,10 +277,12 @@ export default class ProfileScreen extends React.Component {
 
     const userToken = await AsyncStorage.getItem('userToken');
     this.setState({userToken: userToken});
-    const serverUrl = await AsyncStorage.getItem('serverUrl');
-    this.setState({serverUrl: serverUrl});
+    const nodeServerUrl = await AsyncStorage.getItem('nodeServerUrl');
+    this.setState({nodeServerUrl: nodeServerUrl});
+    const socketServerUrl = await AsyncStorage.getItem('socketServerUrl');
+    this.setState({socketServerUrl: socketServerUrl});
 
-    fetch(`${serverUrl}/profile/user_info/${userToken}`, {
+    fetch(`${nodeServerUrl}/profile/user_info/${userToken}`, {
        method: 'GET',
        headers: {
            'Content-Type': 'application/json'
