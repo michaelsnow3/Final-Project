@@ -13,17 +13,14 @@ import TrackCard from './TrackCard'
 class ShowSuggestions extends React.Component {
 
   render() {
-    let { handleChatWithFriend, inChatWith, messages, handleTrackPress } = this.props;
+    let { handleChatWithFriend, inChatWith, messages, handleTrackPress, selectedTrack, page } = this.props;
     let suggestions = messages.map(message => {
-      if(message.type === 'track') {
-        console.log(this.props.selectedTrack)
-        // let isSelected = message.spotifyId === this.props.selectedTrack.spotifyId
-        console.log(track)
+      if(message.type === 'track'){
         return (<TrackCard 
           track={message}
           handleTrackPress={handleTrackPress}
           key={message.spotifyId}
-          // isSelected={isSelected}
+          selectedTrack={selectedTrack}
         />)
       }
     })

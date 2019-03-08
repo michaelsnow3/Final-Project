@@ -83,11 +83,6 @@ class Chat extends React.Component {
     return JSON.parse(data._bodyInit).track
   }
 
-    // track on press handle function
-    handleTrackPress = (track) => {
-      console.log(track)
-    }  
-
   initSocket = () => {
     this.socket = io.connect(`${this.props.url}:3005`)
 
@@ -120,16 +115,19 @@ class Chat extends React.Component {
   }
 
   render(){
-    let { sendOnPress, onChangeText, inChatWith, handleChatWithFriend, navigation, page } = this.props;
+    let { sendOnPress, onChangeText, inChatWith, handleChatWithFriend, navigation, page, handleTrackPress } = this.props;
     backToShowFriends = () => {
       handleChatWithFriend(null, 'showChatrooms');
     }
     let messageList = this.state.messages.map(message => {
-      return (<Message 
-        message={ message } 
-        key={Math.random().toString()} 
-        handleTrackPress={this.handleTrackPress}
-      />)
+      return (
+        <Message 
+          userId={this.props.userId}
+          handleTrackPress={handleTrackPress}
+          message={ message } 
+          key={Math.random().toString()}
+        />
+      )
     })
 
     // only render suggest music menu if suggest music button is clicked
@@ -159,7 +157,8 @@ class Chat extends React.Component {
           inChatWith={inChatWith}
           messages={this.state.messages}
           selectedTrack={this.state.selectedTrack}
-          handleTrackPress={this.handleTrackPress}
+          handleTrackPress={this.props.handleTrackPress}
+          page={page}
         />
       )
     }

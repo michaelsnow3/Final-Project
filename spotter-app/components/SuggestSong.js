@@ -43,8 +43,7 @@ export default class SuggestSong extends React.Component {
     })
   };
   
-  handleAddTrack = (track) => {
-    console.log(track)
+  handleAddTrack = ({track}) => {
     fetch(`${this.props.url}:8888/chat/message/create`, {
       method: 'POST',
       headers: {
@@ -54,7 +53,7 @@ export default class SuggestSong extends React.Component {
       body: JSON.stringify({
         content: track.spotifyId,
         type: 'suggest',
-        userId: 9,
+        userId: this.props.userId,
         chatroomId: this.props.inChatWith.chatroomId
       })
 
@@ -67,11 +66,11 @@ export default class SuggestSong extends React.Component {
     let {
       handleChatWithFriend,
       inChatWith,
-      handleTrackSuggestion
+      page
     } = this.props;
 
     let searchResultTags = this.state.searchResults.map(track => {
-      return <TrackCard track={track} handleAddTrack={this.handleAddTrack} key={Math.random().toString()} />
+      return <TrackCard page={page} track={track} handleAddTrack={this.handleAddTrack} key={Math.random().toString()} />
     });
     return (
       <KeyboardAvoidingView style={styles.container} behavior="padding">

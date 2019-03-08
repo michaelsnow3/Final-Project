@@ -9,8 +9,8 @@ import {
   View,
 } from 'react-native';
 
-function TrackCard({track, handleTrackPress, handleAddTrack}) {
-  let handleTrack = page === 'showSuggestions' ? handleTrackPress : handleAddTrack
+function TrackCard({track, handleTrackPress, handleAddTrack, selectedTrack}) {
+  let handleTrack =  handleTrackPress || handleAddTrack;
   return (
     <TouchableOpacity 
       style={styles.container}

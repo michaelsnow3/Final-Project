@@ -258,8 +258,8 @@ module.exports = function(request, rp) {
       });
   });
 
-  profileEditRoutes.post("/user_id", function(req, res) {
-    let token = req.body.token;
+  profileEditRoutes.get("/user_id/:token", function(req, res) {
+    let token = req.params.token;
     var options = {
       url: "https://api.spotify.com/v1/me",
       headers: { Authorization: "Bearer " + token },
@@ -279,6 +279,7 @@ module.exports = function(request, rp) {
 
     }).then(data => {
       console.log(data)
+      res.json(data)
     })
   })
   return profileEditRoutes;

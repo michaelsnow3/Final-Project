@@ -51,8 +51,6 @@ export default class FriendScreen extends React.Component {
         id : 7
       })
     }).then(data => {
-      console.log('data: ', data)
-      // console.log(JSON.parse(data._bodyInit).friends);
       let friends = JSON.parse(data._bodyInit)
       this.setState({ friends })
     })

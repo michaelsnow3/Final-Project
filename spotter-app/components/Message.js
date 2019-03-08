@@ -7,9 +7,9 @@ import {
   TouchableOpacity,
 } from 'react-native';
 
-function Message({ message, handleTrackPress }) {
-  let { content, date, user_id, type } = message
-  let messageStyle = user_id === 9 ? styles.userMessage : styles.friendMessage
+function Message({ message, handleTrackPress, userId }) {
+  let { content, date, user_id, type, } = message
+  let messageStyle = user_id === userId ? styles.userMessage : styles.friendMessage
 
   //parse date
   let dateObj = new Date(date);

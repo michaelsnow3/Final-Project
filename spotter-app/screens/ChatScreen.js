@@ -27,7 +27,9 @@ export default class ChatScreen extends React.Component {
       page: "showChatrooms",
       suggestedSong: {},
       url: "http://172.46.0.236",
-      inChatWith: null
+      inChatWith: null,
+      userId: 9,
+      selectedTrack: null
     };
   }
 
@@ -40,7 +42,7 @@ export default class ChatScreen extends React.Component {
         "Content-Type": "application/json"
       },
       body: JSON.stringify({
-        userId: 9
+        userId: this.state.userId
       })
     }).then(data => {
       let chatrooms = JSON.parse(data._bodyInit).chatrooms;
@@ -81,7 +83,7 @@ export default class ChatScreen extends React.Component {
       body: JSON.stringify({
         content: this.state.text,
         type: "message",
-        userId: 9,
+        userId: this.state.userId,
         chatroomId: this.state.inChatWith.chatroomId
       })
     }).then(() => {
@@ -105,8 +107,12 @@ export default class ChatScreen extends React.Component {
     });
   };
 
-  handleTrackSuggestion = track => {
-    console.log(track);
+  handleTrackPress = track => {
+    console.log('selectedTrack', track);
+    this.setState({ 
+      page: 'showSuggestions',
+      selectedTrack: track
+    })
   };
 
   render() {
@@ -123,6 +129,8 @@ export default class ChatScreen extends React.Component {
             url={this.state.url}
             navigation={this.props.navigation}
             page={this.state.page}
+            userId={this.state.userId}
+            handleTrackPress={this.handleTrackPress}
           />
         );
       case 'showSuggestions':
@@ -137,6 +145,9 @@ export default class ChatScreen extends React.Component {
             url={this.state.url}
             navigation={this.props.navigation}
             page={this.state.page}
+            userId={this.state.userId}
+            handleTrackPress={this.handleTrackPress}
+            selectedTrack={this.state.selectedTrack}     
           />
         );
       case "showChatrooms":
@@ -151,8 +162,9 @@ export default class ChatScreen extends React.Component {
           <SuggestSong
             handleChatWithFriend={this.handleChatWithFriend}
             inChatWith={this.state.inChatWith}
-            handleTrackSuggestion={this.handleTrackSuggestion}
             url={this.state.url}
+            page={this.state.page}
+            userId={this.state.userId}  
           />
         );
     }
