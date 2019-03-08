@@ -11,6 +11,7 @@ import {
 } from 'react-native';
 
 import { Icon } from 'expo';
+import io from 'socket.io-client';
 
 export default class NearbyScreen extends React.Component {
 
@@ -24,6 +25,10 @@ export default class NearbyScreen extends React.Component {
     }
   }
 
+  componentWillMount() {
+    this.initSocket();
+  }
+
   componentDidMount() {
 
     this._interval = setInterval(() => {
@@ -32,6 +37,18 @@ export default class NearbyScreen extends React.Component {
 
     this.props.navigation.addListener('willFocus', this._getUserInfo)
   }
+
+  initSocket = () => {
+    this.socket = io.connect(`http://192.168.1.41:3005`)
+
+    console.log('in insocket')
+
+    this.socket.on('connect', () => {
+      console.log('connected');
+
+
+    });
+  };
 
   _getUserInfo = async() => {
 
@@ -46,19 +63,20 @@ export default class NearbyScreen extends React.Component {
      })
     .then((response) => response.json())
     .then((jsonData) => {
-      let currentAlbum  = jsonData.item.album.name;
-      let currentArtist = jsonData.item.album.artists[0].name;
-      let currentSong   = jsonData.item.name;
+      if (jsonData.item !== undefined) {
+        let currentAlbum  = jsonData.item.album.name;
+        let currentArtist = jsonData.item.album.artists[0].name;
+        let currentSong   = jsonData.item.name;
 
-      let userCurrentMusic = {
-        album: currentAlbum,
-        artist: currentArtist,
-        song: currentSong
-      };
-      console.log(`${currentAlbum} / ${currentArtist} / ${currentSong}`);
+        let userCurrentMusic = {
+          album: currentAlbum,
+          artist: currentArtist,
+          song: currentSong
+        };
+        console.log(`${currentAlbum} / ${currentArtist} / ${currentSong}`);
 
-      _sendFindRequest(userCurrentMusic);
-
+        _sendFindRequest(userCurrentMusic);
+      }
     }).catch(function(error) {
       console.log('There has been a problem with your fetch operation: ' + error.message);
       throw error;

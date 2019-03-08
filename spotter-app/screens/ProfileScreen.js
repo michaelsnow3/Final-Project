@@ -31,6 +31,12 @@ export default class ProfileScreen extends React.Component {
     this._getUserInfo();
   }
 
+  componentDidMount() {
+    this._interval = setInterval(() => {
+      this.setSearchingText();
+    }, 30000);
+  }
+
   static navigationOptions = {
     header: null,
   };
