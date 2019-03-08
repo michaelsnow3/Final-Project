@@ -54,6 +54,7 @@ module.exports = function(request) {
       } else {
         console.log("profileEditRoutes get error:");
         console.log(error);
+        res.status(500).send({error: error});
       }
     });
   });

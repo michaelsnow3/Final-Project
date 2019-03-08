@@ -208,6 +208,9 @@ export default class ProfileScreen extends React.Component {
         type: favoriteType,
         favoriteData: newData
       }),
+    }).catch(function(error) {
+      console.log('There has been a problem with your fetch operation: ' + error.message);
+      throw error;
     });
   };
 
@@ -295,6 +298,7 @@ export default class ProfileScreen extends React.Component {
     })
     .catch((error) => {
       console.error(error);
+      throw error;
     });
   };
 

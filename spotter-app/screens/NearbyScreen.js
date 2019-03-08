@@ -25,21 +25,53 @@ export default class NearbyScreen extends React.Component {
   }
 
   componentDidMount() {
+
     this._interval = setInterval(() => {
       this.setSearchingText();
     }, 1000);
 
-    this._getUserInfoAndSendFindRequest();
+    this.props.navigation.addListener('willFocus', this._getUserInfo)
   }
 
-  _getUserInfoAndSendFindRequest = async() => {
+  _getUserInfo = async() => {
+
+    const userToken = await AsyncStorage.getItem('userToken');
+    this.setState({userToken: userToken});
+
+    fetch(`https://api.spotify.com/v1/me/player/`, {
+       method: 'GET',
+       headers: {
+          'Authorization': "Bearer " + userToken
+       }
+     })
+    .then((response) => response.json())
+    .then((jsonData) => {
+      let currentAlbum  = jsonData.item.album.name;
+      let currentArtist = jsonData.item.album.artists[0].name;
+      let currentSong   = jsonData.item.name;
+
+      let userCurrentMusic = {
+        album: currentAlbum,
+        artist: currentArtist,
+        song: currentSong
+      };
+      console.log(`${currentAlbum} / ${currentArtist} / ${currentSong}`);
+
+      _sendFindRequest(userCurrentMusic);
+
+    }).catch(function(error) {
+      console.log('There has been a problem with your fetch operation: ' + error.message);
+      throw error;
+    });
+
+    /*
     const userToken = await AsyncStorage.getItem('userToken');
     this.setState({userToken: userToken});
     const serverUrl = await AsyncStorage.getItem('serverUrl');
     this.setState({serverUrl: serverUrl});
 
     console.log(`${serverUrl}/nearby/${userToken}`);
-    fetch(`${serverUrl}/nearby/${userToken}`, {
+    fetch(`${serverUrl}/profile/user_info/${userToken}`, {
        method: 'GET',
        headers: {
            'Content-Type': 'application/json'
@@ -48,11 +80,21 @@ export default class NearbyScreen extends React.Component {
     .then((response) => response.json())
     .then((jsonData) => {
       console.log(jsonData);
+    }).catch(function(error) {
+      console.log('There has been a problem with your fetch operation: ' + error.message);
+      throw error;
     });
+    */
+
+
   };
 
   static navigationOptions = {
     header: null,
+  };
+
+  _sendFindRequest = (currentMusic) => {
+
   };
 
   setSearchingText = () => {
