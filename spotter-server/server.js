@@ -60,6 +60,10 @@ app.use("/profile/", profileEditRoutes(request));
 const chatRoutes = require("./server-endpoints/chat-routes.js");
 app.use("/chat/", chatRoutes(selectQueries, insertQueries));
 
+// show friends routes
+const friendRoutes = require("./server-endpoints/show-friends-routes.js");
+app.use("/show-friends/", friendRoutes(selectQueries));
+
 // message endpoint
 const messageEditRoutes = require("./server-endpoints/message-routes.js");
 app.use("/message/", messageEditRoutes());

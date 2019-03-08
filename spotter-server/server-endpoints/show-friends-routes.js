@@ -1,0 +1,18 @@
+const express = require("express");
+const friendRoutes = express.Router();
+
+module.exports = function(selectQueries) {
+  friendRoutes.post("/", function(req, res) {
+    const userID = req.body.id;
+    selectQueries.selectFriends(userID)
+    .then((data) => {
+      console.log('data: ', data)
+      res.json(data)
+    })
+
+
+    console.log("show friends ");
+  });
+
+  return friendRoutes;
+};

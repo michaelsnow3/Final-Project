@@ -6,40 +6,30 @@ import {
   StyleSheet,
   Text,
 } from 'react-native';
-import {AsyncStorage} from 'react-native';
 
-// receive id from props or ????
-// fetch user info by id,
-// get primary user id from async storage
-// receive user avatar, name and top3 favourites 
-// render user with info and display 
-
-// button:
-// if friend state = false
-//   button = addfriend
-// else 
-//   button = messageFriend
-
-// const primary_id = async storage user_id
-
-// set user info in state, call functions in component did mount
-// have two diffrent route names and routers
-////////////// how to make 2 separate calls to the same route? have diff path names
 //////////// have a list of all route paths
+// receive user id in props?
+// set user id
+// message button redirect to chat
+// styling
 
-export default class OtherProfileScreen extends React.Component { 
-  constructor() {
-    super();
+export default class OtherProfileScreen extends React.Component {
+  constructor(props) {
+    super(props);
     this.state = {
       friend: false,
-      user_id : 9,//this.props.user_id,
-      name : "A",
+      user_id : this.props.id,
+      name : "",
       avatar : null,
-      top3 : "C",
+      top3 : "",
       primary_id : 3
     }
   }
+  static navigationOptions = {
+    header: null,
+  };
 
+  
   // get primary user id from async storage????????????????????
   // getPrimaryId = async () => {
   //   try {
@@ -52,8 +42,14 @@ export default class OtherProfileScreen extends React.Component {
   //     console.log(error);
   //     }
   // };
- 
-  getUser = async (user_id) => {
+
+  setUserId = (id, cb) =>  { 
+    this.setState({
+      user_id: id
+    }, cb)
+  }
+
+  getUser = async () => {
     fetch(`http://172.46.0.173:8888/show_profile/info`, {
       method: 'POST',
       headers: {
@@ -61,7 +57,7 @@ export default class OtherProfileScreen extends React.Component {
         'Content-Type': 'application/json',
       },  
       body: JSON.stringify({
-        id : user_id 
+        id : this.state.user_id 
       })  
     })
     .then(data => data.json()) 
@@ -76,7 +72,7 @@ export default class OtherProfileScreen extends React.Component {
     });    
   } 
   
-  getFav = async (user_id) => {
+  getFav = async () => {
     fetch(`http://172.46.0.173:8888/show_profile/fav`, {
       method: 'POST',
       headers: {
@@ -84,7 +80,7 @@ export default class OtherProfileScreen extends React.Component {
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
-        id : user_id
+        id : this.state.user_id
       })
     })
     .then((data) => data.json())
@@ -92,7 +88,7 @@ export default class OtherProfileScreen extends React.Component {
       const songNames = [];
       json.forEach(entry => {
         songNames.push(entry.name)
-      })
+      }) 
       top3 = songNames.join("\r\n");
       this.setState({
         top3: top3
@@ -103,8 +99,6 @@ export default class OtherProfileScreen extends React.Component {
     });
   }  
 
-
-// PARSING ERROR 
   checkFriend = () => {
     fetch(`http://172.46.0.173:8888/show_profile/friend_status`, {
     method: 'POST',
@@ -118,10 +112,7 @@ export default class OtherProfileScreen extends React.Component {
     }),  
     })   
     .then((response) => { 
-      (response._bodyText === 'true') ? this.setState({friend : true}) : this.setState({friend : false})
-      // data ? this.setState({friend : true}) : this.setState({friend : false})
-      // if access data element that is true of false, and then set that in the if statement
-      // return data?this.setState({friend: true}):this.setState({friend: false});
+      (response._bodyText === 'true') ? this.setState({friend : true}) : this.setState({friend : false});
     })  
     .catch((err) => {
       console.log(err);  
@@ -141,33 +132,35 @@ export default class OtherProfileScreen extends React.Component {
       }),
       })  
       .then(() => {
-        // this.setState({ state: this.state });
-        console.log(`Primary user # ${this.state.primary_id} added a friend # ${this.state.user_id}`)
         this.setState({friend : true})
       })
       .catch((err) => {
-        console.log(err);
+        console.log(err); 
       });
-    // this.props.navigation.navigate(`/show_profile/${this.user_id}`);
   } 
-
+  
+  // Doesnt work
   message = () => { 
-    this.props.navigation.navigate(`/chat/`);  
+    this.props.navigation.navigate(`Chat`);  
   }
-
+  
   componentDidMount() {    
-    this.getUser(7);
-    this.getFav(7);
-    this.checkFriend()    
-  }
+    // this.setPrimaryUserId()
+    /////////// Set User should acquire ID from props or async storage
+    this.setUserId(this.state.user_id, function() {
+      this.getUser();
+      this.getFav();
+      this.checkFriend();
+    })
+  } 
   render() { 
     const addOrMsg = (this.state.friend) ?
-    (<Button title="Message" onPress={this.message} />) :
-    (<Button title="Add Friend" onPress={this.addFriend} />); 
+    (<Button title="Message" onPress={this.message} style={styles.container}/>) :
+    (<Button title="Add Friend" onPress={this.addFriend} style={styles.container}/>); 
 
     const avatar = (this.state.avatar === null ) ? 
     <Text> No Image </Text> : 
-    <Image style={{width: 150, height: 150}} source={{uri: this.state.avatar}} />
+    <Image style={{width: 180, height: 180}} source={{uri: this.state.avatar}} />
 
     return ( 
       <View> 
@@ -182,13 +175,21 @@ export default class OtherProfileScreen extends React.Component {
           {this.state.top3}
         </Text>
         {addOrMsg}
+        <Button title="View Friends" onPress={() => {
+          this.props.handler( null, 'ShowFriends'
+          )
+        }} />
       </View>
     );
   }
 }
 
 const styles = StyleSheet.create({
-
+    container: {
+    flex: 1,
+    marginTop: 40,
+    flexDirection: 'column',
+    justifyContent: 'flex-start',
+    backgroundColor: '#fff',
+  },
 });
-
-

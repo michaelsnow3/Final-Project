@@ -9,15 +9,12 @@ import {
   View,
 } from 'react-native';
 
-function UserCard({name, id, handleChatWithFriend}) {
-  handleFriendPress = () => {
-    handleChatWithFriend({
-      name: name,
-      id: id
-    })
+function UserCard({name, id, handler}) {
+  handler2 = () => {
+    handler (id, 'OtherProfileScreen')
   }
   return (
-    <TouchableOpacity style={styles.container} onPress={handleFriendPress}>
+    <TouchableOpacity style={styles.container} onPress={handler2}>
       <Text style={styles.name}>{name}</Text>
     </TouchableOpacity>
   )

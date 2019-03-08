@@ -72,7 +72,6 @@ module.exports = (knex) => {
 
   // addFriend
   showProfile.post("/add_friend", (req, res) => {
-    console.log(111111111111)
     const primary_user_id = req.body.user_id;
     const other_user_id = req.body.friend_id;
     knex('friend')
