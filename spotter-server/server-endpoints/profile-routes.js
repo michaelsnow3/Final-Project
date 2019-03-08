@@ -212,7 +212,7 @@ module.exports = function(request) {
                 } else {
                   console.log("Insert New Content:", item);
                   knex(dbContent)
-                  .insert({name: item})
+                  .insert({name: item}) 
                   .returning('id')
                   .then(function (id) {
                     console.log("id:", id[0]);

@@ -1,0 +1,5 @@
+fetches cannot return anything. they can set state, however
+
+set state in component did mount, NOT in render
+(whenever state is set another render is triggered)
+can initialize shit in render tho

@@ -27,172 +27,161 @@ import {AsyncStorage} from 'react-native';
 ////////////// how to make 2 separate calls to the same route? have diff path names
 //////////// have a list of all route paths
 
-export default class OtherProfileScreen extends React.Component {
+export default class OtherProfileScreen extends React.Component { 
   constructor() {
     super();
     this.state = {
       friend: false,
-      user_id : 4,//this.props.user_id,
+      user_id : 9,//this.props.user_id,
       name : "A",
-      avatar : "B",
+      avatar : null,
       top3 : "C",
-      primary_id : "3"
+      primary_id : 3
     }
   }
 
   // get primary user id from async storage????????????????????
-  getPrimaryId = async () => {
-    try {
-      const value_id = await AsyncStorage.getItem('user_id');
-      if (value_id !== null) {
-        console.log(`Primary user id : ${value_id}`);
-        return value_id;
-      }
-    } catch (error) { 
-      console.log(error);
-      }
-  };
+  // getPrimaryId = async () => {
+  //   try {
+  //     const value_id = await AsyncStorage.getItem('user_id');
+  //     if (value_id !== null) {
+  //       console.log(`Primary user id : ${value_id}`);
+  //       return value_id;
+  //     }
+  //   } catch (error) { 
+  //     console.log(error);
+  //     }
+  // };
  
   getUser = async (user_id) => {
-    console.log(user_id)
     fetch(`http://172.46.0.173:8888/show_profile/info`, {
       method: 'POST',
       headers: {
         'Accept': 'application/json',
         'Content-Type': 'application/json',
-      },
+      },  
       body: JSON.stringify({
         id : user_id 
-      })
-    })  
-    .then(data => data.json())
+      })  
+    })
+    .then(data => data.json()) 
     .then(json => { 
-      this.setState({ 
+      this.setState({  
         name : json.name,
-        avatar : json.avatar 
-      })
-    })
-  }
-    
-    
-    
-    
-    
-  //   .then((data) => {
-  //     console.log(data)
-  //     const user = {
-  //       name: data.name,
-  //       avatar: data.avatar
-  //     }
-  //     cb(user);
-  //   })
-  //   .catch((err) => {
-  //     console.log(err);
-  //   });
-  // }  
-
-  // getFav = (user_id) => {
-  //   fetch(`http://172.46.0.173:8888/show_profile/:${user_id}/fav`, {
-  //     method: 'GET',
-  //     headers: {
-  //       'Accept': 'application/json',
-  //       'Content-Type': 'application/json',
-  //     },
-  //     body: JSON.stringify({
-  //       id : user_id
-  //     })
-  //   }).then((data) => {
-  //     console.log(data)
-  //     const fav = {
-  //       top3: data.top3
-  //     }
-  //     return fav;
-  //   })
-  //   .catch((err) => {
-  //     console.log(err);
-  //   });
-  // }  
-
-  checkFriend = (primary_id, user_id) => {
-    fetch(`http://172.46.0.173:8888/show_profile/friend_status/:${primary_id}/:${user_id}`, {
-    method: 'POST',
-    headers: {
-      'Accept': 'application/json',
-      'Content-Type': 'application/json',
-    },
-    body: JSON.stringify({
-      user_id : primary_id,
-      friend_id : user_id
-    }),
-    })
-    .then((data) => {
-      console.log(data)
-      // if access data element that is true of false, and then set that in the if statement
-      // return data?this.setState({friend: true}):this.setState({friend: false});
+        avatar : json.avatar   
+      }) 
     })
     .catch((err) => {
       console.log(err);
-    });
-  }
-
-  addFriend = () => {
-    fetch(`http://172.46.0.173:8888/show_profile/add_friend/:${primary_id}/:${user_id}`, {
+    });    
+  } 
+  
+  getFav = async (user_id) => {
+    fetch(`http://172.46.0.173:8888/show_profile/fav`, {
       method: 'POST',
       headers: {
         'Accept': 'application/json',
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
-        user_id : primary_id,
-        friend_id : user_id
-      }),
+        id : user_id
       })
+    })
+    .then((data) => data.json())
+    .then(json => {
+      const songNames = [];
+      json.forEach(entry => {
+        songNames.push(entry.name)
+      })
+      top3 = songNames.join("\r\n");
+      this.setState({
+        top3: top3
+      })
+    })
+    .catch((err) => {
+      console.log(err);
+    });
+  }  
+
+
+// PARSING ERROR 
+  checkFriend = () => {
+    fetch(`http://172.46.0.173:8888/show_profile/friend_status`, {
+    method: 'POST',
+    headers: {
+      'Accept': 'application/json',
+      'Content-Type': 'application/json',
+    }, 
+    body: JSON.stringify({
+      user_id : this.state.primary_id, 
+      friend_id : this.state.user_id
+    }),  
+    })   
+    .then((response) => { 
+      (response._bodyText === 'true') ? this.setState({friend : true}) : this.setState({friend : false})
+      // data ? this.setState({friend : true}) : this.setState({friend : false})
+      // if access data element that is true of false, and then set that in the if statement
+      // return data?this.setState({friend: true}):this.setState({friend: false});
+    })  
+    .catch((err) => {
+      console.log(err);  
+    });   
+  }  
+ 
+  addFriend = () => {
+    fetch(`http://172.46.0.173:8888/show_profile/add_friend`, {
+      method: 'POST',
+      headers: {
+        'Accept': 'application/json',  
+        'Content-Type': 'application/json', 
+      },
+      body: JSON.stringify({
+        user_id : this.state.primary_id,
+        friend_id : this.state.user_id
+      }),
+      })  
       .then(() => {
-        console.log(`Primary user # ${primary_id} added a friend # ${user_id}`)
+        // this.setState({ state: this.state });
+        console.log(`Primary user # ${this.state.primary_id} added a friend # ${this.state.user_id}`)
+        this.setState({friend : true})
       })
       .catch((err) => {
         console.log(err);
       });
-    this.props.navigation.navigate(`/show_profile/${this.user_id}`);
-  }
+    // this.props.navigation.navigate(`/show_profile/${this.user_id}`);
+  } 
 
   message = () => { 
-    this.props.navigation.navigate(`/chat/`);
+    this.props.navigation.navigate(`/chat/`);  
   }
 
-  componentDidMount() {
-    // console.log(this.getUser(this.state.user_id))
-    
-
-    this.getUser(4);
-    // this.setState({
-    //   name : this.getUser(this.state.user_id, function(user){
-    //     console.log("Name :", user.name)
-    //   }),
-    //   avatar : "this.getUser(this.state.user_id).avatar",
-    //   top3 : "getFav(this.state.user_id)",
-    //   primary_id : "3"// this.getPrimaryId()
-    // }) 
-
+  componentDidMount() {    
+    this.getUser(7);
+    this.getFav(7);
+    this.checkFriend()    
   }
-//<Image source={this.state.avatar} />
-  render() {
-    console.log("RENDERS")
+  render() { 
+    const addOrMsg = (this.state.friend) ?
+    (<Button title="Message" onPress={this.message} />) :
+    (<Button title="Add Friend" onPress={this.addFriend} />); 
 
-    const addOrMsg = (this.checkFriend(this.state.primary_id, this.state.user_id)) ?
-            (<Button title="Message" onPress={this.message} />) :
-            (<Button title="Add Friend" onPress={this.addFriend} />);
+    const avatar = (this.state.avatar === null ) ? 
+    <Text> No Image </Text> : 
+    <Image style={{width: 150, height: 150}} source={{uri: this.state.avatar}} />
 
-    return (
-      <View style={styles}>
-          
-          <Text>
-            {this.state.name}
-          </Text>
-          <Text>
-            {this.state.top3}
-          </Text>
-          {addOrMsg}
+    return ( 
+      <View> 
+        {avatar} 
+        <Text>
+          {this.state.name}
+        </Text> 
+        <Text>
+          Top 3 Favourite Songs:
+        </Text>
+        <Text>
+          {this.state.top3}
+        </Text>
+        {addOrMsg}
       </View>
     );
   }

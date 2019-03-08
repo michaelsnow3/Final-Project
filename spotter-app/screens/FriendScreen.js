@@ -46,16 +46,17 @@ export default class FriendScreen extends React.Component {
       this.setState({ friends })
     })
   }
+  // <View style={styles.container}>
+  //   <ShowFriends 
+  //     friends={this.state.friends} 
+  //     handleChatWithFriend={() => {}} 
+  //   />
+  //   <Text>Friends</Text>
+  // </View>
 
   render() {
     return (
-      <View style={styles.container}>
-        <ShowFriends 
-          friends={this.state.friends} 
-          handleChatWithFriend={() => {}} 
-        />
-        <Text>Friends</Text>
-      </View>
+      <OtherProfileScreen />
     );
   }
 

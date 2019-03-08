@@ -5,8 +5,7 @@ module.exports = (knex) => {
 
   // getUserInfo
   showProfile.post("/info", (req, res) => {
-      let id = req.body.id;
-      console.log(`Showing user # ${id} profile 111111`);
+      const id = req.body.id;
       knex('users')
         .select()
         .where({id : id})
@@ -21,27 +20,25 @@ module.exports = (knex) => {
         .catch((err) => {
           console.log(err);
         }); 
-        console.log(`Showing user # ${id} profile 222222222`);
     });
 
   // getUserFav
-  showProfile.post('/:id/fav', (req, res) => {
-    const id = req.params.id;
-    knex('users')
-    .select()
-    .where({id : id})
+  showProfile.post('/fav', (req, res) => {
+    const id = req.body.id;
+    knex
+    .select('*')
+    .from('users')
+    .where('users.id', id)
     .join('favourite', {'users.id': 'favourite.user_id'})
     .join('favourite_song', {'favourite.id': 'favourite_id'})
     .join('song', {'song.id': 'song_id'})
-    .then((results) => {
-      const result = results[0];
+    .then((results) => {  
       let songs = [];
-      for (let i = 1; i < 4; i ++) {
-        songs.push({
-          name : result[i].name,
-          spotify : result[i].spotify,
-          artist_id : result[i].artist_id
-        })
+      for (let song of results) {
+        if (songs.length === 3){
+          break;
+        }
+        songs.push(song)
       }
       res.json(songs);
     })
@@ -51,39 +48,40 @@ module.exports = (knex) => {
   });
 
   // checkFriend
-  showProfile.post("friend_status/:primary_id/:user_id", (req, res) => {
-    const primary_user_id = req.params.primary_id;
-    const other_user_id = req.params.user_id;
-    knex('friend')
-      .select()
-      .where({primary_user_id : user_id})
-      .then((results) => {
-        const result = results[0];
-        let isFriend = false;
-        for (let i of result) {
-          if (i.friend_id === other_user_id){
-            isFriend = true;
+  showProfile.post("/friend_status", (req, res) => {
+    const primary_user_id = req.body.user_id;
+    const other_user_id = req.body.friend_id;
+    knex
+    .select('*')
+    .from('friend')
+    .where({'friend.user_id' : primary_user_id })
+    .then((results) => {
+        let result = false;
+        for (let friend of results) { 
+          if (friend.friend_id === other_user_id){
+            result = true;
             break;
           }
         }
-        res.json(isFriend);
+        res.json(result)
       })
       .catch((err) => {
         console.log(err);
       });
-      console.log(`friend status is ${isFriend}`)
   });
 
   // addFriend
-  showProfile.post("add_friend/:primary_id/:user_id", (req, res) => {
-    const primary_user_id = req.params.primary_id;
-    const other_user_id = req.params.user_id;
+  showProfile.post("/add_friend", (req, res) => {
+    console.log(111111111111)
+    const primary_user_id = req.body.user_id;
+    const other_user_id = req.body.friend_id;
     knex('friend')
       .insert({
         user_id: primary_user_id,
         friend_id: other_user_id 
       })
       .then(() => {
+        res.json();
         console.log(`Primary user # ${primary_user_id} added a friend # ${other_user_id}`)
       })
       .catch((err) => {
