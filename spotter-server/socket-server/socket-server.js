@@ -14,6 +14,13 @@ io.on('connection', function (socket) {
     })
   });
 
+  socket.on('usersQueue', function (data) {
+
+  });
+
+  socket.on('findPeople', function (data) {
+
+  });
 });
 
 app.listen(PORT, () => {
