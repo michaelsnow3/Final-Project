@@ -8,18 +8,20 @@ import {
   View,
 } from 'react-native';
 
-function SuggestMusicMenu({ suggestMusicButtonHandler, navigation, inChatWith, handleChatWithFriend }) {
+function SuggestMusicMenu({ suggestMusicButtonHandler, inChatWith, handleChatWithFriend }) {
   return(
     <View style={styles.container}>
       <View style={styles.suggestions}>
 
-        <TouchableOpacity onPress={() => {
+        <TouchableOpacity style={styles.topOption} onPress={() => {
           handleChatWithFriend(inChatWith, 'suggestSong')
         }}>
           <Text style={styles.text}>Suggest a Song</Text>
         </TouchableOpacity>
 
-        <TouchableOpacity onPress={suggestMusicButtonHandler}>
+        <TouchableOpacity style={styles.bottomOption} onPress={() =>  {
+          handleChatWithFriend(inChatWith, 'showSuggestions')
+        }}>
           <Text style={styles.text}>Suggested Songs</Text>
         </TouchableOpacity>
         
@@ -34,7 +36,8 @@ const styles = StyleSheet.create({
     flex: 1,
     flexDirection: 'row',
     justifyContent: 'space-around',
-    alignItems: 'center'
+    alignItems: 'center',
+    borderTopWidth: 1
   },
   suggestions: {
     flex: 1,
@@ -42,12 +45,22 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
   },
   text: {
-    fontSize: 20
+    fontSize: 25,
+    textAlign: 'center'
   },
   minimize: {
-    fontSize: 15,
-    alignSelf: 'center'
-  }
+    fontSize: 20,
+    alignSelf: 'center',
+    marginRight: 20,
+    borderTopWidth: 1
+  },
+  topOption: {
+    borderBottomWidth: 1,
+    width: '70%'
+  },
+  bottomOption: {
+    width: '70%'
+  },
 })
 
 export default SuggestMusicMenu;

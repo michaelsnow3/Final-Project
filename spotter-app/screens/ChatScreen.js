@@ -46,7 +46,29 @@ export default class ChatScreen extends React.Component {
       let chatrooms = JSON.parse(data._bodyInit).chatrooms;
       this.setState({ chatrooms });
     });
+
   }
+
+  // getUserId = async () => {
+  //   try{
+  //     let token = await AsyncStorage.getItem('userToken');
+  //     fetch(`${this.state.url}:8888/profile/user_id`, {
+  //       method: "POST",
+  //       headers: {
+  //         Accept: "application/json",
+  //         "Content-Type": "application/json"
+  //       },
+  //       body: JSON.stringify({
+  //         token: token
+  //       })
+  //     }).then(data => {
+  //       console.log(JSON.parse(data))
+  //     });
+  //   }
+  //   catch(e){
+  //     console.log('error getting user id', e)
+  //   }
+  // }
 
   sendOnPress = (sendMessageToSocketServer, fetchMessages) => {
     if (this.state.text === "") return;
@@ -100,6 +122,21 @@ export default class ChatScreen extends React.Component {
             clearTextInput={this.clearTextInput}
             url={this.state.url}
             navigation={this.props.navigation}
+            page={this.state.page}
+          />
+        );
+      case 'showSuggestions':
+        return (
+          <Chat
+            text={this.state.text}
+            sendOnPress={this.sendOnPress}
+            inChatWith={this.state.inChatWith}
+            handleChatWithFriend={this.handleChatWithFriend}
+            onChangeText={this.onChangeText}
+            clearTextInput={this.clearTextInput}
+            url={this.state.url}
+            navigation={this.props.navigation}
+            page={this.state.page}
           />
         );
       case "showChatrooms":

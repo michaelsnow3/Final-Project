@@ -5,6 +5,7 @@ const ENV = process.env.ENV || "development";
 
 const express = require("express"); // Express web server framework
 const request = require("request"); // "Request" library
+const rp = require("request-promise") //request promise library
 const cors = require("cors");
 const cookieParser = require("cookie-parser");
 const querystring = require("querystring");
@@ -54,7 +55,7 @@ app.use("/refresh_token/", refreshTokenRoutes());
 
 // user profile endpoint
 const profileEditRoutes = require("./server-endpoints/profile-routes.js");
-app.use("/profile/", profileEditRoutes(request));
+app.use("/profile/", profileEditRoutes(request, rp));
 
 // chat endpoints
 const chatRoutes = require("./server-endpoints/chat-routes.js");

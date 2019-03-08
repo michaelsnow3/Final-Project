@@ -43,7 +43,8 @@ export default class SuggestSong extends React.Component {
     })
   };
   
-  handleTrackPress = (track) => {
+  handleAddTrack = (track) => {
+    console.log(track)
     fetch(`${this.props.url}:8888/chat/message/create`, {
       method: 'POST',
       headers: {
@@ -70,7 +71,7 @@ export default class SuggestSong extends React.Component {
     } = this.props;
 
     let searchResultTags = this.state.searchResults.map(track => {
-      return <TrackCard track={track} handleTrackPress={this.handleTrackPress} key={Math.random().toString()} />
+      return <TrackCard track={track} handleAddTrack={this.handleAddTrack} key={Math.random().toString()} />
     });
     return (
       <KeyboardAvoidingView style={styles.container} behavior="padding">

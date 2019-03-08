@@ -26,6 +26,11 @@ module.exports = function(selectQueries, insertQueries) {
 
   })
 
+  chatRoutes.get("/track/:id", function(req, res) {
+    let { id } = req.params;
+    search.searchTrackById(id).then(track => {res.json({track})});
+  })
+
   chatRoutes.post("/track/suggest", function(req, res) {
     let { title } = req.body;
     let type = 'track';

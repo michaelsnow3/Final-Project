@@ -18,7 +18,8 @@ import io from 'socket.io-client';
 import FriendScreen from '../screens/FriendScreen';
 import Message from './Message';
 import SuggestMusicMenu from './SuggestMusicMenu';
-import ChatInput from './ChatInput'
+import ChatInput from './ChatInput';
+import ShowSuggestions from "./ShowSuggestions";
 
 class Chat extends React.Component {
   constructor(props) {
@@ -26,7 +27,10 @@ class Chat extends React.Component {
     this.state = {
       messages: [],
       suggestMenuState: false,
+      selectedTrack: null
     }
+    this.fetchMessages = this.fetchMessages.bind(this)
+    this.fetchTrackInfo = this.fetchTrackInfo.bind(this)
   }
   componentDidMount() {
     this.fetchMessages();
@@ -36,22 +40,53 @@ class Chat extends React.Component {
     this.initSocket();
   }
 
-  fetchMessages = () => {
-    fetch(`${this.props.url}:8888/chat/message/view`, {
-          method: 'POST',
+  fetchMessages = async function() {
+    let data = await fetch(`${this.props.url}:8888/chat/message/view`, {
+      method: 'POST',
+      headers: {
+        'Accept': 'application/json',
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        chatroomId: this.props.inChatWith.chatroomId
+      })
+    })
+    let messages = JSON.parse(data._bodyInit).messages;
+    let messagesAndTracks = []
+    for(let i = 0; i < messages.length; i++) {
+      let message = messages[i];
+      if(message.type === 'suggest') {
+        track = await this.fetchTrackInfo(message.content);
+        message = {
+          name: track.name,
+          spotifyId: track.spotifyId,
+          type: 'track',
+          artistName: track.artistName,
+          date: message.date,
+          user_id: message.user_id,
+          url: track.url
+        }
+      }
+      messagesAndTracks.push(message)
+    }
+    this.setState({ messages: messagesAndTracks });
+  }
+
+  fetchTrackInfo = async function(id) {
+    let data = await fetch(`${this.props.url}:8888/chat/track/${id}`, {
+          method: 'GET',
           headers: {
             'Accept': 'application/json',
             'Content-Type': 'application/json',
           },
-          body: JSON.stringify({
-            chatroomId: this.props.inChatWith.chatroomId
-          })
-        }).then(data => {
-          let messages = JSON.parse(data._bodyInit).messages;
-          this.setState({ messages });
         })
+    return JSON.parse(data._bodyInit).track
   }
-  
+
+    // track on press handle function
+    handleTrackPress = (track) => {
+      console.log(track)
+    }  
 
   initSocket = () => {
     this.socket = io.connect(`${this.props.url}:3005`)
@@ -78,13 +113,23 @@ class Chat extends React.Component {
     })
   }
 
+  updateStateMessages = (message) => {
+    this.setState({
+      messages: [...this.state.messages, message]
+    })
+  }
+
   render(){
-    let { sendOnPress, onChangeText, inChatWith, handleChatWithFriend, navigation } = this.props;
+    let { sendOnPress, onChangeText, inChatWith, handleChatWithFriend, navigation, page } = this.props;
     backToShowFriends = () => {
       handleChatWithFriend(null, 'showChatrooms');
     }
     let messageList = this.state.messages.map(message => {
-      return <Message content={message.content} date={message.date} userId={message.user_id} key={Math.random().toString()} />
+      return (<Message 
+        message={ message } 
+        key={Math.random().toString()} 
+        handleTrackPress={this.handleTrackPress}
+      />)
     })
 
     // only render suggest music menu if suggest music button is clicked
@@ -95,6 +140,7 @@ class Chat extends React.Component {
       sendMessageToSocketServer={this.sendMessageToSocketServer}
       fetchMessages={this.fetchMessages}
       sendOnPress={sendOnPress}
+      updateStateMessages={this.updateStateMessages}
     />
 
     if(this.state.suggestMenuState) {
@@ -104,6 +150,18 @@ class Chat extends React.Component {
         handleChatWithFriend={handleChatWithFriend}
         inChatWith={inChatWith}
       />
+    }
+    // renders suggested tracks if user presses show tracks button
+    if(page === 'showSuggestions') {
+      return (
+        <ShowSuggestions 
+          handleChatWithFriend={handleChatWithFriend}
+          inChatWith={inChatWith}
+          messages={this.state.messages}
+          selectedTrack={this.state.selectedTrack}
+          handleTrackPress={this.handleTrackPress}
+        />
+      )
     }
 
     return (

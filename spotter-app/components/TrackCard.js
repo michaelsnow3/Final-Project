@@ -9,16 +9,14 @@ import {
   View,
 } from 'react-native';
 
-function TrackCard({track, handleTrackPress}) {
-  handlePress = () => {
-    handleTrackPress({
-      name: track.name,
-      spotifyId: track.spotifyId
-    })
-  }
+function TrackCard({track, handleTrackPress, handleAddTrack}) {
+  let handleTrack = page === 'showSuggestions' ? handleTrackPress : handleAddTrack
   return (
-    <TouchableOpacity style={styles.container} onPress={handlePress}>
-      <Text style={styles.name}>{track.name} by {track.artistName[0]}</Text>
+    <TouchableOpacity 
+      style={styles.container}
+      onPress={() => handleTrack({ track })}
+    >
+      <Text style={styles.name}>{track.name} by {track.artistName}</Text>
     </TouchableOpacity>
   )
 }

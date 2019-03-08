@@ -5,7 +5,7 @@ const ENV = process.env.ENV || "development";
 const knexConfig = require("../knexfile");
 const knex = require("knex")(knexConfig[ENV]);
 
-module.exports = function(request) {
+module.exports = function(request, rp) {
 
   profileEditRoutes.get("/user_info/:user_token", function(req, res) {
 
@@ -249,5 +249,28 @@ module.exports = function(request) {
       });
   });
 
+  profileEditRoutes.post("/user_id", function(req, res) {
+    let token = req.body.token;
+    var options = {
+      url: "https://api.spotify.com/v1/me",
+      headers: { Authorization: "Bearer " + token },
+      json: true
+    };
+    rp.get(options, function(error, response, body) {
+
+      if (!error && response.statusCode === 200) {
+        let avatar = (body.images.length === 0) ? null : body.images[0].url;
+        let userInfo = {
+          name: body.display_name,
+          avatar: avatar,
+          email: body.email
+        };
+      response.json({userInfo})
+      }
+
+    }).then(data => {
+      console.log(data)
+    })
+  })
   return profileEditRoutes;
 };
