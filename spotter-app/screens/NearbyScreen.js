@@ -20,7 +20,7 @@ export default class NearbyScreen extends React.Component {
     this.state = {
       searching: true,
       searchingDot: "",
-      userToken: null
+      email: null
     }
 
     this.initSocket();
@@ -36,14 +36,21 @@ export default class NearbyScreen extends React.Component {
 
   initSocket = async () => {
 
-    const userToken       = await AsyncStorage.getItem('userToken');
+    const email           = await AsyncStorage.getItem('email');
     const nodeServerUrl   = await AsyncStorage.getItem('nodeServerUrl');
     const socketServerUrl = await AsyncStorage.getItem('socketServerUrl');
 
-    this.socket = io.connect(`${socketServerUrl}:3005`);
-    this.socket.on('connect', () => {
-      console.log('connected at Nearby');
-      this._sendFindRequest(userToken);
+    this.setState({email: email}, () => {
+      try {
+        this.socket = io.connect(`${socketServerUrl}:3005`);
+        this.socket.on('connect', () => {
+          console.log('connected at Nearby');
+          this._sendFindRequest(email);
+        });
+      } catch (error) {
+        console.log('Problem with initSocket:' + error.message);
+        throw error;
+      }
     });
   };
 
@@ -51,10 +58,12 @@ export default class NearbyScreen extends React.Component {
     header: null,
   };
 
-  _sendFindRequest = (userToken) => {
-    if (this.socket && this.socket.connected) {
+  _sendFindRequest = () => {
+    console.log("Email at app side:");
+    console.log(this.state.email);
+    if (this.socket && this.socket.connected && this.state.email) {
       this.socket.emit("findPeople", {
-        myUserToken: userToken
+        myEmail: this.state.email
       });
     }
   };

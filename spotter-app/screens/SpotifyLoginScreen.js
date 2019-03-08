@@ -8,6 +8,8 @@ import {
   Linking,
 } from 'react-native';
 
+import { getUserProfile } from '../components/GetUserProfile';
+
 export default class SpotifyLoginScreen extends React.Component {
 
   constructor(props) {
@@ -48,9 +50,27 @@ export default class SpotifyLoginScreen extends React.Component {
     if (userTokenIndex > 0) {
       const userToken = data.nativeEvent.url.substring(userTokenIndex + 14); // 14 is the length of "#access_token="
       this._signInAsync(userToken);
+      this.dealWithEmail();
     } else {
       this.props.navigation.navigate('Auth');
     }
+  };
+
+  dealWithEmail = () => {
+    getUserProfile()
+    .then((response) => response.json())
+    .then((jsonData) => {
+      if (jsonData) {
+        this.setEmailIntoStorage(jsonData.email);
+      }
+    }).catch(function(error) {
+      console.log('Problem with your currentMusic processing: ' + error.message);
+      throw error;
+    });
+  };
+
+  setEmailIntoStorage = async (email) => {
+    await AsyncStorage.setItem('email', email);
   };
 
   onLoadError = (data) => {

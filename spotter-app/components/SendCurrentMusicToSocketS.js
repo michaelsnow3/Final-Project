@@ -4,7 +4,6 @@ import { Constants, Location, Permissions } from 'expo';
 
 async function sendMusicSocketServer(currentMusic, socket) {
 
-  const userToken = await AsyncStorage.getItem('userToken');
   currentMusic
   .then((response) => response.json())
   .then((jsonData) => {
@@ -27,6 +26,12 @@ async function sendMusicSocketServer(currentMusic, socket) {
   });
 
   async function getGeoLocation(currentMusic) {
+
+    const email = await AsyncStorage.getItem('email');
+
+    console.log(email);
+    console.log(currentMusic);
+
     try{
       let { status } = await Permissions.askAsync(Permissions.LOCATION);
       if (status !== 'granted') {
@@ -44,7 +49,7 @@ async function sendMusicSocketServer(currentMusic, socket) {
         socket.emit("usersQueue", {
           currentMusicData: currentMusic,
           locationInfo: locationInfo,
-          userInfo: userToken
+          userInfo: email
         });
       }
     } catch(error) {

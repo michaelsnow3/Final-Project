@@ -3,12 +3,23 @@ var io = module.exports.io = require('socket.io')(app)
 
 require("dotenv").config();
 const PORT = process.env.SOCKET_PORT || 3005
-const UserQueue = require("./userQueue");
+const QueueOperator = require("./QueueOperator");
+
+let users = {
+  // 'abc@gmail.com':
+  //  { currentMusicData: { album: 'Sweetener', artist: 'Ariana Grande', song: 'raindrops (an angel cried)' },
+  //    locationInfo:
+  //     { longitude: -79.40227565453004,
+  //       latitude: 43.64407861007,
+  //       timestamp: 1552082456.135453
+  //     }
+  //   }
+};
 
 io.on('connection', function (socket) {
 
   console.log('user connected');
-  const userQueue = new UserQueue({});
+  const userQueueOperator = new QueueOperator();
 
   socket.on('message', function (data) {
     socket.emit(data.chatroomId, {
@@ -17,17 +28,15 @@ io.on('connection', function (socket) {
   });
 
   socket.on('usersQueue', function (data) {
-    userQueue.setUserIntoQueue(data);
-    console.log("------ user start ------");
-    console.log(userQueue.getUsersFromQueue());
-    console.log("------ user end ------");
+    users = userQueueOperator.addUserInfoQueue(users, data);
+    // console.log("------ user start ------");
+    // console.log(users);
+    // console.log("------ user end ------");
   });
 
   socket.on('findPeople', function (data) {
-    console.log("In findPeople, data:");
-    console.log(data.myUserToken);
-
-    userQueue
+    console.log("In findPeople");
+    userQueueOperator.pairPeopleFromQueue(users, data.myEmail, socket);
   });
 });
 

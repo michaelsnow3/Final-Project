@@ -290,7 +290,6 @@ export default class ProfileScreen extends React.Component {
      })
     .then((response) => response.json())
     .then((jsonData) => {
-      console.log(jsonData);
       this.setState({userId: jsonData.name});
       this.setState({email: jsonData.email});
       if (jsonData.favoriteGenres) {
