@@ -30,11 +30,14 @@ class Chat extends React.Component {
       selectedTrack: null,
       suggestedTracks: [],
     }
+    this._isMounted = false;
     this.fetchMessages = this.fetchMessages.bind(this)
     this.fetchTrackInfo = this.fetchTrackInfo.bind(this)
   }
   componentDidMount() {
-    this.fetchMessages().then(this.getSuggestedTracks)
+    this._isMounted = true;
+
+    this._isMounted && this.fetchMessages().then(this.getSuggestedTracks)
   }
 
   componentWillMount() {

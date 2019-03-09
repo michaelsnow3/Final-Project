@@ -12,14 +12,23 @@ import {
 
 import UserCard from '../components/UserCard'
 
-function ShowFriends({friends, handler}) {
+function StartChat({friends, handleChatWithFriend, userId, url}) {
+
   const friendsList = friends.map(friend => {
-    return <UserCard name={friend.name} id={friend.id} handler={handler} key={Math.random().toString()} />
+    return <UserCard 
+      name={friend.name} 
+      id={friend.id} 
+      handleChatWithFriend={handleChatWithFriend} 
+      friend={friend} 
+      key={Math.random().toString()} 
+      userId={userId}
+      url={url}
+    />
   });
 
   return(
     <View>
-      <Text style={styles.name}>Friends:</Text>
+      <Text style={styles.name}>Start a Chat</Text>
       {friendsList}
     </View>
   )
@@ -30,4 +39,4 @@ const styles = StyleSheet.create({
     textAlign: 'center'
   }
 });
-export default ShowFriends
+export default StartChat

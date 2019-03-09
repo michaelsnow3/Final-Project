@@ -8,7 +8,15 @@ module.exports = function(selectQueries, insertQueries) {
     let userId = req.params.user_id;
     selectQueries.selectFriendChats(userId).then(chatrooms => {
       res.json({ chatrooms });
-    });
+    })
+    .catch(e => console.log('GET /chatroom/create', e))
+  });
+
+  chatRoutes.post("/chatroom/create", function(req, res) {
+    let { userId, friendId } = req.body;
+    insertQueries.addChatroom(userId, friendId)
+      .then(chatroomId => res.json({chatroomId}))
+      .catch(e => console.log('POST /chatrooms/:user_id', e))
   });
 
   chatRoutes.get("/message/view/:chatroom_id", function(req, res) {
@@ -16,6 +24,7 @@ module.exports = function(selectQueries, insertQueries) {
     selectQueries.selectMessages(chatroomId).then(messages => {
       res.json({ messages })
     })
+    .catch(e => console.log("GET /message/view/:chatroom_id", e))
   })
 
   chatRoutes.post("/message/create", function(req, res) {
@@ -24,12 +33,13 @@ module.exports = function(selectQueries, insertQueries) {
     insertQueries.addMessage(content, type, userId, chatroomId, id).then(data => {
       res.json({ data })
     })
-
+    .catch(e => console.log("POST /message/create", e))
   })
 
   chatRoutes.get("/track/:id", function(req, res) {
     let { id } = req.params;
-    search.searchTrackById(id).then(track => {res.json({track})});
+    search.searchTrackById(id).then(track => {res.json({track})})
+    .catch(e => console.log("GET /track/:id", e))
   })
 
   chatRoutes.post("/track/suggest", function(req, res) {
@@ -37,7 +47,8 @@ module.exports = function(selectQueries, insertQueries) {
     let type = 'track';
     search.searchSpotify(type, title).then(searchResults =>{
       res.json({searchResults})
-    });
+    })
+    .catch(e => console.log("POST /track/suggest", e))
   })
 
   return chatRoutes;

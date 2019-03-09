@@ -48,7 +48,7 @@ export default class FriendScreen extends React.Component {
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
-        id : 7
+        id : 6
       })
     }).then(data => {
       let friends = JSON.parse(data._bodyInit)
@@ -64,7 +64,6 @@ export default class FriendScreen extends React.Component {
               <ShowFriends 
                 friends={this.state.friends} 
                 handler={this.handler}
-                handleChatWithFriend={() => {}} 
               />
               <Text>Friends</Text>
             </ScrollView>
@@ -72,12 +71,10 @@ export default class FriendScreen extends React.Component {
     case 'OtherProfileScreen':
       return ( 
         <OtherProfileScreen 
-        handler={this.handler}
-        id={this.state.friend_id}
-        navigation={this.props.navigation}
-        handleChatWithFriend={() => {
-            console.log(111111)
-          }} />
+          handler={this.handler}
+          id={this.state.friend_id}
+          navigation={this.props.navigation}
+        />
         )
       }
   }

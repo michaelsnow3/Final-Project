@@ -2,6 +2,7 @@ import React from "react";
 import ShowChatrooms from "../components/ShowChatrooms";
 import Chat from "../components/Chat";
 import SuggestSong from "../components/SuggestSong";
+import StartChat from "../components/StartChat";
 
 import {
   StyleSheet,
@@ -22,13 +23,14 @@ export default class ChatScreen extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
+      friends: [],
       text: "",
       chatrooms: [],
       page: "showChatrooms",
       suggestedSong: {},
       url: "http://172.46.0.236",
       inChatWith: null,
-      userId: 1,
+      userId: 6,
       selectedTrack: null
     };
   }
@@ -45,9 +47,23 @@ export default class ChatScreen extends React.Component {
       let chatrooms = JSON.parse(data._bodyInit).chatrooms;
       this.setState({ chatrooms });
     });
+    fetch('http://172.46.0.236:8888/show-friends/', {
+      method: 'POST',
+      headers: {
+        'Accept': 'application/json',
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        id : this.state.userId
+      })
+    }).then(data => {
+      let friends = JSON.parse(data._bodyInit)
+      this.setState({ friends })
+    })
   }
 
   sendOnPress = (sendMessageToSocketServer, fetchMessages) => {
+    console.log('send button pressed')
     if (this.state.text === "") return;
     fetch(`${this.state.url}:8888/chat/message/create`, {
       method: "POST",
@@ -136,6 +152,17 @@ export default class ChatScreen extends React.Component {
             chatrooms={this.state.chatrooms}
             handleChatWithFriend={this.handleChatWithFriend}
           />
+        );
+      case 'startChat':
+        return (
+          <ScrollView style={styles.container}>
+            <StartChat 
+              friends={this.state.friends} 
+              handleChatWithFriend={this.handleChatWithFriend} 
+              userId={this.state.userId}
+              url={this.state.url}
+            />
+          </ScrollView>
         );
       case "suggestSong":
         return (

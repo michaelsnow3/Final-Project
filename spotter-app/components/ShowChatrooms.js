@@ -22,6 +22,7 @@ class ShowChatrooms extends React.Component {
         <Text style={styles.name}>Chats</Text>
         <Text>{"\n"}</Text>
         <ScrollView>{chatroomList}</ScrollView>
+        <TouchableOpacity onPress={() => handleChatWithFriend(null, 'startChat')}><Text>Start a New Chat With a Friend</Text></TouchableOpacity>
       </View>
     )
   }
