@@ -1,6 +1,7 @@
 const express = require("express");
 const chatRoutes = express.Router();
 const search = require("../search/search-spotify.js")
+const uuidv4 = require('uuid/v4');
 
 module.exports = function(selectQueries, insertQueries) {
   chatRoutes.get("/chatrooms/:user_id", function(req, res) {
@@ -19,8 +20,8 @@ module.exports = function(selectQueries, insertQueries) {
 
   chatRoutes.post("/message/create", function(req, res) {
     let { content, type, userId, chatroomId, spotifyId } = req.body
-    console.log(content, type, userId, chatroomId, spotifyId)
-    insertQueries.addMessage(content, type, userId, chatroomId, spotifyId).then(data => {
+    let id = type === 'track' ? spotifyId : uuidv4()
+    insertQueries.addMessage(content, type, userId, chatroomId, id).then(data => {
       res.json({ data })
     })
 
