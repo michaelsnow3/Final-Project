@@ -28,7 +28,7 @@ export default class ChatScreen extends React.Component {
       suggestedSong: {},
       url: "http://172.46.0.236",
       inChatWith: null,
-      userId: 2,
+      userId: 1,
       selectedTrack: null
     };
   }
@@ -83,10 +83,16 @@ export default class ChatScreen extends React.Component {
   };
 
   handleTrackPress = track => {
-    this.setState({ 
-      page: 'showSuggestions',
-      selectedTrack: track
-    })
+    if(track === this.state.selectedTrack) {
+      this.setState({
+        selectedTrack: {}
+      })
+    }else {
+      this.setState({ 
+        page: 'showSuggestions',
+        selectedTrack: track
+      })
+    }
   };
 
   render() {

@@ -79,7 +79,7 @@ async function searchTrackById(id) {
   let trackInfo = {
     name: spotifySearchResponse.name,
     artistName: spotifySearchResponse.artists[0].name,
-    spotifyId: spotifySearchResponse.id,
+    id: spotifySearchResponse.id,
     url: spotifySearchResponse.external_urls.spotify
   }
   return trackInfo

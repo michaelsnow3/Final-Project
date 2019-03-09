@@ -28,12 +28,13 @@ class Chat extends React.Component {
       messages: [],
       suggestMenuState: false,
       selectedTrack: null,
+      suggestedTracks: [],
     }
     this.fetchMessages = this.fetchMessages.bind(this)
     this.fetchTrackInfo = this.fetchTrackInfo.bind(this)
   }
   componentDidMount() {
-    this.fetchMessages();
+    this.fetchMessages().then(this.getSuggestedTracks)
   }
 
   componentWillMount() {
@@ -57,6 +58,18 @@ class Chat extends React.Component {
     this.setState({ messages: sortedMessages });
   }
 
+  getSuggestedTracks = async() => {
+    let tracks = [];
+    let messages = this.state.messages;
+    for(let i = 0; i < messages.length; i++) {
+      if(messages[i].type === 'track'){
+        let track = await this.fetchTrackInfo(messages[i].id);
+        tracks.push(track)
+      }
+    }
+    this.setState({suggestedTracks: tracks})
+  }
+
   fetchTrackInfo = async function(id) {
     let data = await fetch(`${this.props.url}:8888/chat/track/${id}`, {
           method: 'GET',
@@ -65,8 +78,8 @@ class Chat extends React.Component {
             'Content-Type': 'application/json',
           },
         })
-    let tracks = JSON.parse(data._bodyInit).track
-    console.log(tracks)
+    let track = JSON.parse(data._bodyInit).track
+    return track
   }
 
   initSocket = () => {
@@ -78,6 +91,7 @@ class Chat extends React.Component {
       console.log('connected')
       this.socket.on(this.props.inChatWith.chatroomId, (data) => {
         this.props.clearTextInput()
+        this.getSuggestedTracks()
       })
     })
   }
@@ -141,7 +155,7 @@ class Chat extends React.Component {
         <ShowSuggestions 
           handleChatWithFriend={handleChatWithFriend}
           inChatWith={inChatWith}
-          messages={this.state.messages}
+          suggestedTracks={this.state.suggestedTracks}
           selectedTrack={this.props.selectedTrack}
           handleTrackPress={this.props.handleTrackPress}
           fetchTrackInfo={this.fetchTrackInfo}
@@ -204,7 +218,7 @@ const styles = StyleSheet.create({
     borderRadius: 20,
   },
   messageList: {
-    maxHeight: '70%'
+    height: '65%'
   },
 });
 

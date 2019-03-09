@@ -13,15 +13,14 @@ import TrackMenu from './TrackMenu'
 
 class ShowSuggestions extends React.Component {
   render() {
-    let { handleChatWithFriend, inChatWith, messages, handleTrackPress, selectedTrack, fetchTrackInfo} = this.props;
-    let suggestions = messages.map(message => {
-      if(message.type === 'track') {
-        let isSelectedTrack = message.spotifyId === selectedTrack.spotifyId;
+    let { handleChatWithFriend, inChatWith, suggestedTracks, handleTrackPress, selectedTrack, fetchTrackInfo} = this.props;
+    let suggestions = suggestedTracks.map(track => {
+        let isSelectedTrack = track.id === selectedTrack.id;
         let trackMenu = isSelectedTrack && <TrackMenu track={selectedTrack} />
         return (
-          <View key={message.id}>
+          <View key={track.id}>
             <TrackCard 
-              track={message}
+              track={track}
               handleTrackPress={handleTrackPress}
               isSelectedTrack={isSelectedTrack}
               fetchTrackInfo={fetchTrackInfo}
@@ -29,7 +28,6 @@ class ShowSuggestions extends React.Component {
             {trackMenu}
           </View>
         )
-      }
     })
     return (
       <View style={styles.container}>
