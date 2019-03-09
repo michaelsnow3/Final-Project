@@ -7,43 +7,135 @@ import {
   Text,
   TouchableOpacity,
   View,
+  AsyncStorage,
+  Alert,
 } from 'react-native';
 
+import { Icon } from 'expo';
+import io from 'socket.io-client';
+
 export default class NearbyScreen extends React.Component {
+
+  constructor(props) {
+    super(props);
+    this.state = {
+      searching: true,
+      searchingDot: "",
+      email: null,
+
+      timer: 0
+    }
+  }
+
+  componentDidMount() {
+
+    this.initSocket();
+
+    this._interval = setInterval(() => {
+      this.setSearchingText();
+      this._countDownTimer();
+    }, 1000);
+
+    this.props.navigation.addListener('willFocus', this._sendFindRequest);
+  }
+
+  initSocket = async () => {
+
+    const socketServerUrl = await AsyncStorage.getItem('socketServerUrl');
+    const nodeServerUrl   = await AsyncStorage.getItem('nodeServerUrl');
+    const email           = await AsyncStorage.getItem('email');
+
+    this.setState({email: email}, () => {
+      try {
+        this.socket = io.connect(`${socketServerUrl}:3005`);
+        this.socket.on('connect', () => {
+          console.log('connected at Nearby');
+          this._sendFindRequest(email);
+          this._matchPeople();
+        });
+      } catch (error) {
+        console.log('Problem with initSocket:' + error.message);
+        throw error;
+      }
+    });
+  };
+
   static navigationOptions = {
     header: null,
   };
 
+  _matchPeople = () => {
+    console.log("socket on _matchPeople");
+    this.socket.on('findMatchPeople', function(match) {
+      console.log("match:");
+      console.log(match);
+    });
+  };
+
+  _sendFindRequest = () => {
+    if (this.socket && this.socket.connected && this.state.email) {
+      this.socket.emit("findPeople", {
+        myEmail: this.state.email
+      });
+    }
+  };
+
+  setSearchingText = () => {
+    if (this.state.searchingDot.length > 30) {
+      this.setState({searchingDot: ""});
+    } else {
+      this.setState({searchingDot: this.state.searchingDot + " . "});
+    }
+  };
+
+  _countDownTimer = () => {
+    this.setState({timer: this.state.timer + 1});
+    let time = this.state.timer;
+    if(this.state.timer === 10) {
+      Alert.alert('Finding People', "No people listening similar music nearby",
+        [
+          {text: 'Search Again', onPress: () => this._resetTimer() },
+        ]
+      );
+    }
+  };
+
+  _resetTimer = () => {
+    this.setState({timer: 0});
+    this.setState({searchingDot: ""});
+  };
+
   render() {
+
+    const searchingOrFind = this._showSearchingOrFind();
+
     return (
-      <View style={styles.container}>
-        <Text>Nearby</Text>
+      <View>
+        {searchingOrFind}
       </View>
     );
   }
 
-  _maybeRenderDevelopmentModeWarning() {
-    if (__DEV__) {
-      const learnMoreButton = (
-        <Text onPress={this._handleLearnMorePress} style={styles.helpLinkText}>
-          Learn more
-        </Text>
-      );
-
+  _showSearchingOrFind = () => {
+    if (this.state.searching) {
       return (
-        <Text style={styles.developmentModeText}>
-          Development mode is enabled, your app will be slower but you can use useful development
-          tools. {learnMoreButton}
-        </Text>
+        <View>
+          <View style={{alignItems: 'center'}}>
+          <Icon.Ionicons
+            name={Platform.OS === 'ios' ? 'ios-pin' : 'md-pin'}
+            size={256}
+          />
+          </View>
+          <View style={{flexDirection: 'row'}}>
+            <Text style={{fontSize: 32}}>  Search</Text>
+            <Text style={{fontSize: 32}}>{this.state.searchingDot}</Text>
+          </View>
+        </View>
       );
     } else {
-      return (
-        <Text style={styles.developmentModeText}>
-          You are not in development mode, your app will run at full speed.
-        </Text>
-      );
+
     }
-  }
+  };
 }
 
 const styles = StyleSheet.create({

@@ -21,7 +21,7 @@ const insertQueries = require("./knexQueries/insertQueries.js")(knex);
 const client_id = process.env.CLIENT_ID; // Your client id
 const client_secret = process.env.CLIENT_SECRET; // Your secret
 
-const redirect_uri = 'http://e3901f89.ngrok.io/callback/'; // Your redirect uri
+const redirect_uri = 'http://c13d1175.ngrok.io/callback/'; // Your redirect uri
 
 const stateKey = "spotify_auth_state";
 
@@ -74,7 +74,11 @@ app.use("/add_friend", addFriendRoutes);
 
 // show profile endpoint
 const showProfileRoutes = require("./server-endpoints/show-profile-routes")
-app.use('/show_profile', showProfileRoutes(knex))
+app.use('/show_profile', showProfileRoutes(knex));
+
+// Find people nearby endpoint
+const nearbyRoutes = require("./server-endpoints/nearby-routes")
+app.use('/nearby', nearbyRoutes(request, knex));
 
 //app.use("/routes", routes(knex));
 
