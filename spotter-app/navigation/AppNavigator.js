@@ -19,7 +19,6 @@ class AuthLoadingScreen extends React.Component {
   }
 
   componentDidMount() {
-    console.log("AuthLoadingScreen");
     this.props.navigation.addListener('willFocus', this._bootstrapAsync);
   }
 

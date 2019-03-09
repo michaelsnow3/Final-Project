@@ -46,7 +46,7 @@ class userQueueOperator {
           usersQueue[user].locationInfo.latitude, usersQueue[user].locationInfo.longitude);
         console.log("Distance:" + distance + " KM");
 
-        if (distance < 1) {
+        if (distance < 10) {
           let yourAlbum  = usersQueue[user].currentMusicData.album;
           let yourArtist = usersQueue[user].currentMusicData.artist;
           let yourSong   = usersQueue[user].currentMusicData.song;

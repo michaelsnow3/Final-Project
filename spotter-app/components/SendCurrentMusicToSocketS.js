@@ -29,9 +29,6 @@ async function sendMusicSocketServer(currentMusic, socket) {
 
     const email = await AsyncStorage.getItem('email');
 
-    console.log(email);
-    console.log(currentMusic);
-
     try{
       let { status } = await Permissions.askAsync(Permissions.LOCATION);
       if (status !== 'granted') {

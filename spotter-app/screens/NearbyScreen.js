@@ -8,6 +8,7 @@ import {
   TouchableOpacity,
   View,
   AsyncStorage,
+  Alert,
 } from 'react-native';
 
 import { Icon } from 'expo';
@@ -20,7 +21,9 @@ export default class NearbyScreen extends React.Component {
     this.state = {
       searching: true,
       searchingDot: "",
-      email: null
+      email: null,
+
+      timer: 0
     }
   }
 
@@ -30,6 +33,7 @@ export default class NearbyScreen extends React.Component {
 
     this._interval = setInterval(() => {
       this.setSearchingText();
+      this._countDownTimer();
     }, 1000);
 
     this.props.navigation.addListener('willFocus', this._sendFindRequest);
@@ -61,6 +65,7 @@ export default class NearbyScreen extends React.Component {
   };
 
   _matchPeople = () => {
+    console.log("socket on _matchPeople");
     this.socket.on('findMatchPeople', function(match) {
       console.log("match:");
       console.log(match);
@@ -68,8 +73,6 @@ export default class NearbyScreen extends React.Component {
   };
 
   _sendFindRequest = () => {
-    console.log("Email at app side:");
-    console.log(this.state.email);
     if (this.socket && this.socket.connected && this.state.email) {
       this.socket.emit("findPeople", {
         myEmail: this.state.email
@@ -83,6 +86,23 @@ export default class NearbyScreen extends React.Component {
     } else {
       this.setState({searchingDot: this.state.searchingDot + " . "});
     }
+  };
+
+  _countDownTimer = () => {
+    this.setState({timer: this.state.timer + 1});
+    let time = this.state.timer;
+    if(this.state.timer === 10) {
+      Alert.alert('Finding People', "No people listening similar music nearby",
+        [
+          {text: 'Search Again', onPress: () => this._resetTimer() },
+        ]
+      );
+    }
+  };
+
+  _resetTimer = () => {
+    this.setState({timer: 0});
+    this.setState({searchingDot: ""});
   };
 
   render() {
