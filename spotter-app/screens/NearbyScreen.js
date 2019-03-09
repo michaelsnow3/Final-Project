@@ -23,6 +23,7 @@ export default class NearbyScreen extends React.Component {
       searchingDot: "",
       email: null,
 
+      willingSendFindRequest: true,
       timer: 0
     }
   }
@@ -32,11 +33,14 @@ export default class NearbyScreen extends React.Component {
     this.initSocket();
 
     this._interval = setInterval(() => {
-      this.setSearchingText();
-      this._countDownTimer();
+      if (this.state.willingSendFindRequest) {
+        this.setSearchingText();
+        this._countDownTimer();
+      }
     }, 1000);
 
     this.props.navigation.addListener('willFocus', this._sendFindRequest);
+    this.props.navigation.addListener('willFocus', this._trunOnSearching);
   }
 
   initSocket = async () => {
@@ -91,13 +95,24 @@ export default class NearbyScreen extends React.Component {
   _countDownTimer = () => {
     this.setState({timer: this.state.timer + 1});
     let time = this.state.timer;
-    if(this.state.timer === 10) {
+    if(this.state.timer === 6) {
       Alert.alert('Finding People', "No people listening similar music nearby",
         [
+          {text: 'Ok', onPress: () => this._stopSearching() },
           {text: 'Search Again', onPress: () => this._resetTimer() },
         ]
       );
     }
+  };
+
+  _trunOnSearching = () => {
+    this.setState({willingSendFindRequest: true});
+    this.setState({timer: 0});
+  };
+
+  _stopSearching = () => {
+    this.setState({willingSendFindRequest: false});
+    this.setState({searchingDot: ""});
   };
 
   _resetTimer = () => {
