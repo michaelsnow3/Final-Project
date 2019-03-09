@@ -5,7 +5,7 @@ const ENV = process.env.ENV || "development";
 const knexConfig = require("../knexfile");
 const knex = require("knex")(knexConfig[ENV]);
 
-module.exports = function(request) {
+module.exports = function(request, selectQueries) {
 
   profileEditRoutes.post("/insert_user_if_not_exist", function(req, res) {
     var options = {
@@ -57,9 +57,9 @@ module.exports = function(request) {
     });
   });
 
-  profileEditRoutes.get("/user_info/:email", function(req, res) {
+  profileEditRoutes.get("/user_info/:userIdFromSpotify", function(req, res) {
 
-    knex('users').where('email', req.params.email)
+    knex('users').where('name', req.params.userIdFromSpotify)
     .then((rows) => {
       let user_id = rows[0].id;
       let userName = rows[0].name;

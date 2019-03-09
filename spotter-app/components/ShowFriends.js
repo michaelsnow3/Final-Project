@@ -19,7 +19,7 @@ function ShowFriends({friends, handler, handleChatWithFriend}) {
 
   return(
     <View>
-      <Text style={styles.name}>Friends:</Text>
+      <Text style={styles.name}>Friends</Text>
       {friendsList}
     </View>
   )

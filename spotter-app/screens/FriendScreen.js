@@ -79,14 +79,14 @@ export default class FriendScreen extends React.Component {
   componentDidMount() {
 
     try {
-      fetch('http://172.46.0.173:8888/show-friends/', {
+      fetch('http://c13d1175.ngrok.io/show-friends/', {
         method: 'POST',
         headers: {
           'Accept': 'application/json',
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          id : 3
+          id : 10
         })
       }).then(data => {
         console.log('data: ', data)
@@ -100,14 +100,14 @@ export default class FriendScreen extends React.Component {
         throw error;
       });
 
-      fetch('https://mysterious-gorge-24322.herokuapp.com:8888/profile/friends', {
+      fetch('http://c13d1175.ngrok.io/profile/friends', {
         method: 'POST',
         headers: {
           'Accept': 'application/json',
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          userId: 7
+          userId: 10
         })
       })
       .then(data => {

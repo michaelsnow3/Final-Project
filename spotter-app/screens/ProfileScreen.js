@@ -46,6 +46,7 @@ export default class ProfileScreen extends React.Component {
 
     return (
       <View>
+        <Text style={styles.name}>Profile</Text>
         <Button title={editTitle} onPress={this._editInfo} />
         {editOrDisplay}
         <Button title="Logout this amazing App :)" onPress={this._signOutAsync} />
@@ -281,7 +282,7 @@ export default class ProfileScreen extends React.Component {
     this.setState({nodeServerUrl: nodeServerUrl});
     this.setState({socketServerUrl: socketServerUrl});
 
-    fetch(`${nodeServerUrl}/profile/user_info/${email}`, {
+    fetch(`${nodeServerUrl}/profile/user_info/${userIdFromSpotify}`, {
        method: 'GET',
        headers: {
            'Content-Type': 'application/json'
@@ -330,4 +331,8 @@ const styles = StyleSheet.create({
   AddNewcontainer: {
     alignItems: 'center',
   },
+  name: {
+    fontSize: 50,
+    textAlign: 'center'
+  }
 });

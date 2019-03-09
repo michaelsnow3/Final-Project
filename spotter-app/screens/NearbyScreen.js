@@ -13,6 +13,7 @@ import {
 
 import { Icon } from 'expo';
 import io from 'socket.io-client';
+import UserCard from '../components/UserCard'
 
 export default class NearbyScreen extends React.Component {
 
@@ -75,7 +76,6 @@ export default class NearbyScreen extends React.Component {
       console.log(match);
       if (match) {
         this.setState({searching: false});
-
       }
     });
   };
@@ -131,6 +131,7 @@ export default class NearbyScreen extends React.Component {
 
     return (
       <View>
+        <Text style={styles.name}>Nearby</Text>
         {searchingOrFind}
       </View>
     );
@@ -155,7 +156,14 @@ export default class NearbyScreen extends React.Component {
     } else {
       return (
         <View>
-
+          <OtherProfileScreen
+            handler={this.handler}
+            id={this.state.friend_id}
+            navigation={this.props.navigation}
+            handleChatWithFriend={() => {
+              console.log(111111)
+            }}
+          />
         </View>
       );
     }
@@ -163,5 +171,8 @@ export default class NearbyScreen extends React.Component {
 }
 
 const styles = StyleSheet.create({
-
+  name: {
+    fontSize: 50,
+    textAlign: 'center'
+  }
 });
