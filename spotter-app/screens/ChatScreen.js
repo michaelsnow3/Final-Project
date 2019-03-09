@@ -108,7 +108,6 @@ export default class ChatScreen extends React.Component {
   };
 
   handleTrackPress = track => {
-    console.log('selectedTrack', track);
     this.setState({ 
       page: 'showSuggestions',
       selectedTrack: track

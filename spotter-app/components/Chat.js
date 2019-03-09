@@ -156,9 +156,8 @@ class Chat extends React.Component {
           handleChatWithFriend={handleChatWithFriend}
           inChatWith={inChatWith}
           messages={this.state.messages}
-          selectedTrack={this.state.selectedTrack}
+          selectedTrack={this.props.selectedTrack}
           handleTrackPress={this.props.handleTrackPress}
-          page={page}
         />
       )
     }

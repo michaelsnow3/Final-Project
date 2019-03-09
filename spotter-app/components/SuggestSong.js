@@ -43,7 +43,7 @@ export default class SuggestSong extends React.Component {
     })
   };
   
-  handleAddTrack = ({track}) => {
+  handleAddTrack = (track) => {
     fetch(`${this.props.url}:8888/chat/message/create`, {
       method: 'POST',
       headers: {

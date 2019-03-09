@@ -9,19 +9,26 @@ import {
   View,
 } from 'react-native';
 import TrackCard from './TrackCard'
+import TrackMenu from './TrackMenu'
 
 class ShowSuggestions extends React.Component {
 
   render() {
-    let { handleChatWithFriend, inChatWith, messages, handleTrackPress, selectedTrack, page } = this.props;
+    let { handleChatWithFriend, inChatWith, messages, handleTrackPress, selectedTrack} = this.props;
     let suggestions = messages.map(message => {
-      if(message.type === 'track'){
-        return (<TrackCard 
-          track={message}
-          handleTrackPress={handleTrackPress}
-          key={message.spotifyId}
-          selectedTrack={selectedTrack}
-        />)
+      if(message.type === 'track') {
+        let isSelectedTrack = message.spotifyId === selectedTrack.spotifyId;
+        let trackMenu = isSelectedTrack && <TrackMenu track={selectedTrack} />
+        return (
+          <View key={message.spotifyId}>
+            <TrackCard 
+              track={message}
+              handleTrackPress={handleTrackPress}
+              isSelectedTrack={isSelectedTrack}
+            />
+            {trackMenu}
+          </View>
+        )
       }
     })
     return (
