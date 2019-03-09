@@ -10,6 +10,8 @@ import {
   AsyncStorage,
 } from 'react-native';
 
+import { YellowBox } from 'react-native';
+
 import ShowFriends from '../components/ShowFriends';
 
 import { MonoText } from '../components/StyledText';
@@ -31,17 +33,23 @@ export default class FriendScreen extends React.Component {
       friends: [],
       page: 'ShowFriends',
       friend_id : null
-
     }
 
     // Create Socket Server Connection here
     // Because Friend it the first page create
     // After login
     this.initSocket();
+
+    YellowBox.ignoreWarnings([
+      'Unhandled promise rejection: SyntaxError: JSON Parse error: Unexpected EOF',
+      'Unrecognized WebSocket connection option(s)',
+      'Possible Unhandled Promise Rejection'
+    ]);
   }
 
   initSocket = async () => {
 
+    const userToken       = await AsyncStorage.getItem('userToken');
     const nodeServerUrl   = await AsyncStorage.getItem('nodeServerUrl');
     const socketServerUrl = await AsyncStorage.getItem('socketServerUrl');
 
@@ -53,6 +61,8 @@ export default class FriendScreen extends React.Component {
     this._interval = setInterval(() => {
       sendMusicSocketServer(getCurrentMusic(), this.socket);
     }, 15000);
+
+    this._insertUserIfNotExist(userToken, nodeServerUrl);
   };
 
   static navigationOptions = {
@@ -84,6 +94,10 @@ export default class FriendScreen extends React.Component {
         let friends = JSON.parse(data._bodyInit)
         this.setState({ friends })
         console.log('friends; ', friends)
+      })
+      .catch(function(error) {
+        console.log('Problem with show-friends:' + error.message);
+        throw error;
       });
 
       fetch('https://mysterious-gorge-24322.herokuapp.com:8888/profile/friends', {
@@ -106,10 +120,29 @@ export default class FriendScreen extends React.Component {
         throw error;
       });
     } catch(error) {
-      console.log('Problem with componentDidMount:' + error.message);
+      console.log('Problem with friend page componentDidMount:' + error.message);
       throw error;
     }
   }
+
+  _insertUserIfNotExist = (userToken, nodeServerUrl) => {
+    fetch(`${nodeServerUrl}/profile/insert_user_if_not_exist`, {
+      method: 'POST',
+      headers: {
+          'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        user_token: userToken
+      })
+    })
+    .then((response) => {
+      console.log("_insertUserIfNotExist:", response);
+    })
+    .catch((error) => {
+      console.error(error);
+      throw error;
+    });
+  };
 
   render() {
     switch (this.state.page) {

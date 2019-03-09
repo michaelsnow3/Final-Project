@@ -59,9 +59,8 @@ export default class SpotifyLoginScreen extends React.Component {
     getUserProfile(userToken)
     .then((response) => response.json())
     .then((jsonData) => {
-
       if (jsonData) {
-        this._signInAsync(userToken, jsonData.email);
+        this._signInAsync(userToken, jsonData.email, jsonData.display_name);
       }
     }).catch(function(error) {
       console.log('Problem with your currentMusic processing: ' + error.message);
@@ -77,9 +76,10 @@ export default class SpotifyLoginScreen extends React.Component {
     this.setState({loginClicked: true});
   };
 
-  _signInAsync = async (userToken, email) => {
+  _signInAsync = async (userToken, email, userIdFromSpotify) => {
     await AsyncStorage.setItem('email', email);
     await AsyncStorage.setItem('userToken', userToken);
+    await AsyncStorage.setItem('userIdFromSpotify', userIdFromSpotify);
     await AsyncStorage.setItem('nodeServerUrl', this.state.nodeServerUrl);
     await AsyncStorage.setItem('socketServerUrl', this.state.socketServerUrl);
     await AsyncStorage.setItem('lastLoginTime', String(Date.now() / 1000 | 0));

@@ -19,7 +19,7 @@ export default class ProfileScreen extends React.Component {
       userToken: null,
       nodeServerUrl: null,
       socketServerUrl: null,
-      userId: null,
+      userIdFromSpotify: null,
       email: null,
       favoriteGenres: [],
       favoriteArtists: [],
@@ -28,14 +28,10 @@ export default class ProfileScreen extends React.Component {
       displayInfo: true,
       favoriteContent: ''
     };
- 
-    this._getUserInfo();
   }
 
   componentDidMount() {
-    this._interval = setInterval(() => {
-
-    }, 30000);
+    this._getUserInfo();
   }
 
   static navigationOptions = {
@@ -69,7 +65,7 @@ export default class ProfileScreen extends React.Component {
       return (
         <View style={styles.container}>
           <View>
-            <Text>Id: {this.state.userId}</Text>
+            <Text>Id: {this.state.userIdFromSpotify}</Text>
             <Text>Email: {this.state.email}</Text>
           </View>
           <View style={styles.favoriteBtn}>
@@ -90,15 +86,16 @@ export default class ProfileScreen extends React.Component {
       return (
         <View style={styles.AddNewcontainer}>
           <TextInput style={
-                       { width: 120,
-                         borderColor: 'gray',
-                         borderWidth: 1,
-                       }
-                     }
-                     onChangeText={(text) => this.setState({favoriteContent: text})}
-                     value={this.state.favoriteContent}
-                     placeholder={addNewPlaceHolder} />
-          <Button title='Submit' onPress={this._addNewValue} />
+            {
+              width: 120,
+              borderColor: 'gray',
+              borderWidth: 1,
+            }
+          }
+          onChangeText={(text) => this.setState({favoriteContent: text})}
+          value={this.state.favoriteContent}
+          placeholder={addNewPlaceHolder} />
+        <Button title='Submit' onPress={this._addNewValue} />
         </View>
       );
     }
@@ -129,9 +126,6 @@ export default class ProfileScreen extends React.Component {
           break;
         break;
       };
-
-      console.log("updateData:");
-      console.log(updateData);
 
       this._updateFavoriteDb(this.state.favoriteType, updateData);
 
@@ -211,7 +205,7 @@ export default class ProfileScreen extends React.Component {
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
-        userName: this.state.userId,
+        userName: this.state.userIdFromSpotify,
         type: favoriteType,
         favoriteData: newData
       }),
@@ -275,14 +269,19 @@ export default class ProfileScreen extends React.Component {
 
   _getUserInfo = async () => {
 
-    const userToken = await AsyncStorage.getItem('userToken');
+    const email               = await AsyncStorage.getItem('email');
+    const userToken           = await AsyncStorage.getItem('userToken');
+    const userIdFromSpotify   = await AsyncStorage.getItem('userIdFromSpotify');
+    const nodeServerUrl       = await AsyncStorage.getItem('nodeServerUrl');
+    const socketServerUrl     = await AsyncStorage.getItem('socketServerUrl');
+
+    this.setState({email: email});
     this.setState({userToken: userToken});
-    const nodeServerUrl = await AsyncStorage.getItem('nodeServerUrl');
+    this.setState({userIdFromSpotify: userIdFromSpotify});
     this.setState({nodeServerUrl: nodeServerUrl});
-    const socketServerUrl = await AsyncStorage.getItem('socketServerUrl');
     this.setState({socketServerUrl: socketServerUrl});
 
-    fetch(`${nodeServerUrl}/profile/user_info/${userToken}`, {
+    fetch(`${nodeServerUrl}/profile/user_info/${email}`, {
        method: 'GET',
        headers: {
            'Content-Type': 'application/json'
@@ -290,8 +289,6 @@ export default class ProfileScreen extends React.Component {
      })
     .then((response) => response.json())
     .then((jsonData) => {
-      this.setState({userId: jsonData.name});
-      this.setState({email: jsonData.email});
       if (jsonData.favoriteGenres) {
         this.setState({favoriteGenres: jsonData.favoriteGenres});
       }

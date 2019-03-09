@@ -73,6 +73,10 @@ export default class NearbyScreen extends React.Component {
     this.socket.on('findMatchPeople', function(match) {
       console.log("match:");
       console.log(match);
+      if (match) {
+        this.setState({searching: false});
+
+      }
     });
   };
 
@@ -99,7 +103,7 @@ export default class NearbyScreen extends React.Component {
       Alert.alert('Finding People', "No people listening similar music nearby",
         [
           {text: 'Ok', onPress: () => this._stopSearching() },
-          {text: 'Search Again', onPress: () => this._resetTimer() },
+          {text: 'Search Again', onPress: () => this._searchAgain() },
         ]
       );
     }
@@ -115,9 +119,10 @@ export default class NearbyScreen extends React.Component {
     this.setState({searchingDot: ""});
   };
 
-  _resetTimer = () => {
+  _searchAgain = () => {
     this.setState({timer: 0});
     this.setState({searchingDot: ""});
+    this._sendFindRequest(this.state.email);
   };
 
   render() {
@@ -148,7 +153,11 @@ export default class NearbyScreen extends React.Component {
         </View>
       );
     } else {
+      return (
+        <View>
 
+        </View>
+      );
     }
   };
 }

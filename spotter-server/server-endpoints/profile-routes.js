@@ -7,17 +7,14 @@ const knex = require("knex")(knexConfig[ENV]);
 
 module.exports = function(request) {
 
-  profileEditRoutes.get("/user_info/:user_token", function(req, res) {
-
-    let firstLogin = false;
+  profileEditRoutes.post("/insert_user_if_not_exist", function(req, res) {
     var options = {
       url: "https://api.spotify.com/v1/me",
-      headers: { Authorization: "Bearer " + req.params.user_token },
+      headers: { Authorization: "Bearer " + req.body.user_token },
       json: true
     };
 
     request.get(options, function(error, response, body) {
-
       if (!error && response.statusCode === 200) {
         let avatar = (body.images.length === 0) ? null : body.images[0].url;
         let userInfo = {
@@ -38,33 +35,36 @@ module.exports = function(request) {
               .insert({"user_id": id[0]})
               .then(()=> {
                 console.log("Insert New User");
-                res.status(200).send(userInfo);
+                res.status(200);
               });
             });
           } else {
-            _getUserInfoFromDbSendBackApp(userInfo, res);
+            console.log("User exist");
+            res.status(200);
           }
         })
-        .then(() => {
-          console.log("Get User Info");
-        })
         .catch((error) => {
-          console.log(error);
+          console.log("profileEditRoutes insert new user error1:");
           res.status(500).send({error: error});
+          throw error;
         });
       } else {
-        console.log("profileEditRoutes get error:");
+        console.log("profileEditRoutes insert new user error2:");
         console.log(error);
         res.status(500).send({error: error});
+        throw error;
       }
     });
   });
 
-  _getUserInfoFromDbSendBackApp = (userInfo, res) => {
+  profileEditRoutes.get("/user_info/:email", function(req, res) {
 
-    knex('users').where('name', userInfo.name)
+    knex('users').where('email', req.params.email)
     .then((rows) => {
       let user_id = rows[0].id;
+      let userName = rows[0].name;
+      let userAvatar = rows[0].avatar;
+      let userEmail = rows[0].email;
 
       Promise.all([
         new Promise(function(resolve, reject) {
@@ -81,9 +81,10 @@ module.exports = function(request) {
             }
             resolve(genreArr);
           })
-          .catch((err) => {
-            console.log(error);
+          .catch((error) => {
+            console.log("Error when get favourite genre:", error);
             res.status(500).send({error: error});
+            throw error;
           });
         }),
 
@@ -102,8 +103,9 @@ module.exports = function(request) {
             resolve(artistArr);
           })
           .catch((error) => {
-            console.log(error);
+            console.log("Error when get favourite artist:", error);
             res.status(500).send({error: error});
+            throw error;
           });
         }),
 
@@ -122,25 +124,36 @@ module.exports = function(request) {
             resolve(songArr);
           })
           .catch((error) => {
-            console.log(error);
+            console.log("Error when get favourite song:", error);
             res.status(500).send({error: error});
+            throw error;
           });
         }),
-      ]).then(function(values) {
-        console.log(values);
+      ])
+      .then(function(values) {
         let userDetailInfo = {
-          name: userInfo.name,
-          avatar: userInfo.avatar,
-          email: userInfo.email,
+          name: userName,
+          avatar: userAvatar,
+          email: userEmail,
           favoriteGenres: values[0],
           favoriteArtists: values[1],
           favoriteSongs: values[2],
         };
 
         res.status(200).send(userDetailInfo);
+      })
+      .catch((error) => {
+        console.log("Error when after promise:", error);
+        res.status(500).send({error: error});
+        throw error;
       });
+    })
+    .catch((error) => {
+      console.log("Error in the end at user_info:", error);
+      res.status(500).send({error: error});
+      throw error;
     });
-  };
+  });
 
   profileEditRoutes.post("/edit/", function(req, res) {
 
@@ -217,7 +230,7 @@ module.exports = function(request) {
                 } else {
                   console.log("Insert New Content:", item);
                   knex(dbContent)
-                  .insert({name: item}) 
+                  .insert({name: item})
                   .returning('id')
                   .then(function (id) {
                     console.log("id:", id[0]);
