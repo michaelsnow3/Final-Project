@@ -16,16 +16,25 @@ class AuthLoadingScreen extends React.Component {
 
   constructor() {
     super();
-    this._bootstrapAsync();
+  }
+
+  componentDidMount() {
+    console.log("AuthLoadingScreen");
+    this.props.navigation.addListener('willFocus', this._bootstrapAsync);
   }
 
   // Fetch the token from storage then navigate to our appropriate place
   _bootstrapAsync = async () => {
-    const userToken = await AsyncStorage.getItem('userToken');
+    const userToken     = await AsyncStorage.getItem('userToken');
+    const lastLoginTime = await AsyncStorage.getItem('lastLoginTime');
+    const current       = Date.now() / 1000 | 0;
+    const outDated      = ((current - parseInt(lastLoginTime, 10)) > 3600000);
 
-    // This will switch to the App screen or Auth screen and this loading
-    // screen will be unmounted and thrown away.
-    this.props.navigation.navigate(userToken ? 'App' : 'Auth');
+    if (outDated) {
+      await AsyncStorage.clear();
+    }
+
+    this.props.navigation.navigate((outDated || !userToken) ? 'Auth' : 'App');
   };
 
   // Render any loading content that you like here

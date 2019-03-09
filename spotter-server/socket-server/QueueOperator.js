@@ -30,11 +30,11 @@ class userQueueOperator {
       return;
     }
 
-   let pairedObj = {}; //key: userToken
+    let pairedObj = {}; //key: userToken
 
-   let myAlbum  = myData.currentMusicData.album;
-   let myArtist = myData.currentMusicData.artist;
-   let mySong   = myData.currentMusicData.song;
+    let myAlbum  = myData.currentMusicData.album;
+    let myArtist = myData.currentMusicData.artist;
+    let mySong   = myData.currentMusicData.song;
 
     for (let user in usersQueue) {
       if (myEmail !== user) {
@@ -53,16 +53,33 @@ class userQueueOperator {
 
           if (mySong === yourSong) {
             console.log("You are listening the same song");
+            return {
+              matchPerson: user,
+              matchType: "Song",
+              matchContent: mySong
+            };
           } else if (myAlbum === yourAlbum) {
             console.log("You are listening the same album");
+            return {
+              matchPerson: user,
+              matchType: "Album",
+              matchContent: myAlbum
+            };
           } else if (myArtist === yourArtist) {
             console.log("You are listening the same artist");
+            return {
+              matchPerson: user,
+              matchType: "Artist",
+              matchContent: myArtist
+            };
           } else {
             console.log("You just close. No similar music taste.");
           }
         }
       }
     }
+
+    return null;
   };
 
   getDistanceFromLatLonInKm(lat1,lon1,lat2,lon2) {

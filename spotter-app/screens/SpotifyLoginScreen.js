@@ -16,7 +16,7 @@ export default class SpotifyLoginScreen extends React.Component {
     super(props);
     this.state = {
       loginClicked: false,
-      nodeServerUrl: "http://f81f3112.ngrok.io",
+      nodeServerUrl: "http://c13d1175.ngrok.io",
       socketServerUrl: "http://172.46.1.177"
     }
   }
@@ -49,28 +49,24 @@ export default class SpotifyLoginScreen extends React.Component {
     const userTokenIndex = data.nativeEvent.url.indexOf('#access_token=');
     if (userTokenIndex > 0) {
       const userToken = data.nativeEvent.url.substring(userTokenIndex + 14); // 14 is the length of "#access_token="
-      this._signInAsync(userToken);
-      this.dealWithEmail();
+      this.dealWithEdealWithEmailThenJumpPagemail(userToken);
     } else {
       this.props.navigation.navigate('Auth');
     }
   };
 
-  dealWithEmail = () => {
-    getUserProfile()
+  dealWithEdealWithEmailThenJumpPagemail = (userToken) => {
+    getUserProfile(userToken)
     .then((response) => response.json())
     .then((jsonData) => {
+
       if (jsonData) {
-        this.setEmailIntoStorage(jsonData.email);
+        this._signInAsync(userToken, jsonData.email);
       }
     }).catch(function(error) {
       console.log('Problem with your currentMusic processing: ' + error.message);
       throw error;
     });
-  };
-
-  setEmailIntoStorage = async (email) => {
-    await AsyncStorage.setItem('email', email);
   };
 
   onLoadError = (data) => {
@@ -81,10 +77,12 @@ export default class SpotifyLoginScreen extends React.Component {
     this.setState({loginClicked: true});
   };
 
-  _signInAsync = async (userToken) => {
+  _signInAsync = async (userToken, email) => {
+    await AsyncStorage.setItem('email', email);
     await AsyncStorage.setItem('userToken', userToken);
     await AsyncStorage.setItem('nodeServerUrl', this.state.nodeServerUrl);
     await AsyncStorage.setItem('socketServerUrl', this.state.socketServerUrl);
+    await AsyncStorage.setItem('lastLoginTime', String(Date.now() / 1000 | 0));
     this.props.navigation.navigate('App');
   };
 }

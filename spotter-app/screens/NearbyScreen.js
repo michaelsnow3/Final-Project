@@ -22,11 +22,12 @@ export default class NearbyScreen extends React.Component {
       searchingDot: "",
       email: null
     }
-
-    this.initSocket();
   }
 
   componentDidMount() {
+
+    this.initSocket();
+
     this._interval = setInterval(() => {
       this.setSearchingText();
     }, 1000);
@@ -36,9 +37,9 @@ export default class NearbyScreen extends React.Component {
 
   initSocket = async () => {
 
-    const email           = await AsyncStorage.getItem('email');
-    const nodeServerUrl   = await AsyncStorage.getItem('nodeServerUrl');
     const socketServerUrl = await AsyncStorage.getItem('socketServerUrl');
+    const nodeServerUrl   = await AsyncStorage.getItem('nodeServerUrl');
+    const email           = await AsyncStorage.getItem('email');
 
     this.setState({email: email}, () => {
       try {
@@ -46,6 +47,7 @@ export default class NearbyScreen extends React.Component {
         this.socket.on('connect', () => {
           console.log('connected at Nearby');
           this._sendFindRequest(email);
+          this._matchPeople();
         });
       } catch (error) {
         console.log('Problem with initSocket:' + error.message);
@@ -56,6 +58,13 @@ export default class NearbyScreen extends React.Component {
 
   static navigationOptions = {
     header: null,
+  };
+
+  _matchPeople = () => {
+    this.socket.on('findMatchPeople', function(match) {
+      console.log("match:");
+      console.log(match);
+    });
   };
 
   _sendFindRequest = () => {

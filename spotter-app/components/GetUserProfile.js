@@ -1,9 +1,8 @@
 import React from 'react';
 import { AsyncStorage } from 'react-native';
 
-async function getUserProfile() {
+async function getUserProfile(userToken) {
   try {
-    const userToken = await AsyncStorage.getItem('userToken');
     const userProfile = await fetch(`https://api.spotify.com/v1/me`, {
        method: 'GET',
        headers: {

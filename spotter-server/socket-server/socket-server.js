@@ -6,14 +6,15 @@ const PORT = process.env.SOCKET_PORT || 3005
 const QueueOperator = require("./QueueOperator");
 
 let users = {
-  // 'abc@gmail.com':
-  //  { currentMusicData: { album: 'Sweetener', artist: 'Ariana Grande', song: 'raindrops (an angel cried)' },
-  //    locationInfo:
-  //     { longitude: -79.40227565453004,
-  //       latitude: 43.64407861007,
-  //       timestamp: 1552082456.135453
-  //     }
-  //   }
+  'abc@gmail.com':
+   { currentMusicData: { album: 'Sweetener', artist: 'Ariana Grande', song: 'raindrops (an angel cried)' },
+     locationInfo:
+      { longitude: -79.40227565453004,
+        latitude: 43.64407861007,
+        timestamp: 1552082456.135453
+      },
+     doesntLike: []
+    }
 };
 
 io.on('connection', function (socket) {
@@ -36,7 +37,8 @@ io.on('connection', function (socket) {
 
   socket.on('findPeople', function (data) {
     console.log("In findPeople");
-    userQueueOperator.pairPeopleFromQueue(users, data.myEmail, socket);
+    let match = userQueueOperator.pairPeopleFromQueue(users, data.myEmail, socket);
+    socket.emit('findMatchPeople', match);
   });
 });
 
