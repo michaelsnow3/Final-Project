@@ -1,7 +1,7 @@
 import React from 'react';
 import { View, Text, TouchableOpacity, TextInput, StyleSheet } from 'react-native'
 
-function ChatInput( { suggestMusicButtonHandler, text, onChangeText, sendMessageToSocketServer, fetchMessages, sendOnPress }) {
+function ChatInput( { suggestMusicButtonHandler, text, onChangeText, sendMessageToSocketServer, fetchMessages, sendOnPress, updateStateMessages }) {
   return(
     <View style={styles.input}>
       <TouchableOpacity onPress={suggestMusicButtonHandler}>

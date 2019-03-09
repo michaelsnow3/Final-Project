@@ -1,8 +1,13 @@
 module.exports = function insertQueries(knex) {
   return {
-    addMessage: async function (inputContent, inputType, userId, chatroomId) {
+
+    addMessage: async function (content, type, userId, chatroomId, spotifyId) {
       try{
-        await knex('message').insert({type: inputType, content: inputContent, user_id: userId, chatroom_id: chatroomId});
+        if(spotifyId) {
+          await knex('message').insert({id: spotifyId, type: type, content: content, user_id: userId, chatroom_id: chatroomId});
+        }else {
+          await knex('message').insert({type: type, content: content, user_id: userId, chatroom_id: chatroomId});
+        }
       }
       catch(e) {
         console.log('error inserting message into database', e)

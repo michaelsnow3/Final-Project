@@ -8,7 +8,8 @@ import {
 } from 'react-native';
 
 function Message({ message, handleTrackPress, userId }) {
-  let { content, date, user_id, type, } = message
+  let { content, date, user_id, type, id} = message
+  
   let messageStyle = user_id === userId ? styles.userMessage : styles.friendMessage
 
   //parse date
@@ -24,7 +25,7 @@ function Message({ message, handleTrackPress, userId }) {
     return(
       <TouchableOpacity onPress={() => handleTrackPress(message)} style={styles.suggestMessage}>
         <Text style={styles.date}>{newdate}</Text>
-        <Text style={styles.content}>{`${message.name} by ${message.artistName}`}</Text>
+        <Text style={styles.content}>{`${message.content}`}</Text>
       </TouchableOpacity>
     )
   }

@@ -51,7 +51,7 @@ module.exports = function returnQueries(knex) {
 
     selectMessages: async function(chatroomId) {
       let messages = await knex('message')
-        .select('content', 'date', 'user_id', 'type')
+        .select('content', 'date', 'user_id', 'type', 'id')
         .where({'chatroom_id': chatroomId})
       return messages
     }

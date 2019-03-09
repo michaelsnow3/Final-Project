@@ -9,13 +9,27 @@ import {
   View,
 } from 'react-native';
 
-function TrackCard({track, handleTrackPress, handleAddTrack, isSelectedTrack}) {
-  let handleTrack =  handleTrackPress || handleAddTrack;
+function TrackCard({track, handleTrackPress, handleAddTrack, isSelectedTrack, fetchTrackInfo}) {
   let trackStyle = isSelectedTrack ? styles.selectedTrack : styles.container;
+  // display tracks on suggest music page
+  if(handleTrackPress) {
+    fetchTrackInfo(track.id).then(track => {
+      console.log(track)
+    })
+    return (
+      <TouchableOpacity 
+        style={trackStyle}
+        onPress={() => handleTrackPress( track )}
+      >
+        <Text style={styles.name}>{track.content} by {track.artistName}</Text>
+      </TouchableOpacity>
+    )
+  }
+  // display tracks on add track page
   return (
     <TouchableOpacity 
       style={trackStyle}
-      onPress={() => handleTrack( track )}
+      onPress={() => handleAddTrack( track )}
     >
       <Text style={styles.name}>{track.name} by {track.artistName}</Text>
     </TouchableOpacity>

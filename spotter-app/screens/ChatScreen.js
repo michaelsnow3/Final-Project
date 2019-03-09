@@ -28,49 +28,24 @@ export default class ChatScreen extends React.Component {
       suggestedSong: {},
       url: "http://172.46.0.236",
       inChatWith: null,
-      userId: 9,
+      userId: 2,
       selectedTrack: null
     };
   }
 
   // save current user's chatrooms to state when page renders
   componentDidMount() {
-    fetch(`${this.state.url}:8888/chat/chatrooms`, {
-      method: "POST",
+    fetch(`${this.state.url}:8888/chat/chatrooms/${this.state.userId}`, {
+      method: "GET",
       headers: {
         Accept: "application/json",
         "Content-Type": "application/json"
-      },
-      body: JSON.stringify({
-        userId: this.state.userId
-      })
+      }
     }).then(data => {
       let chatrooms = JSON.parse(data._bodyInit).chatrooms;
       this.setState({ chatrooms });
     });
-
   }
-
-  // getUserId = async () => {
-  //   try{
-  //     let token = await AsyncStorage.getItem('userToken');
-  //     fetch(`${this.state.url}:8888/profile/user_id`, {
-  //       method: "POST",
-  //       headers: {
-  //         Accept: "application/json",
-  //         "Content-Type": "application/json"
-  //       },
-  //       body: JSON.stringify({
-  //         token: token
-  //       })
-  //     }).then(data => {
-  //       console.log(JSON.parse(data))
-  //     });
-  //   }
-  //   catch(e){
-  //     console.log('error getting user id', e)
-  //   }
-  // }
 
   sendOnPress = (sendMessageToSocketServer, fetchMessages) => {
     if (this.state.text === "") return;

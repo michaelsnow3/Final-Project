@@ -12,19 +12,19 @@ import TrackCard from './TrackCard'
 import TrackMenu from './TrackMenu'
 
 class ShowSuggestions extends React.Component {
-
   render() {
-    let { handleChatWithFriend, inChatWith, messages, handleTrackPress, selectedTrack} = this.props;
+    let { handleChatWithFriend, inChatWith, messages, handleTrackPress, selectedTrack, fetchTrackInfo} = this.props;
     let suggestions = messages.map(message => {
       if(message.type === 'track') {
         let isSelectedTrack = message.spotifyId === selectedTrack.spotifyId;
         let trackMenu = isSelectedTrack && <TrackMenu track={selectedTrack} />
         return (
-          <View key={message.spotifyId}>
+          <View key={message.id}>
             <TrackCard 
               track={message}
               handleTrackPress={handleTrackPress}
               isSelectedTrack={isSelectedTrack}
+              fetchTrackInfo={fetchTrackInfo}
             />
             {trackMenu}
           </View>

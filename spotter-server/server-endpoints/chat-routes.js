@@ -3,24 +3,24 @@ const chatRoutes = express.Router();
 const search = require("../search/search-spotify.js")
 
 module.exports = function(selectQueries, insertQueries) {
-  chatRoutes.post("/chatrooms", function(req, res) {
-    let userId = req.body.userId;
+  chatRoutes.get("/chatrooms/:user_id", function(req, res) {
+    let userId = req.params.user_id;
     selectQueries.selectFriendChats(userId).then(chatrooms => {
       res.json({ chatrooms });
     });
   });
 
-  chatRoutes.post("/message/view", function(req, res) {
-    let chatroomId = req.body.chatroomId;
+  chatRoutes.get("/message/view/:chatroom_id", function(req, res) {
+    let chatroomId = req.params.chatroom_id;
     selectQueries.selectMessages(chatroomId).then(messages => {
       res.json({ messages })
     })
   })
 
   chatRoutes.post("/message/create", function(req, res) {
-    let { content, type, userId, chatroomId } = req.body
-
-    insertQueries.addMessage(content, type, userId, chatroomId).then(data => {
+    let { content, type, userId, chatroomId, spotifyId } = req.body
+    console.log(content, type, userId, chatroomId, spotifyId)
+    insertQueries.addMessage(content, type, userId, chatroomId, spotifyId).then(data => {
       res.json({ data })
     })
 

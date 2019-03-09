@@ -27,7 +27,7 @@ class Chat extends React.Component {
     this.state = {
       messages: [],
       suggestMenuState: false,
-      selectedTrack: null
+      selectedTrack: null,
     }
     this.fetchMessages = this.fetchMessages.bind(this)
     this.fetchTrackInfo = this.fetchTrackInfo.bind(this)
@@ -41,35 +41,20 @@ class Chat extends React.Component {
   }
 
   fetchMessages = async function() {
-    let data = await fetch(`${this.props.url}:8888/chat/message/view`, {
-      method: 'POST',
+    let data = await fetch(`${this.props.url}:8888/chat/message/view/${this.props.inChatWith.chatroomId}`, {
+      method: 'GET',
       headers: {
         'Accept': 'application/json',
         'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        chatroomId: this.props.inChatWith.chatroomId
-      })
+      }
     })
     let messages = JSON.parse(data._bodyInit).messages;
-    let messagesAndTracks = []
-    for(let i = 0; i < messages.length; i++) {
-      let message = messages[i];
-      if(message.type === 'suggest') {
-        track = await this.fetchTrackInfo(message.content);
-        message = {
-          name: track.name,
-          spotifyId: track.spotifyId,
-          type: 'track',
-          artistName: track.artistName,
-          date: message.date,
-          user_id: message.user_id,
-          url: track.url
-        }
-      }
-      messagesAndTracks.push(message)
-    }
-    this.setState({ messages: messagesAndTracks });
+    // sort messages by date
+    let sortedMessages = messages.sort(function(a, b) {
+      return new Date(a.date) - new Date(b.date);
+    });
+
+    this.setState({ messages: sortedMessages });
   }
 
   fetchTrackInfo = async function(id) {
@@ -80,7 +65,8 @@ class Chat extends React.Component {
             'Content-Type': 'application/json',
           },
         })
-    return JSON.parse(data._bodyInit).track
+    let tracks = JSON.parse(data._bodyInit).track
+    console.log(tracks)
   }
 
   initSocket = () => {
@@ -158,6 +144,7 @@ class Chat extends React.Component {
           messages={this.state.messages}
           selectedTrack={this.props.selectedTrack}
           handleTrackPress={this.props.handleTrackPress}
+          fetchTrackInfo={this.fetchTrackInfo}
         />
       )
     }

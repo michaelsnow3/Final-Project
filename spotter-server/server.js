@@ -55,7 +55,7 @@ app.use("/refresh_token/", refreshTokenRoutes());
 
 // user profile endpoint
 const profileEditRoutes = require("./server-endpoints/profile-routes.js");
-app.use("/profile/", profileEditRoutes(request, rp));
+app.use("/profile/", profileEditRoutes(request));
 
 // chat endpoints
 const chatRoutes = require("./server-endpoints/chat-routes.js");

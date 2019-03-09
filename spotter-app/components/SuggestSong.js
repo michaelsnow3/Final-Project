@@ -44,6 +44,7 @@ export default class SuggestSong extends React.Component {
   };
   
   handleAddTrack = (track) => {
+    console.log(track)
     fetch(`${this.props.url}:8888/chat/message/create`, {
       method: 'POST',
       headers: {
@@ -51,8 +52,9 @@ export default class SuggestSong extends React.Component {
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
-        content: track.spotifyId,
-        type: 'suggest',
+        content: track.name,
+        spotifyId: track.spotifyId,
+        type: 'track',
         userId: this.props.userId,
         chatroomId: this.props.inChatWith.chatroomId
       })
