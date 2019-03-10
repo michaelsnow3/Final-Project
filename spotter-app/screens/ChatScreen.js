@@ -28,7 +28,7 @@ export default class ChatScreen extends React.Component {
       chatrooms: [],
       page: "showChatrooms",
       suggestedSong: {},
-      url: "http://172.46.0.236",
+      url: "http://192.168.0.38",
       inChatWith: null,
       userId: 6,
       selectedTrack: null
@@ -37,17 +37,8 @@ export default class ChatScreen extends React.Component {
 
   // save current user's chatrooms to state when page renders
   componentDidMount() {
-    fetch(`${this.state.url}:8888/chat/chatrooms/${this.state.userId}`, {
-      method: "GET",
-      headers: {
-        Accept: "application/json",
-        "Content-Type": "application/json"
-      }
-    }).then(data => {
-      let chatrooms = JSON.parse(data._bodyInit).chatrooms;
-      this.setState({ chatrooms });
-    });
-    fetch('http://172.46.0.236:8888/show-friends/', {
+    this.fetchChatrooms()
+    fetch(`${this.state.url}:8888/show-friends/`, {
       method: 'POST',
       headers: {
         'Accept': 'application/json',
@@ -60,6 +51,19 @@ export default class ChatScreen extends React.Component {
       let friends = JSON.parse(data._bodyInit)
       this.setState({ friends })
     })
+  }
+
+  fetchChatrooms = () => {
+    fetch(`${this.state.url}:8888/chat/chatrooms/${this.state.userId}`, {
+      method: "GET",
+      headers: {
+        Accept: "application/json",
+        "Content-Type": "application/json"
+      }
+    }).then(data => {
+      let chatrooms = JSON.parse(data._bodyInit).chatrooms;
+      this.setState({ chatrooms });
+    });
   }
 
   sendOnPress = (sendMessageToSocketServer, fetchMessages) => {
@@ -161,6 +165,7 @@ export default class ChatScreen extends React.Component {
               handleChatWithFriend={this.handleChatWithFriend} 
               userId={this.state.userId}
               url={this.state.url}
+              fetchChatrooms={this.fetchChatrooms}
             />
           </ScrollView>
         );

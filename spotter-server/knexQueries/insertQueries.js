@@ -12,10 +12,10 @@ module.exports = function insertQueries(knex) {
 
     addChatroom: async function (userId, friendId) {
       try{
-        let chatroomId = await knex('chatroom').insert({}).returning('id')[0]
-        await knex('user_chatroom').insert({chatroom_id: chatroomId, user_id: userId})
-        await knex('user_chatroom').insert({chatroom_id: chatroomId, user_id: friendId})
-        return chatroomId
+        let chatroomId = await knex('chatroom').insert({}).returning('id')
+        await knex('user_chatroom').insert({chatroom_id: chatroomId[0], user_id: userId})
+        await knex('user_chatroom').insert({chatroom_id: chatroomId[0], user_id: friendId})
+        return chatroomId[0]
       }
       catch(e) {
         console.log('error inserting chatroom into database', e)
