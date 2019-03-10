@@ -10,7 +10,8 @@ import {
 } from 'react-native';
 
 
-import UserCard from '../components/UserCard'
+import UserCard from '../components/UserCard';
+import FriendScreenNav from '../components/FriendScreenNav';
 
 function ShowFriends({friends, handler}) {
   const friendsList = friends.map(friend => {
@@ -20,6 +21,7 @@ function ShowFriends({friends, handler}) {
   return(
     <View>
       <Text style={styles.name}>Friends</Text>
+      <FriendScreenNav />
       {friendsList}
     </View>
   )

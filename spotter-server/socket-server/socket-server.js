@@ -42,7 +42,7 @@ io.on('connection', function (socket) {
   const userQueueOperator = new QueueOperator();
 
   socket.on('message', function (data) {
-    socket.emit(data.chatroomId, {
+    socket.broadcast.emit(data.chatroomId, {
       messageSend: true
     })
   });

@@ -18,6 +18,8 @@ import { MonoText } from '../components/StyledText';
 
 import OtherProfileScreen from './OtherProfileScreen.js';
 
+import FriendRequests from '../components/FriendRequests.js';
+
 import { getCurrentMusic } from '../components/GetCurrentMusic';
 
 import { sendMusicSocketServer } from '../components/SendCurrentMusicToSocketS';
@@ -144,7 +146,6 @@ export default class FriendScreen extends React.Component {
               friends={this.state.friends}
               handler={this.handler}
             />
-            <Text>Friends</Text>
           </ScrollView>
         );
       case 'OtherProfileScreen':
@@ -157,6 +158,10 @@ export default class FriendScreen extends React.Component {
             console.log(111111)
           }} />
         );
+      case 'friendRequests':
+      return (
+        <FriendRequests />
+      )
     }
   }
 }

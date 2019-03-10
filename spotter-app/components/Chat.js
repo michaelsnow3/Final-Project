@@ -176,7 +176,7 @@ class Chat extends React.Component {
             <Text style={styles.backButtonText}>{'<'}</Text>
           </TouchableOpacity>
 
-          <Text adjustsFontSizeToFit style={styles.text}>{inChatWith.name}</Text>
+          <Text style={styles.text}>{inChatWith.name}</Text>
         </View>
 
         <ScrollView
