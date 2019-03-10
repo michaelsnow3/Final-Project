@@ -50,22 +50,10 @@ export default class ChatScreen extends React.Component {
     this.setState({url: nodeServerUrl});
     const socketServerUrl = await AsyncStorage.getItem('socketServerUrl');
     this.setState({socketServerUrl: socketServerUrl});
-    
-    await fetch(`${this.state.url}/show-friends/`, {
-      method: 'POST',
-      headers: {
-        'Accept': 'application/json',
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        id : this.state.userId
-      })
-    }).then(data => {
-      let friends = JSON.parse(data._bodyInit)
-      this.setState({ friends })
+    const username = await AsyncStorage.getItem('userIdFromSpotify')
+    this.setState({username}, () => {
+      this.getUserId()
     })
-    let id = await this.getUserId()
-    this.fetchChatrooms()
   }
 
   fetchChatrooms = () => {
@@ -79,6 +67,22 @@ export default class ChatScreen extends React.Component {
       let chatrooms = JSON.parse(data._bodyInit).chatrooms;
       this.setState({ chatrooms });
     });
+  }
+  
+  fetchFriends = () => {
+    fetch(`${this.state.url}/show-friends/`, {
+      method: 'POST',
+      headers: {
+        'Accept': 'application/json',
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        id : this.state.userId
+      })
+    }).then(data => {
+      let friends = JSON.parse(data._bodyInit)
+      this.setState({ friends })
+    })
   }
 
   sendOnPress = (sendMessageToSocketServer, fetchMessages) => {
@@ -102,15 +106,18 @@ export default class ChatScreen extends React.Component {
   };
 
   getUserId = () => {
-    console.log(this.state.username)
-    fetch(`${serverUrl}/nearby/get_id/${this.state.username}`, {
+    fetch(`${this.state.url}/nearby/get_id/${this.state.username}`, {
       method: "GET",
       headers: {
         Accept: "application/json",
         "Content-Type": "application/json"
       }
     }).then((data) => {
-      console.log(data)
+      let userId = JSON.parse(data._bodyInit).id
+      this.setState({userId}, () => {
+        this.fetchFriends()
+        this.fetchChatrooms()
+      })
     });
   }
 
