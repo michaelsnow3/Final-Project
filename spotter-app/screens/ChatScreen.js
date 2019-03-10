@@ -33,26 +33,9 @@ export default class ChatScreen extends React.Component {
       userId: 6,
       selectedTrack: null,
       userToken: null,
-      socketServerUrl: null
+      socketServerUrl: null,
+      username: null
     };
-  }
-
-  // save current user's chatrooms to state when page renders
-  componentDidMount() {
-    this.fetchChatrooms()
-    fetch(`${this.state.url}/show-friends/`, {
-      method: 'POST',
-      headers: {
-        'Accept': 'application/json',
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        id : this.state.userId
-      })
-    }).then(data => {
-      let friends = JSON.parse(data._bodyInit)
-      this.setState({ friends })
-    })
   }
 
   componentWillMount() {
@@ -67,17 +50,22 @@ export default class ChatScreen extends React.Component {
     this.setState({url: nodeServerUrl});
     const socketServerUrl = await AsyncStorage.getItem('socketServerUrl');
     this.setState({socketServerUrl: socketServerUrl});
-
-    fetch(`${nodeServerUrl}/profile/user_info/${userToken}`, {
-       method: 'GET',
-       headers: {
-           'Content-Type': 'application/json'
-       }
-     })
-    .then((response) => response.json())
-    .then((jsonData) => {
-      this.setState({userId: jsonData.name});
-    });
+    
+    await fetch(`${this.state.url}/show-friends/`, {
+      method: 'POST',
+      headers: {
+        'Accept': 'application/json',
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        id : this.state.userId
+      })
+    }).then(data => {
+      let friends = JSON.parse(data._bodyInit)
+      this.setState({ friends })
+    })
+    let id = await this.getUserId()
+    this.fetchChatrooms()
   }
 
   fetchChatrooms = () => {
@@ -112,6 +100,19 @@ export default class ChatScreen extends React.Component {
       sendMessageToSocketServer();
     });
   };
+
+  getUserId = () => {
+    console.log(this.state.username)
+    fetch(`${serverUrl}/nearby/get_id/${this.state.username}`, {
+      method: "GET",
+      headers: {
+        Accept: "application/json",
+        "Content-Type": "application/json"
+      }
+    }).then((data) => {
+      console.log(data)
+    });
+  }
 
   onChangeText = text => {
     this.setState({ text });
