@@ -78,6 +78,17 @@ module.exports = function returnQueries(knex) {
       catch(e) {
         console.log('error selecting users chatrooms', e)
       }
+    },
+
+    selectFriendRequests: async function(userId) {
+      try {
+        let friends = await knex('friend').where({user_id: userId})
+        console.log(friends)
+      }
+      catch(e) {
+        console.log('error selecting users friend requests')
+      }
     }
+
   };
 };

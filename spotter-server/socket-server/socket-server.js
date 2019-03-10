@@ -42,6 +42,7 @@ io.on('connection', function (socket) {
   const userQueueOperator = new QueueOperator();
 
   socket.on('message', function (data) {
+    console.log('in message', data.chatroomId)
     socket.broadcast.emit(data.chatroomId, {
       messageSend: true
     })

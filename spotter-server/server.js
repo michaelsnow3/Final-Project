@@ -75,7 +75,7 @@ app.use("/add_friend", addFriendRoutes);
 
 // show profile endpoint
 const showProfileRoutes = require("./server-endpoints/show-profile-routes")
-app.use('/show_profile', showProfileRoutes(knex, request));
+app.use('/show_profile', showProfileRoutes(knex, request, selectQueries));
 
 // Find people nearby endpoint
 const nearbyRoutes = require("./server-endpoints/nearby-routes")

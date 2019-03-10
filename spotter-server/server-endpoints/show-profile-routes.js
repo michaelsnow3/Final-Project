@@ -1,7 +1,7 @@
 const express = require("express");
 const showProfile = express.Router();
 
-module.exports = (knex, request) => {
+module.exports = (knex, request, selectQueries) => {
 
   // getUserInfo
   showProfile.post("/info", (req, res) => {
@@ -100,6 +100,11 @@ module.exports = (knex, request) => {
     request.get(options, function(error, response, body) {
       console.log(body);
     });
+  })
+  
+  showProfile.get("/friend-requests/:userId", (req, res) => {
+    let userId = req.params.userId
+    selectQueries.selectFriendRequests(userId)
   })
 
   return showProfile;

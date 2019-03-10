@@ -21,8 +21,8 @@ function ShowFriends({friends, handler}) {
   return(
     <View>
       <Text style={styles.name}>Friends</Text>
-      <FriendScreenNav />
-      {friendsList}
+      <FriendScreenNav handler={handler} />
+      <ScrollView style={styles.friendList}>{friendsList}</ScrollView>
     </View>
   )
 }
@@ -30,6 +30,9 @@ const styles = StyleSheet.create({
   name: {
     fontSize: 50,
     textAlign: 'center'
+  },
+  friendList: {
+    height: '65%'
   }
 });
 export default ShowFriends

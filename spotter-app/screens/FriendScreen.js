@@ -141,26 +141,30 @@ export default class FriendScreen extends React.Component {
     switch (this.state.page) {
       case 'ShowFriends':
         return (
-          <ScrollView style={styles.container}>
+          <View style={styles.container}>
             <ShowFriends
               friends={this.state.friends}
               handler={this.handler}
             />
-          </ScrollView>
+          </View>
         );
       case 'OtherProfileScreen':
         return (
           <OtherProfileScreen
-          handler={this.handler}
-          id={this.state.friend_id}
-          navigation={this.props.navigation}
-          handleChatWithFriend={() => {
-            console.log(111111)
-          }} />
+            handler={this.handler}
+            id={this.state.friend_id}
+            navigation={this.props.navigation}
+          />
         );
-      case 'friendRequests':
+      case 'FriendRequests':
       return (
-        <FriendRequests />
+        <View style={styles.container}>
+          <FriendRequests
+            handler={this.handler}
+            url={this.state.nodeServerUrl}
+            userId={this.state.userId}
+          />
+        </View>
       )
     }
   }

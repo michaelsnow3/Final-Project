@@ -88,15 +88,15 @@ class Chat extends React.Component {
   }
 
   initSocket = () => {
-    this.socket = io.connect(`${this.props.socketServerUrl}:3005`)
+    this.socket = io.connect(`http://172.46.0.236:3005`)
 
     console.log('in insocket')
 
     this.socket.on('connect', () => {
       console.log('connected')
-      this.socket.on(this.props.inChatWith.chatroomId, (data) => {
-        this.props.clearTextInput()
-        this.getSuggestedTracks()
+      this.socket.on(this.props.inChatWith.chatroomId.toString(), (data) => {
+        this.fetchMessages()
+        // this.forceUpdate()
       })
     })
   }
@@ -105,6 +105,7 @@ class Chat extends React.Component {
     this.socket.emit('message', {
       chatroomId: this.props.inChatWith.chatroomId
     })
+
   }
 
   suggestMusicButtonHandler = () => {

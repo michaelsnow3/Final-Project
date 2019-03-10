@@ -8,15 +8,21 @@ import {
   View,
 } from 'react-native';
 
-function FriendScreenNav({}) {
+function FriendScreenNav({ handler }) {
+  handleShowFriendsPress = () => {
+    handler(null, 'ShowFriends')
+  }
+  handleShowFriendRequestsPress = () => {
+    handler(null, 'FriendRequests')
+  }
   return(
     <View style={styles.container}>
 
-    <TouchableOpacity style={styles.showFriends}>
+    <TouchableOpacity onPress={handleShowFriendsPress} style={styles.showFriends}>
       <Text style={styles.text}>Show Friends</Text>
     </TouchableOpacity>
 
-    <TouchableOpacity style={styles.showFriendRequests}>
+    <TouchableOpacity onPress={handleShowFriendRequestsPress} style={styles.showFriendRequests}>
       <Text style={styles.text}>Show Friend Requests</Text>
     </TouchableOpacity>
 
@@ -28,7 +34,7 @@ const styles = {
   container: {
     flex: 1,
     flexDirection: 'row',
-    height: 30,
+    height: 40,
     marginBottom: 10,
   },
   showFriends: {
