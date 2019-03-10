@@ -10,7 +10,7 @@ module.exports = function(knex) {
     knex('users').where('name', req.params.user_id_from_spotify)
     .then(function(rows) {
       console.log(rows);
-      if (rows.length === 0) {
+      if (rows.length !== 0) {
         console.log("Id:", rows[0].id);
         res.status(200).send({id: rows[0].id});
       } else {
