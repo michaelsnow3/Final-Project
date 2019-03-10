@@ -23,8 +23,6 @@ module.exports = function(knex) {
       res.status(500).send({error: error});
       throw error;
     });
-
-    res.status(500).send({error: "Can't Get Id"});
   });
 
   return nearbyRoutes;
