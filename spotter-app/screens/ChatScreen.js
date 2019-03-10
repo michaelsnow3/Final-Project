@@ -34,7 +34,8 @@ export default class ChatScreen extends React.Component {
       selectedTrack: null,
       userToken: null,
       socketServerUrl: null,
-      username: null
+      username: null,
+      playlists: []
     };
   }
 
@@ -148,6 +149,18 @@ export default class ChatScreen extends React.Component {
       })
     }
   };
+
+  getPlaylists = () => {
+    fetch(`${this.state.url}/show_profile/${this.state.userToken}`, {
+      method: "GET",
+      headers: {
+        Accept: "application/json",
+        "Content-Type": "application/json"
+      }
+    }).then((data) => {
+      console.log(data._bodyInit)
+    })
+  }
 
   render() {
     switch (this.state.page) {

@@ -1,7 +1,7 @@
 const express = require("express");
 const showProfile = express.Router();
 
-module.exports = (knex) => {
+module.exports = (knex, request) => {
 
   // getUserInfo
   showProfile.post("/info", (req, res) => {
@@ -88,6 +88,19 @@ module.exports = (knex) => {
       });
   });
 
+  showProfile.get("/playlists/:token", (req, res) => {
+    let token = req.params.token;
+    var options = {
+      url: "https://api.spotify.com/v1/me",
+      headers: { Authorization: "Bearer " + token },
+      json: true
+    };
+
+    // use the access token to access the Spotify Web API
+    request.get(options, function(error, response, body) {
+      console.log(body);
+    });
+  })
 
   return showProfile;
 }

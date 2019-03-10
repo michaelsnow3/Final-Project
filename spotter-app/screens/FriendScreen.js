@@ -35,7 +35,8 @@ export default class FriendScreen extends React.Component {
       friend_id : null,
       userId: null,
       nodeServerUrl: null,
-      userToken: null
+      userToken: null,
+      username: null,
     }
 
     // Create Socket Server Connection here
@@ -50,11 +51,47 @@ export default class FriendScreen extends React.Component {
     ]);
   }
 
+  getUserId = () => {
+    fetch(`${this.state.nodeServerUrl}/nearby/get_id/${this.state.username}`, {
+      method: "GET",
+      headers: {
+        Accept: "application/json",
+        "Content-Type": "application/json"
+      }
+    }).then((data) => {
+      let userId = JSON.parse(data._bodyInit).id
+      this.setState({userId}, () => {
+        this.fetchFriends()
+      })
+    });
+  }
+
+  fetchFriends = () => {
+    fetch(`${this.state.nodeServerUrl}/show-friends/`, {
+      method: 'POST',
+      headers: {
+        'Accept': 'application/json',
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        id : this.state.userId
+      })
+    }).then(data => {
+      let friends = JSON.parse(data._bodyInit)
+      this.setState({ friends })
+    })
+  }
+
   initSocket = async () => {
 
     const userToken       = await AsyncStorage.getItem('userToken');
     const nodeServerUrl   = await AsyncStorage.getItem('nodeServerUrl');
+    await this.setState({nodeServerUrl})
     const socketServerUrl = await AsyncStorage.getItem('socketServerUrl');
+    const username        = await AsyncStorage.getItem('userIdFromSpotify');
+
+    await this.setState({username})
+    this.getUserId()
 
     this.socket = io.connect(`${socketServerUrl}:3005`);
     this.socket.on('connect', () => {
@@ -79,53 +116,11 @@ export default class FriendScreen extends React.Component {
     })
   }
 
-  _getUserInfo = async () => {
-    const nodeServerUrl = await AsyncStorage.getItem('nodeServerUrl');
-    this.setState({url: nodeServerUrl});
-    const userToken = await AsyncStorage.getItem('userToken');
-    this.setState({userToken: userToken});
-    fetch(`${nodeServerUrl}/profile/user_info/${userToken}`, {
-       method: 'GET',
-       headers: {
-           'Content-Type': 'application/json'
-       }
-     })
-    .then((response) => response.json())
-    .then((jsonData) => {
-      this.setState({userId: jsonData.name});
-    });
-  }
-  
-  componentDidMount() {
-    try {
-      this._getUserInfo().then( data => {
-        console.log(this.state.userId)
-        fetch(`${this.state.nodeServerUrl}/show-friends/`, {
-          method: 'POST',
-          headers: {
-            'Accept': 'application/json',
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({
-            id : this.state.userId
-          })
-        }).then(data => {
-          console.log('data: ', data)
-          let friends = JSON.parse(data._bodyInit)
-          this.setState({ friends })
-        });
-      })
-      } catch(error) {
-        console.log('Problem with componentDidMount:' + error.message);
-        throw error;
-      }
-    } 
-
   _insertUserIfNotExist = (userToken, nodeServerUrl) => {
     fetch(`${nodeServerUrl}/profile/insert_user_if_not_exist`, {
       method: 'POST',
       headers: {
-          'Content-Type': 'application/json'
+        'Content-Type': 'application/json'
       },
       body: JSON.stringify({
         user_token: userToken
