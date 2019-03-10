@@ -16,12 +16,12 @@ class userQueueOperator {
     return usersQueue;
   };
 
-  pairPeopleFromQueue(usersQueue, myEmail, socket) {
+  pairPeopleFromQueue(usersQueue, myName, socket) {
 
     console.log("usersQueue:");
     console.log(usersQueue);
 
-    let myData = usersQueue[myEmail];
+    let myData = usersQueue[myName];
 
     console.log("myData:");
     console.log(myData);
@@ -37,7 +37,7 @@ class userQueueOperator {
     let mySong   = myData.currentMusicData.song;
 
     for (let user in usersQueue) {
-      if (myEmail !== user) {
+      if (myName !== user) {
 
         console.log("user:", user);
 
@@ -50,27 +50,31 @@ class userQueueOperator {
           let yourAlbum  = usersQueue[user].currentMusicData.album;
           let yourArtist = usersQueue[user].currentMusicData.artist;
           let yourSong   = usersQueue[user].currentMusicData.song;
+          let cover      = usersQueue[user].currentMusicData.cover;
 
           if (mySong === yourSong) {
             console.log("You are listening the same song");
             return {
               matchPerson: user,
               matchType: "Song",
-              matchContent: mySong
+              matchContent: mySong,
+              matchCover: cover
             };
           } else if (myAlbum === yourAlbum) {
             console.log("You are listening the same album");
             return {
               matchPerson: user,
               matchType: "Album",
-              matchContent: myAlbum
+              matchContent: myAlbum,
+              matchCover: cover
             };
           } else if (myArtist === yourArtist) {
             console.log("You are listening the same artist");
             return {
               matchPerson: user,
               matchType: "Artist",
-              matchContent: myArtist
+              matchContent: myArtist,
+              matchCover: cover
             };
           } else {
             console.log("You just close. No similar music taste.");

@@ -5,6 +5,7 @@ import {
   Image,
   StyleSheet,
   Text,
+  AsyncStorage,
 } from 'react-native';
 
 //////////// have a list of all route paths
@@ -29,7 +30,7 @@ export default class OtherProfileScreen extends React.Component {
     header: null,
   };
 
-  
+
   // get primary user id from async storage????????????????????
   // getPrimaryId = async () => {
   //   try {
@@ -38,66 +39,86 @@ export default class OtherProfileScreen extends React.Component {
   //       console.log(`Primary user id : ${value_id}`);
   //       return value_id;
   //     }
-  //   } catch (error) { 
+  //   } catch (error) {
   //     console.log(error);
   //     }
   // };
 
-  setUserId = (id, cb) =>  { 
+  setUserId = (id, cb) =>  {
     this.setState({
       user_id: id
     }, cb)
   }
 
   getUser = async () => {
-    fetch(`http://172.46.0.173:8888/show_profile/info`, {
-      method: 'POST',
-      headers: {
-        'Accept': 'application/json',
-        'Content-Type': 'application/json',
-      },  
-      body: JSON.stringify({
-        id : this.state.user_id 
-      })  
+    fetch(`${nodeServerUrl}/profile/user_info/${userIdFromSpotify}`, {
+     method: 'GET',
+     headers: {
+         'Content-Type': 'application/json'
+     }
     })
-    .then(data => data.json()) 
-    .then(json => { 
-      this.setState({  
-        name : json.name,
-        avatar : json.avatar   
-      }) 
+    .then((response) => response.json())
+    .then((jsonData) => {
+      this._setUserInfo(jsonData);
+      this._setUserFav(jsonData);
     })
-    .catch((err) => {
-      console.log(err);
-    });    
-  } 
-  
-  getFav = async () => {
-    fetch(`http://172.46.0.173:8888/show_profile/fav`, {
-      method: 'POST',
-      headers: {
-        'Accept': 'application/json',
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        id : this.state.user_id
-      })
-    })
-    .then((data) => data.json())
-    .then(json => {
-      const songNames = [];
-      json.forEach(entry => {
-        songNames.push(entry.name)
-      }) 
-      top3 = songNames.join("\r\n");
-      this.setState({
-        top3: top3
-      })
-    })
-    .catch((err) => {
-      console.log(err);
+    .catch((error) => {
+      console.error(error);
+      throw error;
     });
-  }  
+  };
+
+  _setUserInfo = (jsonData) => {
+    if (jsonData.userName) {
+      this.setState({userName: jsonData.userName});
+    }
+
+    if (jsonData.avatar) {
+      this.setState({avatar: jsonData.avatar});
+    }
+  };
+
+  _setUserFav = (jsonData) => {
+    if (jsonData.favoriteGenres) {
+        this.setState({favoriteGenres: jsonData.favoriteGenres});
+    }
+
+    if (jsonData.favoriteArtists) {
+      this.setState({favoriteArtists: jsonData.favoriteArtists});
+    }
+
+    if (jsonData.favoriteSongs) {
+      this.setState({favoriteSongs: jsonData.favoriteSongs});
+    }
+  }
+
+  // get favorite information from db instead of from spotify now
+  // getFav = async () => {
+  //   fetch(`http://172.46.0.173:8888/show_profile/fav`, {
+  //     method: 'POST',
+  //     headers: {
+  //       'Accept': 'application/json',
+  //       'Content-Type': 'application/json',
+  //     },
+  //     body: JSON.stringify({
+  //       id : this.state.user_id
+  //     })
+  //   })
+  //   .then((data) => data.json())
+  //   .then(json => {
+  //     const songNames = [];
+  //     json.forEach(entry => {
+  //       songNames.push(entry.name)
+  //     })
+  //     top3 = songNames.join("\r\n");
+  //     this.setState({
+  //       top3: top3
+  //     })
+  //   })
+  //   .catch((err) => {
+  //     console.log(err);
+  //   });
+  // }
 
   checkFriend = () => {
     fetch(`http://172.46.0.173:8888/show_profile/friend_status`, {
@@ -105,69 +126,76 @@ export default class OtherProfileScreen extends React.Component {
     headers: {
       'Accept': 'application/json',
       'Content-Type': 'application/json',
-    }, 
+    },
     body: JSON.stringify({
-      user_id : this.state.primary_id, 
+      user_id : this.state.primary_id,
       friend_id : this.state.user_id
-    }),  
-    })   
-    .then((response) => { 
+    }),
+    })
+    .then((response) => {
       (response._bodyText === 'true') ? this.setState({friend : true}) : this.setState({friend : false});
-    })  
+    })
     .catch((err) => {
-      console.log(err);  
-    });   
-  }  
- 
+      console.log(err);
+    });
+  }
+
   addFriend = () => {
     fetch(`http://172.46.0.173:8888/show_profile/add_friend`, {
       method: 'POST',
       headers: {
-        'Accept': 'application/json',  
-        'Content-Type': 'application/json', 
+        'Accept': 'application/json',
+        'Content-Type': 'application/json',
       },
       body: JSON.stringify({
         user_id : this.state.primary_id,
         friend_id : this.state.user_id
       }),
-      })  
+      })
       .then(() => {
         this.setState({friend : true})
       })
       .catch((err) => {
-        console.log(err); 
+        console.log(err);
       });
-  } 
-  
-  // Doesnt work
-  message = () => { 
-    this.props.navigation.navigate(`Chat`);  
   }
-  
-  componentDidMount() {    
-    // this.setPrimaryUserId()
-    /////////// Set User should acquire ID from props or async storage
+
+  // Doesnt work
+  message = () => {
+    this.props.navigation.navigate(`Chat`);
+  }
+
+  componentDidMount() {
     this.setUserId(this.state.user_id, function() {
       this.getUser();
-      this.getFav();
+      //this.getFav();
       this.checkFriend();
     })
-  } 
-  render() { 
+
+    this._init();
+  }
+
+  _init = async () => {
+    const userIdFromSpotify = await AsyncStorage.getItem('userIdFromSpotify');
+    const socketServerUrl   = await AsyncStorage.getItem('socketServerUrl');
+    const nodeServerUrl     = await AsyncStorage.getItem('nodeServerUrl');
+  };
+
+  render() {
     const addOrMsg = (this.state.friend) ?
     (<Button title="Message" onPress={this.message} style={styles.container}/>) :
-    (<Button title="Add Friend" onPress={this.addFriend} style={styles.container}/>); 
+    (<Button title="Add Friend" onPress={this.addFriend} style={styles.container}/>);
 
-    const avatar = (this.state.avatar === null ) ? 
-    <Text> No Image </Text> : 
+    const avatar = (this.state.avatar === null ) ?
+    <Text> No Image </Text> :
     <Image style={{width: 180, height: 180}} source={{uri: this.state.avatar}} />
 
-    return ( 
-      <View> 
-        {avatar} 
+    return (
+      <View>
+        {avatar}
         <Text>
           {this.state.name}
-        </Text> 
+        </Text>
         <Text>
           Top 3 Favourite Songs:
         </Text>

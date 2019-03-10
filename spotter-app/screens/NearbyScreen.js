@@ -10,13 +10,14 @@ import {
   AsyncStorage,
   Alert,
   Button,
+  TouchableHighlight,
 } from 'react-native';
 
 import { Icon } from 'expo';
 import io from 'socket.io-client';
 import UserCard from '../components/UserCard';
-import { getUserDbId } from '../components/GetUserDbId';
 import FlipComponent from 'react-native-flip-component';
+import OtherProfileScreen from './OtherProfileScreen.js';
 
 export default class NearbyScreen extends React.Component {
 
@@ -26,11 +27,18 @@ export default class NearbyScreen extends React.Component {
       searching: true,
       searchingDot: "",
       email: null,
+      userIdFromSpotify: null,
 
       timer: 0,
       isFlipped: false,
       matchedPersonDbId: null,
-      matchPerson: null
+      matchPerson: null,
+      matchType: null,
+      matchContent: null,
+      matchCover: null,
+
+      myIdInDb: null,
+      pictureFromSpotify: null
     }
   }
 
@@ -40,28 +48,27 @@ export default class NearbyScreen extends React.Component {
 
     this.props.navigation.addListener('willFocus', this._sendFindRequest);
     this.props.navigation.addListener('willFocus', this._trunOnSearching);
+
+    this._getMyId();
   }
 
   initSocket = async () => {
 
-    const socketServerUrl = await AsyncStorage.getItem('socketServerUrl');
-    const nodeServerUrl   = await AsyncStorage.getItem('nodeServerUrl');
-    const email           = await AsyncStorage.getItem('email');
+    const userIdFromSpotify = await AsyncStorage.getItem('userIdFromSpotify');
+    const socketServerUrl   = await AsyncStorage.getItem('socketServerUrl');
+    const nodeServerUrl     = await AsyncStorage.getItem('nodeServerUrl');
+    const email             = await AsyncStorage.getItem('email');
 
     this.setState({nodeServerUrl: nodeServerUrl});
 
     const that = this;
 
-    this.setState({email: email}, () => {
+    this.setState({userIdFromSpotify: userIdFromSpotify}, () => {
       try {
         this.socket = io.connect(`${socketServerUrl}:3005`);
         this.socket.on('connect', () => {
           console.log('connected at Nearby');
-          this._sendFindRequest(email);
-
-          // confusing... why the "this" in _matchPeople function is different
-          // from "this" here
-          //this._matchPeople(this);
+          this._sendFindRequest(userIdFromSpotify);
         });
 
         this.socket.on('findMatchPeople', function(match) {
@@ -69,6 +76,14 @@ export default class NearbyScreen extends React.Component {
           console.log(match);
           if (match) {
             that.setState({matchPerson: match.matchPerson});
+            that.setState({matchContent: match.matchContent});
+            if (match.matchType === "Song") {
+              that.setState({matchType: "track"});
+            } else {
+              that.setState({matchType: match.matchType});
+            }
+            that.setState({matchCover: match.matchCover});
+
             let delaySec = (that.state.timer > 3) ? 1000 : 3000;
             setTimeout(that._matchingPeople, delaySec);
           }
@@ -84,7 +99,24 @@ export default class NearbyScreen extends React.Component {
     header: null,
   };
 
-  _matchingPeople = () => {
+  _getMyId = async () => {
+
+    const userIdFromSpotify = await AsyncStorage.getItem('userIdFromSpotify');
+
+    await fetch(`${this.state.nodeServerUrl}/nearby/get_id/${userIdFromSpotify}`)
+    .then((response) => response.json())
+    .then((jsonData) => {
+      if (jsonData.id !== undefined) {
+        this.setState({myIdInDby: jsonData.id});
+      }
+    })
+    .catch(function(error) {
+      console.log('Problem with your getMyDbId: ' + error.message);
+      throw error;
+    });
+  };
+
+  _matchingPeople = async () => {
 
     console.log("_matchingPeople");
 
@@ -92,7 +124,7 @@ export default class NearbyScreen extends React.Component {
     clearInterval(this.timerSearchingText);
     clearInterval(this.timerCountDown);
 
-    getUserDbId(this.state.matchPerson, this.state.nodeServerUrl)
+    await fetch(`${this.state.nodeServerUrl}/nearby/get_id/${this.state.matchPerson}`)
     .then((response) => response.json())
     .then((jsonData) => {
       console.log("jsonData:");
@@ -108,9 +140,9 @@ export default class NearbyScreen extends React.Component {
   };
 
   _sendFindRequest = () => {
-    if (this.socket && this.socket.connected && this.state.email) {
+    if (this.socket && this.socket.connected && this.state.userIdFromSpotify) {
       this.socket.emit("findPeople", {
-        myEmail: this.state.email
+        myName: this.state.userIdFromSpotify
       });
     }
   };
@@ -163,6 +195,13 @@ export default class NearbyScreen extends React.Component {
     that._sendFindRequest(that.state.email);
   };
 
+  handler = (friend_id, page) => {
+    this.setState({
+      page : "OtherProfileScreen",
+      friend_id : this.state.matchedPersonDbId
+    });
+  };
+
   render() {
 
     const searchingOrFind = this._showSearchingOrFind();
@@ -199,7 +238,22 @@ export default class NearbyScreen extends React.Component {
             frontView={
               <View>
                 <Text style={{ textAlign: 'center' }}>
-                  Front Side
+                  You match with :
+                </Text>
+                <Text style={{textAlign: 'center',fontSize:20, fontWeight:'bold',fontStyle:'italic',color:'#008000'}}>
+                  {this.state.matchPerson}{'\n'}
+                </Text>
+                <TouchableHighlight style={{justifyContent: 'center',alignItems: 'center',}} onPress={() => {
+                    this.setState({ isFlipped: !this.state.isFlipped })
+                  }}>
+                  <Image style={{width: 180, height: 180}} source={{uri: this.state.matchCover}} />
+                </TouchableHighlight>
+
+                <Text style={{textAlign: 'center'}}>
+                  By {this.state.matchType} :
+                </Text>
+                <Text style={{textAlign: 'center',fontSize:20, fontWeight:'bold',fontStyle:'italic',color:'#CD853F'}}>
+                  {this.state.matchContent}
                 </Text>
               </View>
             }
@@ -208,16 +262,18 @@ export default class NearbyScreen extends React.Component {
                 <Text style={{ textAlign: 'center' }}>
                   Back Side
                 </Text>
+                <OtherProfileScreen
+                  handler={this.handler}
+                  id={this.state.myIdInDb}
+                  navigation={this.props.navigation}
+                  handleChatWithFriend={() => {
+                    console.log(111111)
+                  }}
+                />
               </View>
             }
-          />
-          <Button
-            onPress={() => {
-              this.setState({ isFlipped: !this.state.isFlipped })
-            }}
-            title="Flip"
-          />
-      </View>
+            />
+        </View>
       );
     }
   };

@@ -56,7 +56,7 @@ module.exports = function(stateKey, querystring, redirect_uri, request) {
               avatar: avatar,
               email: body.email
             };
-            console.log(userInfo);
+            //console.log(userInfo);
           });
 
           // get users top tracks
@@ -76,7 +76,7 @@ module.exports = function(stateKey, querystring, redirect_uri, request) {
               };
             });
 
-            console.log(topTracks);
+            //console.log(topTracks);
           });
 
           // get users top artists
@@ -94,7 +94,7 @@ module.exports = function(stateKey, querystring, redirect_uri, request) {
               };
             });
 
-            console.log(topArtists);
+            //console.log(topArtists);
           });
 
           // we can also pass the token to the browser to make requests from there
