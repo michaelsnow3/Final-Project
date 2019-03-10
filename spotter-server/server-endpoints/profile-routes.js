@@ -253,6 +253,7 @@ module.exports = function(request) {
   });
 
   profileEditRoutes.post("/friends", function(req, res) {
+    console.log('yay')
     const userId = req.body.userId;
     selectQueries
       .selectFriends(userId)

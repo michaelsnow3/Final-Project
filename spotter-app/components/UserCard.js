@@ -14,7 +14,7 @@ function UserCard({name, id, handler, handleChatWithFriend, friend, userId, url,
     handler (id, 'OtherProfileScreen')
   }
   async function startNewChat() {
-    await fetch(`${url}:8888/chat/chatroom/create`, {
+    await fetch(`${url}/chat/chatroom/create`, {
       method: "POST",
       headers: {
         Accept: "application/json",
@@ -26,7 +26,6 @@ function UserCard({name, id, handler, handleChatWithFriend, friend, userId, url,
       })
     }).then(data => {
       let chatroomId = JSON.parse(data._bodyInit).chatroomId
-      console.log(chatroomId, friend.name)
       handleChatWithFriend({
         name: friend.name,
         chatroomId: chatroomId
@@ -39,7 +38,6 @@ function UserCard({name, id, handler, handleChatWithFriend, friend, userId, url,
       startNewChat()
     }
   }
-  console.log(handleChatWithFriend)
   return (
     <TouchableOpacity style={styles.container} onPress={handler2}>
       <Text style={styles.name}>{name}</Text>
@@ -53,9 +51,9 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     borderWidth: 0.5,
     borderColor: 'black',
-    backgroundColor: '#bfffea',
     marginTop: 5,
-    marginBottom: 5
+    marginBottom: 5,
+    justifyContent: 'center'
   },
   name: {
     fontSize: 30,

@@ -10,7 +10,7 @@ import {
   Image,
   Platform,
   ScrollView,
-  AsyncStorage
+  AsyncStorage,
 } from "react-native";
 
 import { MonoText } from "../components/StyledText";
@@ -28,17 +28,19 @@ export default class ChatScreen extends React.Component {
       chatrooms: [],
       page: "showChatrooms",
       suggestedSong: {},
-      url: "http://192.168.0.38",
+      url: "https://4421722a.ngrok.io",
       inChatWith: null,
       userId: 6,
-      selectedTrack: null
+      selectedTrack: null,
+      userToken: null,
+      socketServerUrl: null
     };
   }
 
   // save current user's chatrooms to state when page renders
   componentDidMount() {
     this.fetchChatrooms()
-    fetch(`${this.state.url}:8888/show-friends/`, {
+    fetch(`${this.state.url}/show-friends/`, {
       method: 'POST',
       headers: {
         'Accept': 'application/json',
@@ -53,8 +55,33 @@ export default class ChatScreen extends React.Component {
     })
   }
 
+  componentWillMount() {
+    this._getUserInfo()
+  }
+
+  _getUserInfo = async () => {
+
+    const userToken = await AsyncStorage.getItem('userToken');
+    this.setState({userToken: userToken});
+    const nodeServerUrl = await AsyncStorage.getItem('nodeServerUrl');
+    this.setState({url: nodeServerUrl});
+    const socketServerUrl = await AsyncStorage.getItem('socketServerUrl');
+    this.setState({socketServerUrl: socketServerUrl});
+
+    fetch(`${nodeServerUrl}/profile/user_info/${userToken}`, {
+       method: 'GET',
+       headers: {
+           'Content-Type': 'application/json'
+       }
+     })
+    .then((response) => response.json())
+    .then((jsonData) => {
+      this.setState({userId: jsonData.name});
+    });
+  }
+
   fetchChatrooms = () => {
-    fetch(`${this.state.url}:8888/chat/chatrooms/${this.state.userId}`, {
+    fetch(`${this.state.url}/chat/chatrooms/${this.state.userId}`, {
       method: "GET",
       headers: {
         Accept: "application/json",
@@ -67,9 +94,8 @@ export default class ChatScreen extends React.Component {
   }
 
   sendOnPress = (sendMessageToSocketServer, fetchMessages) => {
-    console.log('send button pressed')
     if (this.state.text === "") return;
-    fetch(`${this.state.url}:8888/chat/message/create`, {
+    fetch(`${this.state.url}/chat/message/create`, {
       method: "POST",
       headers: {
         Accept: "application/json",
@@ -131,6 +157,7 @@ export default class ChatScreen extends React.Component {
             page={this.state.page}
             userId={this.state.userId}
             handleTrackPress={this.handleTrackPress}
+            socketServerUrl={this.state.socketServerUrl}
           />
         );
       case 'showSuggestions':
@@ -147,7 +174,8 @@ export default class ChatScreen extends React.Component {
             page={this.state.page}
             userId={this.state.userId}
             handleTrackPress={this.handleTrackPress}
-            selectedTrack={this.state.selectedTrack}     
+            selectedTrack={this.state.selectedTrack}    
+            socketServerUrl={this.state.socketServerUrl} 
           />
         );
       case "showChatrooms":

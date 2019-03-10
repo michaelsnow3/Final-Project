@@ -30,8 +30,10 @@ export default class FriendScreen extends React.Component {
     this.state = {
       friends: [],
       page: 'ShowFriends',
-      friend_id : null
-
+      friend_id : null,
+      userId: null,
+      nodeServerUrl: null,
+      userToken: null
     }
 
     // Create Socket Server Connection here
@@ -65,50 +67,48 @@ export default class FriendScreen extends React.Component {
       friend_id : friend_id
     })
   }
-  // https://mysterious-gorge-24322.herokuapp.com:8888/profile/friends
+
+  _getUserInfo = async () => {
+    const nodeServerUrl = await AsyncStorage.getItem('nodeServerUrl');
+    this.setState({url: nodeServerUrl});
+    const userToken = await AsyncStorage.getItem('userToken');
+    this.setState({userToken: userToken});
+    fetch(`${nodeServerUrl}/profile/user_info/${userToken}`, {
+       method: 'GET',
+       headers: {
+           'Content-Type': 'application/json'
+       }
+     })
+    .then((response) => response.json())
+    .then((jsonData) => {
+      this.setState({userId: jsonData.name});
+    });
+  }
+  
   componentDidMount() {
-
     try {
-      fetch('http://172.46.0.236:8888/show-friends/', {
-        method: 'POST',
-        headers: {
-          'Accept': 'application/json',
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          id : 3
-        })
-      }).then(data => {
-        console.log('data: ', data)
-        // console.log(JSON.parse(data._bodyInit).friends);
-        let friends = JSON.parse(data._bodyInit)
-        this.setState({ friends })
-        // console.log('friends; ', friends)
-      });
+      this._getUserInfo().then( data => {
+        console.log(this.state.userId)
+        fetch(`${this.state.nodeServerUrl}/show-friends/`, {
+          method: 'POST',
+          headers: {
+            'Accept': 'application/json',
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            id : this.state.userId
+          })
+        }).then(data => {
+          console.log('data: ', data)
+          let friends = JSON.parse(data._bodyInit)
+          this.setState({ friends })
+        });
+      })
+      } catch(error) {
+        console.log('Problem with componentDidMount:' + error.message);
+        throw error;
+      }
 
-      // fetch('http://172.46.0.236:8888/profile/friends', {
-      //   method: 'POST',
-      //   headers: {
-      //     'Accept': 'application/json',
-      //     'Content-Type': 'application/json',
-      //   },
-      //   body: JSON.stringify({
-      //     userId: 7
-      //   })
-      // })
-      // .then(data => {
-      //   // console.log(JSON.parse(data._bodyInit).friends);
-      //   let friends = JSON.parse(data._bodyInit).friends
-      //   this.setState({ friends })
-      // })
-      // .catch(function(error) {
-      //   console.log('Problem with fetch friends:' + error.message);
-      //   throw error;
-      // });
-    } catch(error) {
-      console.log('Problem with componentDidMount:' + error.message);
-      throw error;
-    }
   }
 
   render() {

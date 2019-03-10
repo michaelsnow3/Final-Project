@@ -36,16 +36,18 @@ class Chat extends React.Component {
   }
   componentDidMount() {
     this._isMounted = true;
-
-    this._isMounted && this.fetchMessages().then(this.getSuggestedTracks)
+    if(this._isMounted){
+      this.fetchMessages().then(this.getSuggestedTracks)
+      this.initSocket();
+    }
   }
 
-  componentWillMount() {
-    this.initSocket();
+  componentWillUnmount() {
+    this._isMounted = false;
   }
 
   fetchMessages = async function() {
-    let data = await fetch(`${this.props.url}:8888/chat/message/view/${this.props.inChatWith.chatroomId}`, {
+    let data = await fetch(`${this.props.url}/chat/message/view/${this.props.inChatWith.chatroomId}`, {
       method: 'GET',
       headers: {
         'Accept': 'application/json',
@@ -74,7 +76,7 @@ class Chat extends React.Component {
   }
 
   fetchTrackInfo = async function(id) {
-    let data = await fetch(`${this.props.url}:8888/chat/track/${id}`, {
+    let data = await fetch(`${this.props.url}/chat/track/${id}`, {
           method: 'GET',
           headers: {
             'Accept': 'application/json',
@@ -86,7 +88,7 @@ class Chat extends React.Component {
   }
 
   initSocket = () => {
-    this.socket = io.connect(`${this.props.url}:3005`)
+    this.socket = io.connect(`${this.props.socketServerUrl}:3005`)
 
     console.log('in insocket')
 
@@ -167,7 +169,7 @@ class Chat extends React.Component {
     }
 
     return (
-      <KeyboardAvoidingView keyboardVerticalOffset = {60} behavior="padding" style={styles.container}>
+      <KeyboardAvoidingView keyboardVerticalOffset = {65} behavior="padding" style={styles.container}>
       
         <View style={styles.header}>
           <TouchableOpacity style={styles.back} onPress={backToShowFriends}>
@@ -205,13 +207,15 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     height: 5,
     alignItems: 'center',
+    borderBottomWidth: 1, 
+    marginBottom: 10,
   },
   backButtonText: {
     fontSize: 20,
     textAlign: 'center'
   },
   text: {
-    fontSize: 40,
+    fontSize: 30,
     marginEnd: 20,
   },
   back: {

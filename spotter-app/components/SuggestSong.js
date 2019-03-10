@@ -28,7 +28,7 @@ export default class SuggestSong extends React.Component {
 
   searchSpotify = () => {
     if(!this.state.text) return
-    fetch(`${this.props.url}:8888/chat/track/suggest`, {
+    fetch(`${this.props.url}/chat/track/suggest`, {
       method: 'POST',
       headers: {
         'Accept': 'application/json',
@@ -44,8 +44,7 @@ export default class SuggestSong extends React.Component {
   };
   
   handleAddTrack = (track) => {
-    console.log(track)
-    fetch(`${this.props.url}:8888/chat/message/create`, {
+    fetch(`${this.props.url}/chat/message/create`, {
       method: 'POST',
       headers: {
         'Accept': 'application/json',
