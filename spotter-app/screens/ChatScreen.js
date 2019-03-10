@@ -103,7 +103,7 @@ export default class ChatScreen extends React.Component {
   };
 
   handleTrackPress = track => {
-    if(track === this.state.selectedTrack) {
+    if(this.state.selectedTrack && track.id === this.state.selectedTrack.id) {
       this.setState({
         selectedTrack: {}
       })

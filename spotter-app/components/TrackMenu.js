@@ -10,6 +10,7 @@ import {
 } from 'react-native';
 
 function TrackMenu({ track }) {
+  console.log(track)
   handleClick = () => {
     Linking.canOpenURL(track.url).then(supported => {
       if (supported) {
