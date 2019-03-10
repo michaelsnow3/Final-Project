@@ -9,11 +9,14 @@ import {
   View,
   AsyncStorage,
   Alert,
+  Button,
 } from 'react-native';
 
 import { Icon } from 'expo';
 import io from 'socket.io-client';
-import UserCard from '../components/UserCard'
+import UserCard from '../components/UserCard';
+import { getUserDbId } from '../components/GetUserDbId';
+import FlipComponent from 'react-native-flip-component';
 
 export default class NearbyScreen extends React.Component {
 
@@ -24,21 +27,16 @@ export default class NearbyScreen extends React.Component {
       searchingDot: "",
       email: null,
 
-      willingSendFindRequest: true,
-      timer: 0
+      timer: 0,
+      isFlipped: false,
+      matchedPersonDbId: null,
+      matchPerson: null
     }
   }
 
   componentDidMount() {
 
     this.initSocket();
-
-    this._interval = setInterval(() => {
-      if (this.state.willingSendFindRequest) {
-        this.setSearchingText();
-        this._countDownTimer();
-      }
-    }, 1000);
 
     this.props.navigation.addListener('willFocus', this._sendFindRequest);
     this.props.navigation.addListener('willFocus', this._trunOnSearching);
@@ -50,13 +48,30 @@ export default class NearbyScreen extends React.Component {
     const nodeServerUrl   = await AsyncStorage.getItem('nodeServerUrl');
     const email           = await AsyncStorage.getItem('email');
 
+    this.setState({nodeServerUrl: nodeServerUrl});
+
+    const that = this;
+
     this.setState({email: email}, () => {
       try {
         this.socket = io.connect(`${socketServerUrl}:3005`);
         this.socket.on('connect', () => {
           console.log('connected at Nearby');
           this._sendFindRequest(email);
-          this._matchPeople();
+
+          // confusing... why the "this" in _matchPeople function is different
+          // from "this" here
+          //this._matchPeople(this);
+        });
+
+        this.socket.on('findMatchPeople', function(match) {
+          console.log("match:");
+          console.log(match);
+          if (match) {
+            that.setState({matchPerson: match.matchPerson});
+            let delaySec = (that.state.timer > 3) ? 1000 : 3000;
+            setTimeout(that._matchingPeople, delaySec);
+          }
         });
       } catch (error) {
         console.log('Problem with initSocket:' + error.message);
@@ -69,14 +84,26 @@ export default class NearbyScreen extends React.Component {
     header: null,
   };
 
-  _matchPeople = () => {
-    console.log("socket on _matchPeople");
-    this.socket.on('findMatchPeople', function(match) {
-      console.log("match:");
-      console.log(match);
-      if (match) {
-        this.setState({searching: false});
+  _matchingPeople = () => {
+
+    console.log("_matchingPeople");
+
+    this.setState({searching: false});
+    clearInterval(this.timerSearchingText);
+    clearInterval(this.timerCountDown);
+
+    getUserDbId(this.state.matchPerson, this.state.nodeServerUrl)
+    .then((response) => response.json())
+    .then((jsonData) => {
+      console.log("jsonData:");
+      console.log(jsonData);
+      if (jsonData.id !== undefined) {
+        this.setState({matchedPersonDbId: jsonData.id});
       }
+    })
+    .catch(function(error) {
+      console.log('Problem with your getUserDbId: ' + error.message);
+      throw error;
     });
   };
 
@@ -88,41 +115,52 @@ export default class NearbyScreen extends React.Component {
     }
   };
 
-  setSearchingText = () => {
-    if (this.state.searchingDot.length > 30) {
-      this.setState({searchingDot: ""});
+  _setSearchingText = (that) => {
+    if (that.state.searchingDot.length > 30) {
+      that.setState({searchingDot: ""});
     } else {
-      this.setState({searchingDot: this.state.searchingDot + " . "});
+      that.setState({searchingDot: that.state.searchingDot + " . "});
     }
   };
 
-  _countDownTimer = () => {
-    this.setState({timer: this.state.timer + 1});
-    let time = this.state.timer;
+  _countDownTimer = (that) => {
+    that.setState({timer: that.state.timer + 1});
     if(this.state.timer === 6) {
+
+      this.setState({timer: 0});
+      this.setState({searchingDot: ""});
+      clearInterval(this.timerSearchingText);
+      clearInterval(this.timerCountDown);
+
+      let that = this;
       Alert.alert('Finding People', "No people listening similar music nearby",
         [
-          {text: 'Ok', onPress: () => this._stopSearching() },
-          {text: 'Search Again', onPress: () => this._searchAgain() },
+          {text: 'Ok', onPress: () => {} },
+          {text: 'Search Again', onPress: () => this._searchAgain(that) },
         ]
       );
     }
   };
 
   _trunOnSearching = () => {
-    this.setState({willingSendFindRequest: true});
-    this.setState({timer: 0});
+    if (this.state.timer === 0) {
+
+      let that = this;
+
+      this.timerSearchingText = setInterval(() => {
+          this._setSearchingText(that);
+      }, 800);
+
+      this.timerCountDown = setInterval(() => {
+          this._countDownTimer(that);
+      }, 1000);
+    }
   };
 
-  _stopSearching = () => {
-    this.setState({willingSendFindRequest: false});
-    this.setState({searchingDot: ""});
-  };
-
-  _searchAgain = () => {
-    this.setState({timer: 0});
-    this.setState({searchingDot: ""});
-    this._sendFindRequest(this.state.email);
+  _searchAgain = (that) => {
+    that.setState({timer: 0});
+    that._trunOnSearching();
+    that._sendFindRequest(that.state.email);
   };
 
   render() {
@@ -156,15 +194,30 @@ export default class NearbyScreen extends React.Component {
     } else {
       return (
         <View>
-          <OtherProfileScreen
-            handler={this.handler}
-            id={this.state.friend_id}
-            navigation={this.props.navigation}
-            handleChatWithFriend={() => {
-              console.log(111111)
-            }}
+          <FlipComponent
+            isFlipped={this.state.isFlipped}
+            frontView={
+              <View>
+                <Text style={{ textAlign: 'center' }}>
+                  Front Side
+                </Text>
+              </View>
+            }
+            backView={
+              <View>
+                <Text style={{ textAlign: 'center' }}>
+                  Back Side
+                </Text>
+              </View>
+            }
           />
-        </View>
+          <Button
+            onPress={() => {
+              this.setState({ isFlipped: !this.state.isFlipped })
+            }}
+            title="Flip"
+          />
+      </View>
       );
     }
   };
