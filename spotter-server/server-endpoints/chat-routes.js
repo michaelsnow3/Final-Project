@@ -14,9 +14,17 @@ module.exports = function(selectQueries, insertQueries) {
 
   chatRoutes.post("/chatroom/create", function(req, res) {
     let { userId, friendId } = req.body;
-    insertQueries.addChatroom(userId, friendId)
-      .then(chatroomId => res.json({chatroomId}))
-      .catch(e => console.log('POST /chatrooms/:user_id', e))
+    selectQueries.checkIfChatroomExists(userId, friendId).then(chatroomId => {
+      console.log(chatroomId)
+      if(chatroomId) {
+        console.log(chatroomId)
+        res.json({chatroomId})
+      }else {
+        insertQueries.addChatroom(userId, friendId)
+          .then(chatroomId => res.json({chatroomId}))
+          .catch(e => console.log('POST /chatrooms/:user_id', e))
+      }
+    })
   });
 
   chatRoutes.get("/message/view/:chatroom_id", function(req, res) {

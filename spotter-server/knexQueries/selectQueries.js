@@ -54,7 +54,30 @@ module.exports = function returnQueries(knex) {
         .select('content', 'date', 'user_id', 'type', 'id')
         .where({'chatroom_id': chatroomId})
       return messages
-    }
+    },
 
+    checkIfChatroomExists: async function(userId, friendId) {
+      try{
+        let userChatrooms = await knex('user_chatroom')
+          .select('chatroom_id')
+          .where({user_id: userId}) 
+        let friendChatrooms = await knex('user_chatroom')
+          .select('chatroom_id')
+          .where({user_id: friendId}) 
+
+        chatroomId = false
+        userChatrooms.forEach(userChatroom => {
+          friendChatrooms.forEach(friendChatroom => {
+            if(friendChatroom.chatroom_id === userChatroom.chatroom_id) {
+              chatroomId = userChatroom.chatroom_id
+            }
+          })
+        })
+        return chatroomId
+      }
+      catch(e) {
+        console.log('error selecting users chatrooms', e)
+      }
+    }
   };
 };
