@@ -266,6 +266,7 @@ module.exports = function(request, selectQueries) {
   });
 
   profileEditRoutes.post("/friends", function(req, res) {
+    console.log('yay')
     const userId = req.body.userId;
     selectQueries
       .selectFriends(userId)
@@ -277,5 +278,13 @@ module.exports = function(request, selectQueries) {
       });
   });
 
+  profileEditRoutes.get("/user_id/:token", function(req, res) {
+    let token = req.params.token;
+    var options = {
+      url: "https://api.spotify.com/v1/me",
+      headers: { Authorization: "Bearer " + token },
+      json: true
+    };
+  })
   return profileEditRoutes;
 };

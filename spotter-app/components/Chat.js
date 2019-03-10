@@ -18,43 +18,77 @@ import io from 'socket.io-client';
 import FriendScreen from '../screens/FriendScreen';
 import Message from './Message';
 import SuggestMusicMenu from './SuggestMusicMenu';
-import ChatInput from './ChatInput'
+import ChatInput from './ChatInput';
+import ShowSuggestions from "./ShowSuggestions";
 
 class Chat extends React.Component {
   constructor(props) {
     super(props)
     this.state = {
       messages: [],
-      suggestMenuState: false
+      suggestMenuState: false,
+      selectedTrack: null,
+      suggestedTracks: [],
     }
+    this._isMounted = false;
+    this.fetchMessages = this.fetchMessages.bind(this)
+    this.fetchTrackInfo = this.fetchTrackInfo.bind(this)
   }
   componentDidMount() {
-    this.fetchMessages();
+    this._isMounted = true;
+    if(this._isMounted){
+      this.fetchMessages().then(this.getSuggestedTracks)
+      this.initSocket();
+    }
   }
 
-  componentWillMount() {
-    this.initSocket();
+  componentWillUnmount() {
+    this._isMounted = false;
   }
 
-  fetchMessages = () => {
-    fetch('https://mysterious-gorge-24322.herokuapp.com:8888/chat/message/view', {
-          method: 'POST',
+  fetchMessages = async function() {
+    let data = await fetch(`${this.props.url}/chat/message/view/${this.props.inChatWith.chatroomId}`, {
+      method: 'GET',
+      headers: {
+        'Accept': 'application/json',
+        'Content-Type': 'application/json',
+      }
+    })
+    let messages = JSON.parse(data._bodyInit).messages;
+    // sort messages by date
+    let sortedMessages = messages.sort(function(a, b) {
+      return new Date(a.date) - new Date(b.date);
+    });
+
+    this.setState({ messages: sortedMessages });
+  }
+
+  getSuggestedTracks = async() => {
+    let tracks = [];
+    let messages = this.state.messages;
+    for(let i = 0; i < messages.length; i++) {
+      if(messages[i].type === 'track'){
+        let track = await this.fetchTrackInfo(messages[i].id);
+        tracks.push(track)
+      }
+    }
+    this.setState({suggestedTracks: tracks})
+  }
+
+  fetchTrackInfo = async function(id) {
+    let data = await fetch(`${this.props.url}/chat/track/${id}`, {
+          method: 'GET',
           headers: {
             'Accept': 'application/json',
             'Content-Type': 'application/json',
           },
-          body: JSON.stringify({
-            chatroomId: this.props.inChatWith.chatroomId
-          })
-        }).then(data => {
-          let messages = JSON.parse(data._bodyInit).messages;
-          this.setState({ messages });
         })
+    let track = JSON.parse(data._bodyInit).track
+    return track
   }
-  
 
   initSocket = () => {
-    this.socket = io.connect(`https://mysterious-gorge-24322.herokuapp.com:3005`)
+    this.socket = io.connect(`${this.props.socketServerUrl}:3005`)
 
     console.log('in insocket')
 
@@ -62,6 +96,7 @@ class Chat extends React.Component {
       console.log('connected')
       this.socket.on(this.props.inChatWith.chatroomId, (data) => {
         this.props.clearTextInput()
+        this.getSuggestedTracks()
       })
     })
   }
@@ -78,13 +113,26 @@ class Chat extends React.Component {
     })
   }
 
+  updateStateMessages = (message) => {
+    this.setState({
+      messages: [...this.state.messages, message]
+    })
+  }
+
   render(){
-    let { sendOnPress, onChangeText, inChatWith, handleChatWithFriend } = this.props;
+    let { sendOnPress, onChangeText, inChatWith, handleChatWithFriend, navigation, page, handleTrackPress } = this.props;
     backToShowFriends = () => {
-      handleChatWithFriend(null);
+      handleChatWithFriend(null, 'showChatrooms');
     }
     let messageList = this.state.messages.map(message => {
-      return <Message content={message.content} date={message.date} userId={message.user_id} key={Math.random().toString()} />
+      return (
+        <Message 
+          userId={this.props.userId}
+          handleTrackPress={handleTrackPress}
+          message={ message } 
+          key={Math.random().toString()}
+        />
+      )
     })
 
     // only render suggest music menu if suggest music button is clicked
@@ -95,21 +143,40 @@ class Chat extends React.Component {
       sendMessageToSocketServer={this.sendMessageToSocketServer}
       fetchMessages={this.fetchMessages}
       sendOnPress={sendOnPress}
+      updateStateMessages={this.updateStateMessages}
     />
 
     if(this.state.suggestMenuState) {
-      suggestMusicMenu = <SuggestMusicMenu suggestMusicButtonHandler={this.suggestMusicButtonHandler} />
+      suggestMusicMenu = <SuggestMusicMenu 
+        suggestMusicButtonHandler={this.suggestMusicButtonHandler} 
+        navigation={navigation} 
+        handleChatWithFriend={handleChatWithFriend}
+        inChatWith={inChatWith}
+      />
+    }
+    // renders suggested tracks if user presses show tracks button
+    if(page === 'showSuggestions') {
+      return (
+        <ShowSuggestions 
+          handleChatWithFriend={handleChatWithFriend}
+          inChatWith={inChatWith}
+          suggestedTracks={this.state.suggestedTracks}
+          selectedTrack={this.props.selectedTrack}
+          handleTrackPress={this.props.handleTrackPress}
+          fetchTrackInfo={this.fetchTrackInfo}
+        />
+      )
     }
 
     return (
-      <KeyboardAvoidingView keyboardVerticalOffset = {60} behavior="padding" style={styles.container}>
+      <KeyboardAvoidingView keyboardVerticalOffset = {65} behavior="padding" style={styles.container}>
       
         <View style={styles.header}>
           <TouchableOpacity style={styles.back} onPress={backToShowFriends}>
             <Text style={styles.backButtonText}>{'<'}</Text>
           </TouchableOpacity>
 
-          <Text style={styles.text}>{inChatWith.name}</Text>
+          <Text adjustsFontSizeToFit style={styles.text}>{inChatWith.name}</Text>
         </View>
 
         <ScrollView
@@ -140,13 +207,15 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     height: 5,
     alignItems: 'center',
+    borderBottomWidth: 1, 
+    marginBottom: 10,
   },
   backButtonText: {
     fontSize: 20,
     textAlign: 'center'
   },
   text: {
-    fontSize: 40,
+    fontSize: 30,
     marginEnd: 20,
   },
   back: {
@@ -156,7 +225,7 @@ const styles = StyleSheet.create({
     borderRadius: 20,
   },
   messageList: {
-    maxHeight: '70%'
+    height: '65%'
   },
 });
 

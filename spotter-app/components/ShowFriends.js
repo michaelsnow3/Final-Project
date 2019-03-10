@@ -12,9 +12,9 @@ import {
 
 import UserCard from '../components/UserCard'
 
-function ShowFriends({friends, handler, handleChatWithFriend}) {
+function ShowFriends({friends, handler}) {
   const friendsList = friends.map(friend => {
-    return <UserCard name={friend.name} id={friend.id} handler={handler} handleChatWithFriend={handleChatWithFriend} key={Math.random().toString()} />
+    return <UserCard name={friend.name} id={friend.id} handler={handler} key={Math.random().toString()} />
   });
 
   return(

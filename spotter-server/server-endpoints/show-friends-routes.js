@@ -6,7 +6,6 @@ module.exports = function(selectQueries) {
     const userID = req.body.id;
     selectQueries.selectFriends(userID)
     .then((data) => {
-      console.log('data: ', data)
       res.json(data)
     })
 

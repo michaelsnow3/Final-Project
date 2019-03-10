@@ -32,7 +32,10 @@ export default class FriendScreen extends React.Component {
     this.state = {
       friends: [],
       page: 'ShowFriends',
-      friend_id : null
+      friend_id : null,
+      userId: null,
+      nodeServerUrl: null,
+      userToken: null
     }
 
     // Create Socket Server Connection here
@@ -75,55 +78,48 @@ export default class FriendScreen extends React.Component {
       friend_id : friend_id
     })
   }
-  // https://mysterious-gorge-24322.herokuapp.com:8888/profile/friends
-  componentDidMount() {
 
-    try {
-      fetch('http://c13d1175.ngrok.io/show-friends/', {
-        method: 'POST',
-        headers: {
-          'Accept': 'application/json',
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          id : 10
-        })
-      }).then(data => {
-        console.log('data: ', data)
-        // console.log(JSON.parse(data._bodyInit).friends);
-        let friends = JSON.parse(data._bodyInit)
-        this.setState({ friends })
-        console.log('friends; ', friends)
-      })
-      .catch(function(error) {
-        console.log('Problem with show-friends:' + error.message);
-        throw error;
-      });
-
-      fetch('http://c13d1175.ngrok.io/profile/friends', {
-        method: 'POST',
-        headers: {
-          'Accept': 'application/json',
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          userId: 10
-        })
-      })
-      .then(data => {
-        // console.log(JSON.parse(data._bodyInit).friends);
-        let friends = JSON.parse(data._bodyInit).friends
-        this.setState({ friends })
-      })
-      .catch(function(error) {
-        console.log('Problem with fetch friends:' + error.message);
-        throw error;
-      });
-    } catch(error) {
-      console.log('Problem with friend page componentDidMount:' + error.message);
-      throw error;
-    }
+  _getUserInfo = async () => {
+    const nodeServerUrl = await AsyncStorage.getItem('nodeServerUrl');
+    this.setState({url: nodeServerUrl});
+    const userToken = await AsyncStorage.getItem('userToken');
+    this.setState({userToken: userToken});
+    fetch(`${nodeServerUrl}/profile/user_info/${userToken}`, {
+       method: 'GET',
+       headers: {
+           'Content-Type': 'application/json'
+       }
+     })
+    .then((response) => response.json())
+    .then((jsonData) => {
+      this.setState({userId: jsonData.name});
+    });
   }
+  
+  componentDidMount() {
+    try {
+      this._getUserInfo().then( data => {
+        console.log(this.state.userId)
+        fetch(`${this.state.nodeServerUrl}/show-friends/`, {
+          method: 'POST',
+          headers: {
+            'Accept': 'application/json',
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            id : this.state.userId
+          })
+        }).then(data => {
+          console.log('data: ', data)
+          let friends = JSON.parse(data._bodyInit)
+          this.setState({ friends })
+        });
+      })
+      } catch(error) {
+        console.log('Problem with componentDidMount:' + error.message);
+        throw error;
+      }
+    } 
 
   _insertUserIfNotExist = (userToken, nodeServerUrl) => {
     fetch(`${nodeServerUrl}/profile/insert_user_if_not_exist`, {
@@ -152,7 +148,6 @@ export default class FriendScreen extends React.Component {
             <ShowFriends
               friends={this.state.friends}
               handler={this.handler}
-              handleChatWithFriend={() => {}}
             />
             <Text>Friends</Text>
           </ScrollView>

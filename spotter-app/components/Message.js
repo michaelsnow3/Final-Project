@@ -4,18 +4,32 @@ import {
   StyleSheet,
   Text,
   View,
+  TouchableOpacity,
 } from 'react-native';
 
-function Message({ content, date, userId }) {
-  let messageStyle = userId === 9 ? styles.userMessage : styles.friendMessage
+function Message({ message, handleTrackPress, userId }) {
+  let { content, date, user_id, type, id} = message
+  
+  let messageStyle = user_id === userId ? styles.userMessage : styles.friendMessage
 
+  //parse date
   let dateObj = new Date(date);
-  var month = dateObj.getUTCMonth() + 1; //months from 1-12
+  var month = dateObj.getUTCMonth() + 1;
   var day = dateObj.getUTCDate();
   var year = dateObj.getUTCFullYear();
 
   newdate = year + "/" + month + "/" + day;
 
+  // check if message is a track
+  if(type === 'track') {
+    console.log(message)
+    return(
+      <TouchableOpacity onPress={() => handleTrackPress(message)} style={styles.suggestMessage}>
+        <Text style={styles.date}>{newdate}</Text>
+        <Text style={styles.content}>{`${message.content}`}</Text>
+      </TouchableOpacity>
+    )
+  }
   return(
     <View style={messageStyle}>
       <Text style={styles.date}>{newdate}</Text>
@@ -42,6 +56,15 @@ const styles = StyleSheet.create({
     width: '50%',
     marginBottom: 15,
     alignSelf: 'flex-end'
+  },
+  suggestMessage: {
+    borderRadius: 10,
+    borderWidth: 0.5,
+    borderColor: '#d6d7da',
+    backgroundColor: '#f9c345',
+    width: '50%',
+    marginBottom: 15,
+    alignSelf: 'center'
   },
   content: {
     fontSize: 20,
