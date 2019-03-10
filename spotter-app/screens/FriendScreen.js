@@ -43,7 +43,7 @@ export default class FriendScreen extends React.Component {
   }
 
   initSocket = async () => {
-
+    await AsyncStorage.clear();
     const nodeServerUrl   = await AsyncStorage.getItem('nodeServerUrl');
     const socketServerUrl = await AsyncStorage.getItem('socketServerUrl');
 
