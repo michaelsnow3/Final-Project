@@ -13,8 +13,6 @@ import {
 } from 'react-native';
 YellowBox.ignoreWarnings(['Unrecognized WebSocket connection option(s) `agent`, `perMessageDeflate`, `pfx`, `key`, `passphrase`, `cert`, `ca`, `ciphers`, `rejectUnauthorized`. Did you mean to put these under `headers`?'])
 
-import io from 'socket.io-client';
-
 import FriendScreen from '../screens/FriendScreen';
 import Message from './Message';
 import SuggestMusicMenu from './SuggestMusicMenu';
@@ -25,20 +23,18 @@ class Chat extends React.Component {
   constructor(props) {
     super(props)
     this.state = {
-      messages: [],
       suggestMenuState: false,
       selectedTrack: null,
       suggestedTracks: [],
     }
     this._isMounted = false;
-    this.fetchMessages = this.fetchMessages.bind(this)
     this.fetchTrackInfo = this.fetchTrackInfo.bind(this)
   }
   componentDidMount() {
     this._isMounted = true;
     if(this._isMounted){
-      this.fetchMessages().then(this.getSuggestedTracks)
-      this.initSocket();
+      this.props.fetchMessages().then(this.getSuggestedTracks)
+      this.props.initSocket();
     }
   }
 
@@ -46,29 +42,13 @@ class Chat extends React.Component {
     this._isMounted = false;
   }
 
-  fetchMessages = async function() {
-    let data = await fetch(`${this.props.url}/chat/message/view/${this.props.inChatWith.chatroomId}`, {
-      method: 'GET',
-      headers: {
-        'Accept': 'application/json',
-        'Content-Type': 'application/json',
-      }
-    })
-    let messages = JSON.parse(data._bodyInit).messages;
-    // sort messages by date
-    let sortedMessages = messages.sort(function(a, b) {
-      return new Date(a.date) - new Date(b.date);
-    });
-
-    this.setState({ messages: sortedMessages });
-  }
-
   getSuggestedTracks = async() => {
     let tracks = [];
-    let messages = this.state.messages;
+    let messages = this.props.messages;
     for(let i = 0; i < messages.length; i++) {
       if(messages[i].type === 'track'){
-        let track = await this.fetchTrackInfo(messages[i].id);
+        let track = await this.fetchTrackInfo(messages[i].id.split('-')[0]);
+        track.id = messages[i].id
         tracks.push(track)
       }
     }
@@ -76,7 +56,8 @@ class Chat extends React.Component {
   }
 
   fetchTrackInfo = async function(id) {
-    let data = await fetch(`${this.props.url}/chat/track/${id}`, {
+    parsedId = id.split('-')[0]
+    let data = await fetch(`${this.props.url}/chat/track/${parsedId}`, {
           method: 'GET',
           headers: {
             'Accept': 'application/json',
@@ -87,45 +68,18 @@ class Chat extends React.Component {
     return track
   }
 
-  initSocket = () => {
-    this.socket = io.connect(`http://172.46.0.236:3005`)
-
-    console.log('in insocket')
-
-    this.socket.on('connect', () => {
-      console.log('connected')
-      this.socket.on(this.props.inChatWith.chatroomId.toString(), (data) => {
-        this.fetchMessages()
-        // this.forceUpdate()
-      })
-    })
-  }
-
-  sendMessageToSocketServer = () => {
-    this.socket.emit('message', {
-      chatroomId: this.props.inChatWith.chatroomId
-    })
-
-  }
-
   suggestMusicButtonHandler = () => {
     this.setState({
       suggestMenuState: !this.state.suggestMenuState
     })
   }
 
-  updateStateMessages = (message) => {
-    this.setState({
-      messages: [...this.state.messages, message]
-    })
-  }
-
   render(){
-    let { sendOnPress, onChangeText, inChatWith, handleChatWithFriend, navigation, page, handleTrackPress } = this.props;
+    let { sendOnPress, onChangeText, inChatWith, handleChatWithFriend, navigation, page, handleTrackPress, messages } = this.props;
     backToShowFriends = () => {
       handleChatWithFriend(null, 'showChatrooms');
     }
-    let messageList = this.state.messages.map(message => {
+    let messageList = messages.map(message => {
       return (
         <Message 
           userId={this.props.userId}
@@ -141,8 +95,8 @@ class Chat extends React.Component {
       suggestMusicButtonHandler={this.suggestMusicButtonHandler} 
       text={this.props.text} 
       onChangeText={onChangeText}
-      sendMessageToSocketServer={this.sendMessageToSocketServer}
-      fetchMessages={this.fetchMessages}
+      sendMessageToSocketServer={this.props.sendMessageToSocketServer}
+      fetchMessages={this.props.fetchMessages}
       sendOnPress={sendOnPress}
       updateStateMessages={this.updateStateMessages}
     />

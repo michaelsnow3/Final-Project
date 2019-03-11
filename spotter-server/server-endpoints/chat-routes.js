@@ -37,7 +37,7 @@ module.exports = function(selectQueries, insertQueries) {
 
   chatRoutes.post("/message/create", function(req, res) {
     let { content, type, userId, chatroomId, spotifyId } = req.body
-    let id = type === 'track' ? spotifyId : uuidv4()
+    let id = type === 'track' ? spotifyId + '-' + uuidv4() : uuidv4()
     insertQueries.addMessage(content, type, userId, chatroomId, id).then(data => {
       res.json({ data })
     })

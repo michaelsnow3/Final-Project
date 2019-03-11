@@ -16,8 +16,8 @@ export default class SpotifyLoginScreen extends React.Component {
     super(props);
     this.state = {
       loginClicked: false,
-      nodeServerUrl: "http://29e34a61.ngrok.io",
-      socketServerUrl: "http://172.46.0.236"
+      nodeServerUrl: "http://ad9bbd56.ngrok.io",
+      socketServerUrl: "http://192.168.0.38"
     }
   }
 

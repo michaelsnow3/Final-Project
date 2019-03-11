@@ -15,6 +15,8 @@ import {
 
 import { MonoText } from "../components/StyledText";
 
+import io from 'socket.io-client';
+
 export default class ChatScreen extends React.Component {
   static navigationOptions = {
     header: null
@@ -35,12 +37,61 @@ export default class ChatScreen extends React.Component {
       userToken: null,
       socketServerUrl: null,
       username: null,
-      playlists: []
+      playlists: [],
+      messages: []
     };
+
+    this._isMounted = false;
   }
 
-  componentWillMount() {
-    this._getUserInfo()
+  componentDidMount() {
+    this._isMounted = true;
+    if(this._isMounted){
+      this._getUserInfo()
+    }
+  }
+
+  componentWillUnmount() {
+    this._isMounted = false;
+  }
+  
+  initSocket = () => {
+    console.log(`${this.state.socketServerUrl}:3005`)
+    this.socket = io.connect(`${this.state.socketServerUrl}:3005`)
+
+    console.log('in insocket')
+
+    this.socket.on('connect', () => {
+      console.log('connected')
+      this.socket.on(this.state.inChatWith.chatroomId.toString(), (data) => {
+        this.fetchMessages()
+        // this.forceUpdate()
+      })
+    })
+  }
+
+  fetchMessages = async () => {
+    let data = await fetch(`${this.state.url}/chat/message/view/${this.state.inChatWith.chatroomId}`, {
+      method: 'GET',
+      headers: {
+        'Accept': 'application/json',
+        'Content-Type': 'application/json',
+      }
+    })
+    let messages = JSON.parse(data._bodyInit).messages;
+    // sort messages by date
+    let sortedMessages = messages.sort(function(a, b) {
+      return new Date(a.date) - new Date(b.date);
+    });
+
+    this.setState({ messages: sortedMessages });
+  }
+
+
+  sendMessageToSocketServer = () => {
+    this.socket.emit('message', {
+      chatroomId: this.state.inChatWith.chatroomId
+    })
   }
 
   _getUserInfo = async () => {
@@ -86,7 +137,7 @@ export default class ChatScreen extends React.Component {
     })
   }
 
-  sendOnPress = (sendMessageToSocketServer, fetchMessages) => {
+  sendOnPress = (sendMessageToSocketServer) => {
     if (this.state.text === "") return;
     fetch(`${this.state.url}/chat/message/create`, {
       method: "POST",
@@ -101,7 +152,7 @@ export default class ChatScreen extends React.Component {
         chatroomId: this.state.inChatWith.chatroomId
       })
     }).then(() => {
-      fetchMessages();
+      this.fetchMessages();
       sendMessageToSocketServer();
     });
   };
@@ -130,7 +181,10 @@ export default class ChatScreen extends React.Component {
     this.setState({ text: "" });
   };
 
-  handleChatWithFriend = (friend, page) => {
+  handleChatWithFriend = (friend, page, callback) => {
+    // if(callback) {
+    //   callback()
+    // }
     this.setState({
       inChatWith: friend,
       page: page
@@ -179,6 +233,10 @@ export default class ChatScreen extends React.Component {
             userId={this.state.userId}
             handleTrackPress={this.handleTrackPress}
             socketServerUrl={this.state.socketServerUrl}
+            initSocket={this.initSocket}
+            sendMessageToSocketServer={this.sendMessageToSocketServer}
+            fetchMessages={this.fetchMessages}
+            messages={this.state.messages}
           />
         );
       case 'showSuggestions':
@@ -197,6 +255,8 @@ export default class ChatScreen extends React.Component {
             handleTrackPress={this.handleTrackPress}
             selectedTrack={this.state.selectedTrack}    
             socketServerUrl={this.state.socketServerUrl} 
+            fetchMessages={this.fetchMessages}
+            messages={this.state.messages}
           />
         );
       case "showChatrooms":
@@ -226,6 +286,7 @@ export default class ChatScreen extends React.Component {
             url={this.state.url}
             page={this.state.page}
             userId={this.state.userId}  
+            sendMessageToSocketServer={this.sendMessageToSocketServer}
           />
         );
     }
