@@ -11,15 +11,18 @@ module.exports = function returnQueries(knex) {
       }
     },
 
-    selectFriends: async function(userId) {
+    selectFriends: async function(userId, verifyFriends) {
       try {
         let friendIds = await knex("friend")
           .select("friend_id")
           .where({ user_id: userId });
+        let potentialFriends = await verifyFriends(userId);
         let friends = [];
         for (let i = 0; i < friendIds.length; i++) {
-          let friend = await this.selectUserById(friendIds[i].friend_id);
-          friends.push(friend);
+          if(potentialFriends.includes(friendIds[i].friend_id)) {
+            let friend = await this.selectUserById(friendIds[i].friend_id);
+            friends.push(friend);
+          }
         }
         return friends;
       } catch (e) {
@@ -102,6 +105,20 @@ module.exports = function returnQueries(knex) {
       }
       catch(e) {
         console.log('error selecting users friend requests', e)
+      }
+    },
+
+    verifyFriends: async(userId) => {
+      try{
+        let hasUserAdded = await knex('friend').where({friend_id: userId})
+        let canStartChatWith = hasUserAdded.reduce((acc, user) => {
+          acc.push(user.user_id)
+          return acc
+        }, [])
+        return canStartChatWith
+      }
+      catch(e) {
+        console.log('error checking if users are friends', e)
       }
     }
 
