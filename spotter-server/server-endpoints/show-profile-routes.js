@@ -14,12 +14,12 @@ module.exports = (knex, request, selectQueries) => {
           const vars = {
             name: result.name,
             avatar: result.avatar
-          } 
+          }
           res.json(vars);
         })
         .catch((err) => {
           console.log(err);
-        }); 
+        });
     });
 
   // getUserFav
@@ -32,7 +32,7 @@ module.exports = (knex, request, selectQueries) => {
     .join('favourite', {'users.id': 'favourite.user_id'})
     .join('favourite_song', {'favourite.id': 'favourite_id'})
     .join('song', {'song.id': 'song_id'})
-    .then((results) => {  
+    .then((results) => {
       let songs = [];
       for (let song of results) {
         if (songs.length === 3){
@@ -57,7 +57,7 @@ module.exports = (knex, request, selectQueries) => {
     .where({'friend.user_id' : primary_user_id })
     .then((results) => {
         let result = false;
-        for (let friend of results) { 
+        for (let friend of results) {
           if (friend.friend_id === other_user_id){
             result = true;
             break;
@@ -77,7 +77,7 @@ module.exports = (knex, request, selectQueries) => {
     knex('friend')
       .insert({
         user_id: primary_user_id,
-        friend_id: other_user_id 
+        friend_id: other_user_id
       })
       .then(() => {
         res.json();
@@ -101,7 +101,7 @@ module.exports = (knex, request, selectQueries) => {
       console.log(body);
     });
   })
-  
+
   showProfile.get("/friend_requests/:userId", (req, res) => {
     let userId = req.params.userId
     selectQueries.selectFriendRequests(userId, selectQueries.selectUserById).then(friendRequests => {
