@@ -12,6 +12,11 @@ import TrackCard from './TrackCard'
 import TrackMenu from './TrackMenu'
 
 class ShowSuggestions extends React.Component {
+
+  componentDidMount() {
+    this.props.getSuggestedTracks();
+  }
+
   render() {
     let { handleChatWithFriend, inChatWith, suggestedTracks, handleTrackPress, selectedTrack, fetchTrackInfo} = this.props;
     let suggestions = suggestedTracks.map(track => {
@@ -22,7 +27,7 @@ class ShowSuggestions extends React.Component {
         let trackMenu = isSelectedTrack && <TrackMenu track={track} />
         return (
           <View key={track.id}>
-            <TrackCard 
+            <TrackCard
               track={track}
               handleTrackPress={handleTrackPress}
               isSelectedTrack={isSelectedTrack}

@@ -79,7 +79,7 @@ class Chat extends React.Component {
 
   previousMessagesCallback = () => {
     this.props.setLimit(this.props.messages.length + 5, false)
-  }  
+  }
 
   render() {
     let {
@@ -143,6 +143,7 @@ class Chat extends React.Component {
           selectedTrack={this.props.selectedTrack}
           handleTrackPress={this.props.handleTrackPress}
           fetchTrackInfo={this.fetchTrackInfo}
+          getSuggestedTracks={this.getSuggestedTracks}
         />
       );
     }
