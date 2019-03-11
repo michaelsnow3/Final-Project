@@ -14,7 +14,7 @@ function Chatroom({name, chatroomId, handleChatWithFriend}) {
     handleChatWithFriend({
       name: name,
       chatroomId: chatroomId
-    })
+    }, 'showChat')
   }
   return (
     <TouchableOpacity style={styles.container} onPress={handleFriendPress}>
@@ -29,7 +29,7 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     borderWidth: 0.5,
     borderColor: '#d6d7da',
-    backgroundColor: '#adccff',
+    backgroundColor: '#a8e8a7',
     justifyContent: 'center',
     marginBottom: 10
   },

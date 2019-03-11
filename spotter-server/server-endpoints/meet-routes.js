@@ -126,56 +126,29 @@ module.exports = (knex) => {
 
             const result = []
             let i = 0; 
-            const run = (aaa) => {
+            const matching = (data) => {
             if ( i === 5) {
-              console.log(2222222222, result)
+              console.log('matching result: ', result)
               res.json(result);
             }
             else {
               Algorithmia.client("simmxo6hMreL3iS9k6Yu7G2k04B1")
               .algo("matching/DatingAlgorithm/0.1.3") // timeout is optional
-              .pipe(aaa)
+              .pipe(data)
               .then(function(response) {
                 const match = response.get()['User'] 
                 result.push(match)
-                console.log(response)
-                // console.log('match: ', match)
-                // console.log('result: ', result);
-                let xxx = aaa; 
-                xxx.group2 = aaa.group2.filter(x => {
+                let xxx = data; 
+                xxx.group2 = data.group2.filter(x => {
                   return x.name !== match
                 })
-                // console.log(xxx)
                 i++;
-                return run(xxx)
+                return matching(xxx)
               });
             }
           }
-          run(input)
-
-
-            // console.log('input', input)
-            // console.log(matching(input))
-            // res.JSON(matching(input))
-
-            // console.log(JSON.stringify(input))
-            // console.log(input.group2)
-            // console.log(input)
-            // input = JSON.stringify(input)
-            // let finalResult = async () => {
-            //   let response = await matching(input)
-            //   console.log(response)
-            //   return response;
-            // }
-            // console.log(matching)
-
-            //   console.log(111111111111111, data)
-            //   res.json({matches: data})
-            // finalResult()          
-
+          matching(input)
           })
-
-          
         })
       })
     })
@@ -183,14 +156,3 @@ module.exports = (knex) => {
 })
 return meetRoutes;
 }
-
-// pass in primary users name
-// function to fetch favs, top 10
-// fill in user's favourites using func
-// access all users from database
-// fill in favs with func
-// run matching
-
-
-
-// matching(input)

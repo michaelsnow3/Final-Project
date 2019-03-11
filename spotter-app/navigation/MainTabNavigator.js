@@ -8,6 +8,7 @@ import ChatScreen from '../screens/ChatScreen';
 import MeetScreen from '../screens/MeetScreen';
 import NearbyScreen from '../screens/NearbyScreen';
 import ProfileScreen from '../screens/ProfileScreen';
+import SuggestSongScreen from '../screens/ProfileScreen';
 
 const FriendStack = createStackNavigator({
   Friend: FriendScreen,

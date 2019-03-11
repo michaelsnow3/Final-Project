@@ -5,21 +5,19 @@ const ENV = process.env.ENV || "development";
 const knexConfig = require("../knexfile");
 const knex = require("knex")(knexConfig[ENV]);
 
-module.exports = function(request) {
+module.exports = function(request, selectQueries) {
 
-  profileEditRoutes.get("/user_info/:user_token", function(req, res) {
-
-    let firstLogin = false;
+  profileEditRoutes.post("/insert_user_if_not_exist", function(req, res) {
     var options = {
       url: "https://api.spotify.com/v1/me",
-      headers: { Authorization: "Bearer " + req.params.user_token },
+      headers: { Authorization: "Bearer " + req.body.user_token },
       json: true
     };
 
     request.get(options, function(error, response, body) {
-
-      if (!error && response.statusCode === 200) {
-        let avatar = (body.images.length === 0) ? null : body.images[0].url;
+      if (!error && (response.statusCode >= 200) || (response.statusCode <= 204)) {
+        console.log(body);
+        let avatar = (body.images && (body.images.length === 0)) ? null : body.images[0].url;
         let userInfo = {
           name: body.display_name,
           avatar: avatar,
@@ -38,104 +36,126 @@ module.exports = function(request) {
               .insert({"user_id": id[0]})
               .then(()=> {
                 console.log("Insert New User");
-                res.status(200).send(userInfo);
+                res.status(200);
               });
             });
           } else {
-            _getUserInfoFromDbSendBackApp(userInfo, res);
+            console.log("User exist");
+            res.status(200);
           }
         })
-        .then(() => {
-          console.log("Get User Info");
-        })
-        .catch((err) => {
-          console.log(err);
+        .catch((error) => {
+          console.log("profileEditRoutes insert new user error1:");
+          res.status(500).send({error: error});
+          throw error;
         });
       } else {
-        console.log("profileEditRoutes get error:");
-        console.log(error);
+        console.log("profileEditRoutes call spotify api, response code:", response.statusCode);
+        //console.log(error);
+        //res.status(500).send({error: error});
+        //throw error;
       }
     });
   });
 
-  _getUserInfoFromDbSendBackApp = (userInfo, res) => {
+  profileEditRoutes.get("/user_info/:userIdFromSpotify", function(req, res) {
 
-    knex('users').where('name', userInfo.name)
+    knex('users').where('name', req.params.userIdFromSpotify)
     .then((rows) => {
-      let user_id = rows[0].id;
+      if (rows.length !== 0) {
+        let user_id = rows[0].id;
+        let userName = rows[0].name;
+        let userAvatar = rows[0].avatar;
+        let userEmail = rows[0].email;
 
-      Promise.all([
-        new Promise(function(resolve, reject) {
-          knex
-          .select('*')
-          .from('favourite')
-          .innerJoin('users', user_id, 'favourite.user_id')
-          .innerJoin('favourite_genre', 'favourite.id', 'favourite_genre.favourite_id')
-          .innerJoin('genre', 'favourite_genre.genre_id', 'genre.id')
-          .then((results) => {
-            let genreArr = [];
-            for (let genre of results) {
-              genreArr.push(genre.name);
-            }
-            resolve(genreArr);
-          })
-          .catch((err) => {
-            console.log(err);
-          });
-        }),
+        Promise.all([
+          new Promise(function(resolve, reject) {
+            knex
+            .select('*')
+            .from('favourite')
+            .innerJoin('users', user_id, 'favourite.user_id')
+            .innerJoin('favourite_genre', 'favourite.id', 'favourite_genre.favourite_id')
+            .innerJoin('genre', 'favourite_genre.genre_id', 'genre.id')
+            .then((results) => {
+              let genreArr = [];
+              for (let genre of results) {
+                genreArr.push(genre.name);
+              }
+              resolve(genreArr);
+            })
+            .catch((error) => {
+              console.log("Error when get favourite genre:", error);
+              res.status(500).send({error: error});
+              throw error;
+            });
+          }),
 
-        new Promise(function(resolve, reject) {
-          knex
-          .select('*')
-          .from('favourite')
-          .innerJoin('users', user_id, 'favourite.user_id')
-          .innerJoin('favourite_artist', 'favourite.id', 'favourite_artist.favourite_id')
-          .innerJoin('artist', 'favourite_artist.artist_id', 'artist.id')
-          .then((results) => {
-            let artistArr = [];
-            for (let artist of results) {
-              artistArr.push(artist.name);
-            }
-            resolve(artistArr);
-          })
-          .catch((err) => {
-            console.log(err);
-          });
-        }),
+          new Promise(function(resolve, reject) {
+            knex
+            .select('*')
+            .from('favourite')
+            .innerJoin('users', user_id, 'favourite.user_id')
+            .innerJoin('favourite_artist', 'favourite.id', 'favourite_artist.favourite_id')
+            .innerJoin('artist', 'favourite_artist.artist_id', 'artist.id')
+            .then((results) => {
+              let artistArr = [];
+              for (let artist of results) {
+                artistArr.push(artist.name);
+              }
+              resolve(artistArr);
+            })
+            .catch((error) => {
+              console.log("Error when get favourite artist:", error);
+              res.status(500).send({error: error});
+              throw error;
+            });
+          }),
 
-        new Promise(function(resolve, reject) {
-          knex
-          .select('*')
-          .from('favourite')
-          .innerJoin('users', user_id, 'favourite.user_id')
-          .innerJoin('favourite_song', 'favourite.id', 'favourite_song.favourite_id')
-          .innerJoin('song', 'favourite_song.song_id', 'song.id')
-          .then((results) => {
-            let songArr = [];
-            for (let song of results) {
-              songArr.push(song.name);
-            }
-            resolve(songArr);
-          })
-          .catch((err) => {
-            console.log(err);
-          });
-        }),
-      ]).then(function(values) {
-        console.log(values);
-        let userDetailInfo = {
-          name: userInfo.name,
-          avatar: userInfo.avatar,
-          email: userInfo.email,
-          favoriteGenres: values[0],
-          favoriteArtists: values[1],
-          favoriteSongs: values[2],
-        };
-
-        res.status(200).send(userDetailInfo);
-      });
+          new Promise(function(resolve, reject) {
+            knex
+            .select('*')
+            .from('favourite')
+            .innerJoin('users', user_id, 'favourite.user_id')
+            .innerJoin('favourite_song', 'favourite.id', 'favourite_song.favourite_id')
+            .innerJoin('song', 'favourite_song.song_id', 'song.id')
+            .then((results) => {
+              let songArr = [];
+              for (let song of results) {
+                songArr.push(song.name);
+              }
+              resolve(songArr);
+            })
+            .catch((error) => {
+              console.log("Error when get favourite song:", error);
+              res.status(500).send({error: error});
+              throw error;
+            });
+          }),
+        ])
+        .then(function(values) {
+          let userDetailInfo = {
+            name: userName,
+            avatar: userAvatar,
+            email: userEmail,
+            favoriteGenres: values[0],
+            favoriteArtists: values[1],
+            favoriteSongs: values[2],
+          };
+          res.status(200).send(userDetailInfo);
+        })
+        .catch((error) => {
+          console.log("Error when after promise:", error);
+          res.status(500).send({error: error});
+          throw error;
+        });
+      }
+    })
+    .catch((error) => {
+      console.log("Error in the end at user_info:", error);
+      res.status(500).send({error: error});
+      throw error;
     });
-  };
+  });
 
   profileEditRoutes.post("/edit/", function(req, res) {
 
@@ -212,7 +232,7 @@ module.exports = function(request) {
                 } else {
                   console.log("Insert New Content:", item);
                   knex(dbContent)
-                  .insert({name: item}) 
+                  .insert({name: item})
                   .returning('id')
                   .then(function (id) {
                     console.log("id:", id[0]);
@@ -224,6 +244,7 @@ module.exports = function(request) {
                     .then((results) => {
                       console.log("results:");
                       console.log(results);
+                      res.status(200).send({results: "Insert Success."});
                     });
                   });
                 }
@@ -247,6 +268,7 @@ module.exports = function(request) {
   });
 
   profileEditRoutes.post("/friends", function(req, res) {
+    console.log('yay')
     const userId = req.body.userId;
     selectQueries
       .selectFriends(userId)
@@ -258,5 +280,13 @@ module.exports = function(request) {
       });
   });
 
+  profileEditRoutes.get("/user_id/:token", function(req, res) {
+    let token = req.params.token;
+    var options = {
+      url: "https://api.spotify.com/v1/me",
+      headers: { Authorization: "Bearer " + token },
+      json: true
+    };
+  })
   return profileEditRoutes;
 };

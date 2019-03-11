@@ -1,4 +1,4 @@
-import React from 'react';
+import React from "react";
 import {
   Image,
   Platform,
@@ -10,154 +10,218 @@ import {
   KeyboardAvoidingView,
   TextInput,
   YellowBox
-} from 'react-native';
-YellowBox.ignoreWarnings(['Unrecognized WebSocket connection option(s) `agent`, `perMessageDeflate`, `pfx`, `key`, `passphrase`, `cert`, `ca`, `ciphers`, `rejectUnauthorized`. Did you mean to put these under `headers`?'])
+} from "react-native";
+YellowBox.ignoreWarnings([
+  "Unrecognized WebSocket connection option(s) `agent`, `perMessageDeflate`, `pfx`, `key`, `passphrase`, `cert`, `ca`, `ciphers`, `rejectUnauthorized`. Did you mean to put these under `headers`?"
+]);
 
-import io from 'socket.io-client';
-
-import FriendScreen from '../screens/FriendScreen';
-import Message from './Message';
-import SuggestMusicMenu from './SuggestMusicMenu';
-import ChatInput from './ChatInput'
+import FriendScreen from "../screens/FriendScreen";
+import Message from "./Message";
+import SuggestMusicMenu from "./SuggestMusicMenu";
+import ChatInput from "./ChatInput";
+import ShowSuggestions from "./ShowSuggestions";
 
 class Chat extends React.Component {
   constructor(props) {
-    super(props)
+    super(props);
     this.state = {
-      messages: [],
-      suggestMenuState: false
-    }
+      suggestMenuState: false,
+      selectedTrack: null,
+      suggestedTracks: []
+    };
+    this._isMounted = false;
+    this.fetchTrackInfo = this.fetchTrackInfo.bind(this);
   }
   componentDidMount() {
-    this.fetchMessages();
+    this._isMounted = true;
+    if (this._isMounted) {
+      this.props.fetchMessages().then(this.getSuggestedTracks);
+      this.props.initSocket();
+    }
   }
 
-  componentWillMount() {
-    this.initSocket();
+  componentWillUnmount() {
+    this._isMounted = false;
+    this.props.setLimit(20, true)
   }
 
-  fetchMessages = () => {
-    fetch('https://mysterious-gorge-24322.herokuapp.com:8888/chat/message/view', {
-          method: 'POST',
-          headers: {
-            'Accept': 'application/json',
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({
-            chatroomId: this.props.inChatWith.chatroomId
-          })
-        }).then(data => {
-          let messages = JSON.parse(data._bodyInit).messages;
-          this.setState({ messages });
-        })
-  }
-  
+  getSuggestedTracks = async () => {
+    let tracks = [];
+    let messages = this.props.messages;
+    for (let i = 0; i < messages.length; i++) {
+      if (messages[i].type === "track") {
+        let track = await this.fetchTrackInfo(messages[i].id.split("-")[0]);
+        track.id = messages[i].id;
+        tracks.push(track);
+      }
+    }
+    this._isMounted && this.setState({ suggestedTracks: tracks });
+  };
 
-  initSocket = () => {
-    this.socket = io.connect(`https://mysterious-gorge-24322.herokuapp.com:3005`)
-
-    console.log('in insocket')
-
-    this.socket.on('connect', () => {
-      console.log('connected')
-      this.socket.on(this.props.inChatWith.chatroomId, (data) => {
-        this.props.clearTextInput()
-      })
-    })
-  }
-
-  sendMessageToSocketServer = () => {
-    this.socket.emit('message', {
-      chatroomId: this.props.inChatWith.chatroomId
-    })
-  }
+  fetchTrackInfo = async function(id) {
+    parsedId = id.split("-")[0];
+    let data = await fetch(`${this.props.url}/chat/track/${parsedId}`, {
+      method: "GET",
+      headers: {
+        Accept: "application/json",
+        "Content-Type": "application/json"
+      }
+    });
+    let track = JSON.parse(data._bodyInit).track;
+    return track;
+  };
 
   suggestMusicButtonHandler = () => {
     this.setState({
       suggestMenuState: !this.state.suggestMenuState
-    })
-  }
+    });
+  };
 
-  render(){
-    let { sendOnPress, onChangeText, inChatWith, handleChatWithFriend } = this.props;
+  previousMessagesCallback = () => {
+    this.props.setLimit(this.props.messages.length + 5, false)
+  }  
+
+  render() {
+    let {
+      sendOnPress,
+      onChangeText,
+      inChatWith,
+      handleChatWithFriend,
+      navigation,
+      page,
+      handleTrackPress,
+      messages
+    } = this.props;
     backToShowFriends = () => {
-      handleChatWithFriend(null);
-    }
-    let messageList = this.state.messages.map(message => {
-      return <Message content={message.content} date={message.date} userId={message.user_id} key={Math.random().toString()} />
-    })
+      handleChatWithFriend(null, "showChatrooms");
+    };
+    let messageList = messages.map(message => {
+      return (
+        <Message
+          userId={this.props.userId}
+          handleTrackPress={handleTrackPress}
+          message={message}
+          key={Math.random().toString()}
+        />
+      );
+    });
 
     // only render suggest music menu if suggest music button is clicked
-    let suggestMusicMenu = <ChatInput 
-      suggestMusicButtonHandler={this.suggestMusicButtonHandler} 
-      text={this.props.text} 
-      onChangeText={onChangeText}
-      sendMessageToSocketServer={this.sendMessageToSocketServer}
-      fetchMessages={this.fetchMessages}
-      sendOnPress={sendOnPress}
-    />
+    let suggestMusicMenu = (
+      <View style={{ height: 40 }}>
+        <ChatInput
+          suggestMusicButtonHandler={this.suggestMusicButtonHandler}
+          text={this.props.text}
+          onChangeText={onChangeText}
+          sendMessageToSocketServer={this.props.sendMessageToSocketServer}
+          fetchMessages={this.props.fetchMessages}
+          sendOnPress={sendOnPress}
+          updateStateMessages={this.updateStateMessages}
+        />
+      </View>
+    );
 
-    if(this.state.suggestMenuState) {
-      suggestMusicMenu = <SuggestMusicMenu suggestMusicButtonHandler={this.suggestMusicButtonHandler} />
+    if (this.state.suggestMenuState) {
+      suggestMusicMenu = (
+        <View style={{height: 100}}>
+          <SuggestMusicMenu
+            suggestMusicButtonHandler={this.suggestMusicButtonHandler}
+            navigation={navigation}
+            handleChatWithFriend={handleChatWithFriend}
+            inChatWith={inChatWith}
+          />
+        </View>
+      );
+    }
+    // renders suggested tracks if user presses show tracks button
+    if (page === "showSuggestions") {
+      return (
+        <ShowSuggestions
+          handleChatWithFriend={handleChatWithFriend}
+          inChatWith={inChatWith}
+          suggestedTracks={this.state.suggestedTracks}
+          selectedTrack={this.props.selectedTrack}
+          handleTrackPress={this.props.handleTrackPress}
+          fetchTrackInfo={this.fetchTrackInfo}
+        />
+      );
     }
 
     return (
-      <KeyboardAvoidingView keyboardVerticalOffset = {60} behavior="padding" style={styles.container}>
-      
+      <KeyboardAvoidingView
+        keyboardVerticalOffset={65}
+        behavior="padding"
+        style={styles.container}
+      >
         <View style={styles.header}>
           <TouchableOpacity style={styles.back} onPress={backToShowFriends}>
-            <Text style={styles.backButtonText}>{'<'}</Text>
+            <Text style={styles.backButtonText}>{"<"}</Text>
           </TouchableOpacity>
 
           <Text style={styles.text}>{inChatWith.name}</Text>
         </View>
 
         <ScrollView
-          ref={ref => this.scrollView = ref}
-          onContentSizeChange={(contentWidth, contentHeight)=>{        
-            this.scrollView.scrollToEnd({animated: true});
+          ref={ref => (this.scrollView = ref)}
+          onContentSizeChange={() => {
+            this.props.scrollToBottom && this.scrollView.scrollToEnd({ animated: true });
           }}
           style={styles.messageList}
         >
+          <TouchableOpacity onPress={this.previousMessagesCallback} style={styles.previousMessagesButton}>
+            <Text style={styles.previousMessagesText}>Previous Messages</Text>
+          </TouchableOpacity>
           {messageList}
         </ScrollView>
         {suggestMusicMenu}
-        
-  
       </KeyboardAvoidingView>
     );
   }
-  
 }
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
+    flex: 1
   },
   header: {
     flex: 1,
-    flexDirection: 'row',
-    justifyContent: 'space-between',
+    flexDirection: "row",
+    justifyContent: "space-between",
     height: 5,
-    alignItems: 'center',
+    alignItems: "center",
+    borderBottomWidth: 1,
+    marginBottom: 10
   },
   backButtonText: {
     fontSize: 20,
-    textAlign: 'center'
+    textAlign: "center"
   },
   text: {
-    fontSize: 40,
-    marginEnd: 20,
+    fontSize: 30,
+    marginEnd: 20
   },
   back: {
     height: 30,
     width: 60,
-    backgroundColor: '#d5dae2',
-    borderRadius: 20,
+    backgroundColor: "#d5dae2",
+    borderRadius: 20
   },
   messageList: {
-    maxHeight: '70%'
+    height: "65%"
   },
+  previousMessagesText: {
+    fontSize: 20,
+  },
+  previousMessagesButton: {
+    height: 40,
+    backgroundColor: '#d4d6d4',
+    borderWidth: 1,
+    borderColor: '#9ca39c',
+    borderRadius: 20,
+    marginBottom: 25,
+    alignItems: 'center',
+    justifyContent: 'center'
+  }
 });
 
-export default Chat
+export default Chat;

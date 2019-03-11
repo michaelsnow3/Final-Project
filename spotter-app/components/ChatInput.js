@@ -1,7 +1,13 @@
 import React from 'react';
-import {View, Text, TouchableOpacity, TextInput, StyleSheet} from 'react-native'
+import { 
+  View, 
+  Text, 
+  TouchableOpacity, 
+  TextInput, 
+  StyleSheet,
+} from 'react-native'
 
-function ChatInput( {suggestMusicButtonHandler, text, onChangeText, sendMessageToSocketServer, fetchMessages, sendOnPress}) {
+function ChatInput( { suggestMusicButtonHandler, text, onChangeText, sendMessageToSocketServer, fetchMessages, sendOnPress }) {
   return(
     <View style={styles.input}>
       <TouchableOpacity onPress={suggestMusicButtonHandler}>
@@ -27,15 +33,15 @@ const styles = StyleSheet.create({
     flex: 1,
     flexDirection: 'row',
     justifyContent: 'space-around',
-    alignItems: 'center'
+    alignItems: 'center',
   },
   suggestMusicButton: {
     fontSize: 30
   },
   textInput: {
-    height: 40,
+    height: '100%',
     borderRadius: 10,
-    borderWidth: 2,
+    borderWidth: 1.5,
     width: '70%',
     alignSelf: 'center',
   },

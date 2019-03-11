@@ -1,3 +1,4 @@
+
 import React from 'react';
 import {
   View,
@@ -17,8 +18,9 @@ export default class ProfileScreen extends React.Component {
     super(props);
     this.state = {
       userToken: null,
-      serverUrl: null,
-      userId: null,
+      nodeServerUrl: null,
+      socketServerUrl: null,
+      userIdFromSpotify: null,
       email: null,
       favoriteGenres: [],
       favoriteArtists: [],
@@ -27,8 +29,10 @@ export default class ProfileScreen extends React.Component {
       displayInfo: true,
       favoriteContent: ''
     };
- 
-    this._getUserInfo();
+  }
+
+  componentDidMount() {
+    this.props.navigation.addListener('willFocus', this._getUserInfo);
   }
 
   static navigationOptions = {
@@ -43,6 +47,7 @@ export default class ProfileScreen extends React.Component {
 
     return (
       <View>
+        <Text style={styles.name}>Profile</Text>
         <Button title={editTitle} onPress={this._editInfo} />
         {editOrDisplay}
         <Button title="Logout this amazing App :)" onPress={this._signOutAsync} />
@@ -62,7 +67,7 @@ export default class ProfileScreen extends React.Component {
       return (
         <View style={styles.container}>
           <View>
-            <Text>Id: {this.state.userId}</Text>
+            <Text>Id: {this.state.userIdFromSpotify}</Text>
             <Text>Email: {this.state.email}</Text>
           </View>
           <View style={styles.favoriteBtn}>
@@ -83,15 +88,16 @@ export default class ProfileScreen extends React.Component {
       return (
         <View style={styles.AddNewcontainer}>
           <TextInput style={
-                       { width: 120,
-                         borderColor: 'gray',
-                         borderWidth: 1,
-                       }
-                     }
-                     onChangeText={(text) => this.setState({favoriteContent: text})}
-                     value={this.state.favoriteContent}
-                     placeholder={addNewPlaceHolder} />
-          <Button title='Submit' onPress={this._addNewValue} />
+            {
+              width: 120,
+              borderColor: 'gray',
+              borderWidth: 1,
+            }
+          }
+          onChangeText={(text) => this.setState({favoriteContent: text})}
+          value={this.state.favoriteContent}
+          placeholder={addNewPlaceHolder} />
+        <Button title='Submit' onPress={this._addNewValue} />
         </View>
       );
     }
@@ -101,8 +107,9 @@ export default class ProfileScreen extends React.Component {
     console.log(this.state.favoriteContent);
     console.log(this.state.favoriteType);
     if (this.state.favoriteContent !== '') {
-
       let updateData = null;
+
+      console.log("before switch:");
 
       switch (this.state.favoriteType) {
         case "Genre":
@@ -120,8 +127,7 @@ export default class ProfileScreen extends React.Component {
           updateData.push(this.state.favoriteContent);
           this.setState({favoriteSongs: updateData});
           break;
-        break;
-      };
+      }
 
       console.log("updateData:");
       console.log(updateData);
@@ -130,6 +136,7 @@ export default class ProfileScreen extends React.Component {
 
       this.setState({favoriteContent: ''});
       this._editInfo();
+
     }
   };
 
@@ -197,17 +204,20 @@ export default class ProfileScreen extends React.Component {
 
   _updateFavoriteDb = async (favoriteType, newData) => {
 
-    fetch(`${this.state.serverUrl}/profile/edit/`, {
+    fetch(`${this.state.nodeServerUrl}/profile/edit/`, {
       method: 'POST',
       headers: {
         Accept: 'application/json',
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
-        userName: this.state.userId,
+        userName: this.state.userIdFromSpotify,
         type: favoriteType,
         favoriteData: newData
       }),
+    }).catch(function(error) {
+      console.log('There has been a problem with your fetch operation: ' + error.message);
+      throw error;
     });
   };
 
@@ -265,12 +275,19 @@ export default class ProfileScreen extends React.Component {
 
   _getUserInfo = async () => {
 
-    const userToken = await AsyncStorage.getItem('userToken');
-    this.setState({userToken: userToken});
-    const serverUrl = await AsyncStorage.getItem('serverUrl');
-    this.setState({serverUrl: serverUrl});
+    const email               = await AsyncStorage.getItem('email');
+    const userToken           = await AsyncStorage.getItem('userToken');
+    const userIdFromSpotify   = await AsyncStorage.getItem('userIdFromSpotify');
+    const nodeServerUrl       = await AsyncStorage.getItem('nodeServerUrl');
+    const socketServerUrl     = await AsyncStorage.getItem('socketServerUrl');
 
-    fetch(`${serverUrl}/profile/user_info/${userToken}`, {
+    this.setState({email: email});
+    this.setState({userToken: userToken});
+    this.setState({userIdFromSpotify: userIdFromSpotify});
+    this.setState({nodeServerUrl: nodeServerUrl});
+    this.setState({socketServerUrl: socketServerUrl});
+
+    fetch(`${nodeServerUrl}/profile/user_info/${userIdFromSpotify}`, {
        method: 'GET',
        headers: {
            'Content-Type': 'application/json'
@@ -278,9 +295,6 @@ export default class ProfileScreen extends React.Component {
      })
     .then((response) => response.json())
     .then((jsonData) => {
-      console.log(jsonData);
-      this.setState({userId: jsonData.name});
-      this.setState({email: jsonData.email});
       if (jsonData.favoriteGenres) {
         this.setState({favoriteGenres: jsonData.favoriteGenres});
       }
@@ -295,12 +309,13 @@ export default class ProfileScreen extends React.Component {
     })
     .catch((error) => {
       console.error(error);
+      throw error;
     });
   };
 
   _signOutAsync = async () => {
     await AsyncStorage.clear();
-    this.props.navigation.navigate('Auth');
+    this.props.navigation.navigate('AuthLoading');
   };
 }
 
@@ -321,4 +336,8 @@ const styles = StyleSheet.create({
   AddNewcontainer: {
     alignItems: 'center',
   },
+  name: {
+    fontSize: 50,
+    textAlign: 'center'
+  }
 });
