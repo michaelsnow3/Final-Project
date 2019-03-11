@@ -20,26 +20,24 @@ export default class FriendScreen extends React.Component {
 
   constructor(props) {
     super(props)
-
     this.state = {
       friends: [],
       page: 'ShowFriends',
-      friend_id : null
-      
+      friend_id : null,
+      primary_id : 5
     }
   }
-  
   static navigationOptions = {
     header: null,
   };
-
   handler = (friend_id, page) => {
     this.setState({
       page : page,
       friend_id : friend_id
     })
   }
-  // https://mysterious-gorge-24322.herokuapp.com:8888/profile/friends
+  // heroku server: 
+  // https://mysterious-gorge-24322.herokuapp.com:8888/show-friends/
   componentDidMount() {
     fetch('http://172.46.0.173:8888/show-friends/', {
       method: 'POST',
@@ -48,14 +46,11 @@ export default class FriendScreen extends React.Component {
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
-        id : 3
+        id : this.state.primary_id
       })
     }).then(data => {
-      console.log('data: ', data)
-      // console.log(JSON.parse(data._bodyInit).friends);
       let friends = JSON.parse(data._bodyInit)
       this.setState({ friends })
-      console.log('friends; ', friends)
     })
   }
   
@@ -78,11 +73,9 @@ export default class FriendScreen extends React.Component {
         handler={this.handler}
         id={this.state.friend_id}
         navigation={this.props.navigation}
-        handleChatWithFriend={() => {
-            console.log(111111)
-          }} />
-        )
-      }
+        handleChatWithFriend={() => {}} />
+      )
+    }
   }
 
   _maybeRenderDevelopmentModeWarning() {

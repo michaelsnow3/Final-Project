@@ -7,12 +7,6 @@ import {
   Text,
 } from 'react-native';
 
-//////////// have a list of all route paths
-// receive user id in props?
-// set user id
-// message button redirect to chat
-// styling
-
 export default class OtherProfileScreen extends React.Component {
   constructor(props) {
     super(props);
@@ -22,14 +16,13 @@ export default class OtherProfileScreen extends React.Component {
       name : "",
       avatar : null,
       top3 : "",
-      primary_id : 3
+      primary_id : 5
     }
   }
   static navigationOptions = {
     header: null,
   };
 
-  
   // get primary user id from async storage????????????????????
   // getPrimaryId = async () => {
   //   try {
@@ -139,7 +132,6 @@ export default class OtherProfileScreen extends React.Component {
       });
   } 
   
-  // Doesnt work
   message = () => { 
     this.props.navigation.navigate(`Chat`);  
   }
@@ -175,10 +167,8 @@ export default class OtherProfileScreen extends React.Component {
           {this.state.top3}
         </Text>
         {addOrMsg}
-        <Button title="View Friends" onPress={() => {
-          this.props.handler( null, 'ShowFriends'
-          )
-        }} />
+        <Button title="View Friends" 
+                onPress={() => {this.props.handler( null, 'ShowFriends')}} />
       </View>
     );
   }

@@ -1,20 +1,16 @@
 import React from 'react';
 import {
-  Image,
-  Platform,
-  ScrollView,
   StyleSheet,
   Text,
   TouchableOpacity,
-  View,
 } from 'react-native';
 
 function UserCard({name, id, handler}) {
-  handler2 = () => {
+  callHandler = () => {
     handler (id, 'OtherProfileScreen')
   }
   return (
-    <TouchableOpacity style={styles.container} onPress={handler2}>
+    <TouchableOpacity style={styles.container} onPress={callHandler}>
       <Text style={styles.name}>{name}</Text>
     </TouchableOpacity>
   )

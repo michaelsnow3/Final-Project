@@ -76,6 +76,10 @@ app.use("/add_friend", addFriendRoutes);
 const showProfileRoutes = require("./server-endpoints/show-profile-routes")
 app.use('/show_profile', showProfileRoutes(knex))
 
+// meet endpoint
+const meetRoutes = require("./server-endpoints/meet-routes")
+app.use('/meet', meetRoutes(knex))
+
 //app.use("/routes", routes(knex));
 
 console.log("Listening on port " + PORT);
