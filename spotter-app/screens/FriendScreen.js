@@ -40,6 +40,7 @@ export default class FriendScreen extends React.Component {
       userToken: null,
       user_id_from_spotify: null,
       username: null,
+      friendRequests: []
     }
 
     // Create Socket Server Connection here
@@ -54,22 +55,57 @@ export default class FriendScreen extends React.Component {
     ]);
   }
 
+  componentDidMount() {
+    this.props.navigation.addListener('willFocus', this.fetchFriends);
+    this.props.navigation.addListener('willFocus', this.fetchFriendRequest);
+  }
+
+  fetchFriendRequest = () => {
+
+    console.log("fetchFriendRequest url:", `${this.state.nodeServerUrl}/show_profile/friend_requests/${this.state.userId}`);
+
+    fetch(`${this.state.nodeServerUrl}/show_profile/friend_requests/${this.state.userId}`, {
+      method: 'GET',
+      headers: {
+        'Accept': 'application/json',
+        'Content-Type': 'application/json',
+      },
+    }).then(data => {
+          //console.log(data);
+
+      let friendRequests = JSON.parse(data._bodyInit)
+      this.setState({ friendRequests })
+    })
+  };
+
   getUserId = () => {
+
+    console.log("url in getUserId:", `${this.state.nodeServerUrl}/nearby/get_id/${this.state.username}`);
+
     fetch(`${this.state.nodeServerUrl}/nearby/get_id/${this.state.username}`, {
       method: "GET",
       headers: {
         Accept: "application/json",
         "Content-Type": "application/json"
       }
-    }).then((data) => {
+    })
+    .then((data) => {
       let userId = JSON.parse(data._bodyInit).id
       this.setState({userId}, () => {
         this.fetchFriends()
+        this.fetchFriendRequest()
       })
+    })
+    .catch(function(error) {
+      console.log('Problem with fetch friends:', error);
+      throw error;
     });
   }
 
   fetchFriends = () => {
+
+    console.log("url fetchFriends:", `${this.state.nodeServerUrl}/show-friends/`);
+
     fetch(`${this.state.nodeServerUrl}/show-friends/`, {
       method: 'POST',
       headers: {
@@ -89,10 +125,10 @@ export default class FriendScreen extends React.Component {
 
     const userToken       = await AsyncStorage.getItem('userToken');
     const nodeServerUrl   = await AsyncStorage.getItem('nodeServerUrl');
-    await this.setState({nodeServerUrl})
     const socketServerUrl = await AsyncStorage.getItem('socketServerUrl');
     const username        = await AsyncStorage.getItem('userIdFromSpotify');
 
+    await this.setState({nodeServerUrl});
     await this.setState({username})
     this.getUserId()
 
@@ -175,7 +211,7 @@ export default class FriendScreen extends React.Component {
       console.log("_insertUserIfNotExist:", response);
     })
     .catch((error) => {
-      console.error(error);
+      console.error("_insertUserIfNotExist error:", error);
       throw error;
     });
   };
@@ -187,6 +223,7 @@ export default class FriendScreen extends React.Component {
           <View style={styles.container}>
             <ShowFriends
               friends={this.state.friends}
+              GetfriendsList={this.fetchFriends}
               handler={this.handler}
               backgroundColor={'#ff704c'}            />
           </View>
@@ -206,7 +243,10 @@ export default class FriendScreen extends React.Component {
             handler={this.handler}
             url={this.state.nodeServerUrl}
             userId={this.state.userId}
-            backgroundColor={'#ff704c'}  
+            friendRequestsFunc={this.fetchFriendRequest}
+            friendRequests={this.state.friendRequests}
+            backgroundColor={'#ff704c'}
+            GetfriendsList={this.fetchFriends}
           />
         </View>
       )

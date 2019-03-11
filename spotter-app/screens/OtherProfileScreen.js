@@ -25,6 +25,7 @@ export default class OtherProfileScreen extends React.Component {
       name : "",
       avatar : null,
       top3 : "",
+      nodeServerUrl: null
     }
     console.log(`id:${this.props.id},in OtherProfileScreen`);
   }
@@ -42,6 +43,7 @@ export default class OtherProfileScreen extends React.Component {
 
     const userIdFromSpotify = await AsyncStorage.getItem('userIdFromSpotify');
     const nodeServerUrl     = await AsyncStorage.getItem('nodeServerUrl');
+    this.setState({nodeServerUrl: nodeServerUrl});
 
     console.log("get my id url:", `${nodeServerUrl}/nearby/get_id/${userIdFromSpotify}`);
 

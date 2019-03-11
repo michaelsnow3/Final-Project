@@ -8,9 +8,10 @@ import {
   View,
 } from 'react-native';
 
-function FriendScreenNav({ handler }) {
+function FriendScreenNav({ handler, GetfriendsList }) {
   handleShowFriendsPress = () => {
-    handler(null, 'ShowFriends')
+    handler(null, 'ShowFriends');
+    GetfriendsList();
   }
   handleShowFriendRequestsPress = () => {
     handler(null, 'FriendRequests')

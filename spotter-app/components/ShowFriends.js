@@ -13,7 +13,7 @@ import {
 import UserCard from '../components/UserCard';
 import FriendScreenNav from '../components/FriendScreenNav';
 
-function ShowFriends({friends, handler}) {
+function ShowFriends({friends, handler, GetfriendsList}) {
   const friendsList = friends.map(friend => {
     return <UserCard backgroundColor={'#ff704c'} name={friend.name} id={friend.id} handler={handler} key={Math.random().toString()} />
   });
@@ -21,14 +21,14 @@ function ShowFriends({friends, handler}) {
   return(
     <View style={styles.container}>
       <Text style={styles.name}>Friends</Text>
-      <View style={styles.nav}><FriendScreenNav handler={handler} /></View>
+      <View style={styles.nav}><FriendScreenNav handler={handler} GetfriendsList={GetfriendsList}/></View>
       <ScrollView style={styles.friendList}>{friendsList}</ScrollView>
     </View>
   )
 }
 const styles = StyleSheet.create({
   container: {
-   height: '100%' 
+   height: '100%'
   },
   name: {
     fontSize: 50,
