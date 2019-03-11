@@ -9,7 +9,7 @@ import {
   View,
 } from 'react-native';
 
-function UserCard({name, id, handler, handleChatWithFriend, friend, userId, url, fetchChatrooms}) {
+function UserCard({name, id, handler, handleChatWithFriend, friend, userId, url, fetchChatrooms, backgroundColor}) {
   handler2 = () => {
     handler (id, 'OtherProfileScreen')
   }
@@ -38,6 +38,7 @@ function UserCard({name, id, handler, handleChatWithFriend, friend, userId, url,
       startNewChat()
     }
   }
+  
   return (
     <TouchableOpacity style={styles.container} onPress={handler2}>
       <Text style={styles.name}>{name}</Text>
@@ -53,7 +54,8 @@ const styles = StyleSheet.create({
     borderColor: 'black',
     marginTop: 5,
     marginBottom: 5,
-    justifyContent: 'center'
+    justifyContent: 'center',
+    backgroundColor: '#ffc787'
   },
   name: {
     fontSize: 30,

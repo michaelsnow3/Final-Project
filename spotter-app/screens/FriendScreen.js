@@ -145,7 +145,7 @@ export default class FriendScreen extends React.Component {
             <ShowFriends
               friends={this.state.friends}
               handler={this.handler}
-            />
+              backgroundColor={'#ff704c'}            />
           </View>
         );
       case 'OtherProfileScreen':
@@ -163,6 +163,7 @@ export default class FriendScreen extends React.Component {
             handler={this.handler}
             url={this.state.nodeServerUrl}
             userId={this.state.userId}
+            backgroundColor={'#ff704c'}  
           />
         </View>
       )

@@ -11,8 +11,8 @@ import {
   Platform,
   ScrollView,
   AsyncStorage,
+  YellowBox,
 } from "react-native";
-
 import { MonoText } from "../components/StyledText";
 
 import io from 'socket.io-client';

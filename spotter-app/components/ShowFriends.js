@@ -15,7 +15,7 @@ import FriendScreenNav from '../components/FriendScreenNav';
 
 function ShowFriends({friends, handler}) {
   const friendsList = friends.map(friend => {
-    return <UserCard name={friend.name} id={friend.id} handler={handler} key={Math.random().toString()} />
+    return <UserCard backgroundColor={'#ff704c'} name={friend.name} id={friend.id} handler={handler} key={Math.random().toString()} />
   });
 
   return(

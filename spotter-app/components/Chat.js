@@ -52,7 +52,7 @@ class Chat extends React.Component {
         tracks.push(track)
       }
     }
-    this.setState({suggestedTracks: tracks})
+    this._isMounted && this.setState({suggestedTracks: tracks})
   }
 
   fetchTrackInfo = async function(id) {
