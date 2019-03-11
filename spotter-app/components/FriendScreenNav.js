@@ -19,11 +19,11 @@ function FriendScreenNav({ handler }) {
     <View style={styles.container}>
 
     <TouchableOpacity onPress={handleShowFriendsPress} style={styles.showFriends}>
-      <Text style={styles.text}>Show Friends</Text>
+      <Text style={styles.text}>Friends</Text>
     </TouchableOpacity>
 
     <TouchableOpacity onPress={handleShowFriendRequestsPress} style={styles.showFriendRequests}>
-      <Text style={styles.text}>Show Friend Requests</Text>
+      <Text style={styles.text}>Friend Requests</Text>
     </TouchableOpacity>
 
     </View>
@@ -34,21 +34,22 @@ const styles = {
   container: {
     flex: 1,
     flexDirection: 'row',
-    height: 40,
     marginBottom: 10,
   },
   showFriends: {
     width: '50%',
     backgroundColor: '#ffa975',
+    justifyContent: 'center',
   },
   showFriendRequests: {
     width: '50%',
     backgroundColor: '#f47f38',
+    justifyContent: 'center',
   },
   text: {
-    fontSize: 15,
+    fontSize: 20,
     textAlign: 'center',
-    marginTop: 5
+    marginTop: 5,
   }
 }
 

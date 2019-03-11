@@ -19,20 +19,26 @@ function ShowFriends({friends, handler}) {
   });
 
   return(
-    <View>
+    <View style={styles.container}>
       <Text style={styles.name}>Friends</Text>
-      <FriendScreenNav handler={handler} />
+      <View style={styles.nav}><FriendScreenNav handler={handler} /></View>
       <ScrollView style={styles.friendList}>{friendsList}</ScrollView>
     </View>
   )
 }
 const styles = StyleSheet.create({
+  container: {
+   height: '100%' 
+  },
   name: {
     fontSize: 50,
     textAlign: 'center'
   },
   friendList: {
     height: '65%'
+  },
+  nav: {
+    height: 50
   }
 });
 export default ShowFriends

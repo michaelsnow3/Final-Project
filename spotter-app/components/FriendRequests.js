@@ -39,21 +39,27 @@ class FriendRequests extends React.Component {
     });
 
     return(
-      <View>
+      <View style={styles.container}>
         <Text style={styles.name}>Friend Requests</Text>
-        <FriendScreenNav handler={this.props.handler} />
+        <View style={styles.nav}><FriendScreenNav handler={this.props.handler} /></View>
         <ScrollView style={styles.requestList}>{friendRequestsList}</ScrollView>
       </View>
     )
   }
 }
   const styles = StyleSheet.create({
+    container: {
+      height: '100%' 
+     },
     name: {
       fontSize: 50,
       textAlign: 'center'
     },
     requestList: {
       height: '65%'
+    },
+    nav: {
+      height: 50
     }
   });
 

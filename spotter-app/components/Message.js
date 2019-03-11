@@ -45,7 +45,7 @@ const styles = StyleSheet.create({
     backgroundColor: 'lightgreen',
     width: '50%',
     marginBottom: 15,
-    alignSelf: 'flex-start'
+    alignSelf: 'flex-end'
   },
   friendMessage: {
     borderRadius: 10,
@@ -54,7 +54,7 @@ const styles = StyleSheet.create({
     backgroundColor: 'lightblue',
     width: '50%',
     marginBottom: 15,
-    alignSelf: 'flex-end'
+    alignSelf: 'flex-start'
   },
   suggestMessage: {
     borderRadius: 10,
