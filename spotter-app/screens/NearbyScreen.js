@@ -48,8 +48,6 @@ export default class NearbyScreen extends React.Component {
 
     this.props.navigation.addListener('willFocus', this._sendFindRequest);
     this.props.navigation.addListener('willFocus', this._trunOnSearching);
-
-    this._getMyId();
   }
 
   initSocket = async () => {
@@ -99,28 +97,10 @@ export default class NearbyScreen extends React.Component {
     header: null,
   };
 
-  _getMyId = async () => {
-
-    const userIdFromSpotify = await AsyncStorage.getItem('userIdFromSpotify');
-
-    await fetch(`${this.state.nodeServerUrl}/nearby/get_id/${userIdFromSpotify}`)
-    .then((response) => response.json())
-    .then((jsonData) => {
-      if (jsonData.id !== undefined) {
-        this.setState({myIdInDby: jsonData.id});
-      }
-    })
-    .catch(function(error) {
-      console.log('Problem with your getMyDbId: ' + error.message);
-      throw error;
-    });
-  };
-
   _matchingPeople = async () => {
 
     console.log("_matchingPeople");
 
-    this.setState({searching: false});
     clearInterval(this.timerSearchingText);
     clearInterval(this.timerCountDown);
 
@@ -131,10 +111,11 @@ export default class NearbyScreen extends React.Component {
       console.log(jsonData);
       if (jsonData.id !== undefined) {
         this.setState({matchedPersonDbId: jsonData.id});
+        this.setState({searching: false});
       }
     })
     .catch(function(error) {
-      console.log('Problem with your getUserDbId: ' + error.message);
+      console.log('Problem with get the matched user db Id:', error);
       throw error;
     });
   };
@@ -258,12 +239,10 @@ export default class NearbyScreen extends React.Component {
             }
             backView={
               <View>
-                <Text style={{ textAlign: 'center' }}>
-                  Back Side
-                </Text>
                 <OtherProfileScreen
                   handler={this.handler}
-                  id={this.state.myIdInDb}
+                  id={this.state.matchedPersonDbId}
+                  name={this.state.matchPerson}
                   navigation={this.props.navigation}
                   handleChatWithFriend={() => {
                     console.log(111111)

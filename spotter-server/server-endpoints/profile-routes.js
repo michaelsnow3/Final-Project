@@ -15,8 +15,9 @@ module.exports = function(request, selectQueries) {
     };
 
     request.get(options, function(error, response, body) {
-      if (!error && response.statusCode === 200) {
-        let avatar = (body.images.length === 0) ? null : body.images[0].url;
+      if (!error && (response.statusCode >= 200) || (response.statusCode <= 204)) {
+        console.log(body);
+        let avatar = (body.images && (body.images.length === 0)) ? null : body.images[0].url;
         let userInfo = {
           name: body.display_name,
           avatar: avatar,
@@ -49,10 +50,10 @@ module.exports = function(request, selectQueries) {
           throw error;
         });
       } else {
-        console.log("profileEditRoutes insert new user error2:");
-        console.log(error);
-        res.status(500).send({error: error});
-        throw error;
+        console.log("profileEditRoutes call spotify api, response code:", response.statusCode);
+        //console.log(error);
+        //res.status(500).send({error: error});
+        //throw error;
       }
     });
   });

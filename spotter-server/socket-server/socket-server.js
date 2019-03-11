@@ -6,7 +6,7 @@ const PORT = process.env.SOCKET_PORT || 3005
 const QueueOperator = require("./QueueOperator");
 
 let users = {
-  'abc': {
+  'ghi': {
     currentMusicData: { album: '÷ (Deluxe)', artist: 'Ed Sheeran', song: 'Perfect', cover:
          'https://i.scdn.co/image/3b673c999773ba34acd5d724d47666e407fa06f2'},
     locationInfo:
@@ -26,7 +26,7 @@ let users = {
       timestamp: 1552157136.9262118
     }
   },
-  'ghi':{
+  'abc':{
     currentMusicData: { album: '忠孝東路走九遍', artist: 'Power Station', song: '忠孝東路走九遍' },
     locationInfo:
     {
