@@ -16,13 +16,13 @@ function SuggestMusicMenu({ suggestMusicButtonHandler, inChatWith, handleChatWit
         <TouchableOpacity style={styles.topOption} onPress={() => {
           handleChatWithFriend(inChatWith, 'suggestSong')
         }}>
-          <Text style={styles.text}>Suggest a Song</Text>
+          <Text style={styles.text}>Suggest Song</Text>
         </TouchableOpacity>
 
         <TouchableOpacity style={styles.bottomOption} onPress={() =>  {
           handleChatWithFriend(inChatWith, 'showSuggestions')
         }}>
-          <Text style={styles.text}>Suggested Songs</Text>
+          <Text style={styles.text}>View Suggestions</Text>
         </TouchableOpacity>
         
       </View>
@@ -35,18 +35,17 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     flexDirection: 'row',
-    justifyContent: 'space-around',
-    alignItems: 'center',
     borderTopWidth: 1,
+    alignItems: 'center',
+    justifyContent: 'space-around',
   },
   suggestions: {
     flex: 1,
     flexDirection: 'column',
-    justifyContent: 'space-between',
   },
   text: {
     fontSize: 25,
-    textAlign: 'center'
+    textAlign: 'center',
   },
   minimize: {
     fontSize: 20,
@@ -55,12 +54,12 @@ const styles = StyleSheet.create({
     borderTopWidth: 1
   },
   topOption: {
-    borderBottomWidth: 1,
-    width: '70%'
+    width: '80%',
   },
   bottomOption: {
-    width: '70%'
-  },
+    width: '80%',
+    marginTop: 10
+  }
 })
 
 export default SuggestMusicMenu;
