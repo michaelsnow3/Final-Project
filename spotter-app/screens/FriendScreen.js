@@ -18,6 +18,8 @@ import { MonoText } from '../components/StyledText';
 
 import OtherProfileScreen from './OtherProfileScreen.js';
 
+import FriendRequests from '../components/FriendRequests.js';
+
 import { getCurrentMusic } from '../components/GetCurrentMusic';
 
 import { sendMusicSocketServer } from '../components/SendCurrentMusicToSocketS';
@@ -36,7 +38,8 @@ export default class FriendScreen extends React.Component {
       userId: null,
       nodeServerUrl: null,
       userToken: null,
-      user_id_from_spotify: null
+      user_id_from_spotify: null,
+      username: null,
     }
 
     // Create Socket Server Connection here
@@ -51,11 +54,47 @@ export default class FriendScreen extends React.Component {
     ]);
   }
 
+  getUserId = () => {
+    fetch(`${this.state.nodeServerUrl}/nearby/get_id/${this.state.username}`, {
+      method: "GET",
+      headers: {
+        Accept: "application/json",
+        "Content-Type": "application/json"
+      }
+    }).then((data) => {
+      let userId = JSON.parse(data._bodyInit).id
+      this.setState({userId}, () => {
+        this.fetchFriends()
+      })
+    });
+  }
+
+  fetchFriends = () => {
+    fetch(`${this.state.nodeServerUrl}/show-friends/`, {
+      method: 'POST',
+      headers: {
+        'Accept': 'application/json',
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        id : this.state.userId
+      })
+    }).then(data => {
+      let friends = JSON.parse(data._bodyInit)
+      this.setState({ friends })
+    })
+  }
+
   initSocket = async () => {
 
     const userToken       = await AsyncStorage.getItem('userToken');
     const nodeServerUrl   = await AsyncStorage.getItem('nodeServerUrl');
+    await this.setState({nodeServerUrl})
     const socketServerUrl = await AsyncStorage.getItem('socketServerUrl');
+    const username        = await AsyncStorage.getItem('userIdFromSpotify');
+
+    await this.setState({username})
+    this.getUserId()
 
     this.socket = io.connect(`${socketServerUrl}:3005`);
     this.socket.on('connect', () => {
@@ -126,7 +165,7 @@ export default class FriendScreen extends React.Component {
     fetch(`${nodeServerUrl}/profile/insert_user_if_not_exist`, {
       method: 'POST',
       headers: {
-          'Content-Type': 'application/json'
+        'Content-Type': 'application/json'
       },
       body: JSON.stringify({
         user_token: userToken
@@ -145,24 +184,32 @@ export default class FriendScreen extends React.Component {
     switch (this.state.page) {
       case 'ShowFriends':
         return (
-          <ScrollView style={styles.container}>
+          <View style={styles.container}>
             <ShowFriends
               friends={this.state.friends}
               handler={this.handler}
-            />
-            <Text>Friends</Text>
-          </ScrollView>
+              backgroundColor={'#ff704c'}            />
+          </View>
         );
       case 'OtherProfileScreen':
         return (
           <OtherProfileScreen
-          handler={this.handler}
-          id={this.state.friend_id}
-          navigation={this.props.navigation}
-          handleChatWithFriend={() => {
-            console.log(111111)
-          }} />
+            handler={this.handler}
+            id={this.state.friend_id}
+            navigation={this.props.navigation}
+          />
         );
+      case 'FriendRequests':
+      return (
+        <View style={styles.container}>
+          <FriendRequests
+            handler={this.handler}
+            url={this.state.nodeServerUrl}
+            userId={this.state.userId}
+            backgroundColor={'#ff704c'}  
+          />
+        </View>
+      )
     }
   }
 }

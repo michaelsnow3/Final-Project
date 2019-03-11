@@ -11,15 +11,18 @@ module.exports = function returnQueries(knex) {
       }
     },
 
-    selectFriends: async function(userId) {
+    selectFriends: async function(userId, verifyFriends) {
       try {
         let friendIds = await knex("friend")
           .select("friend_id")
           .where({ user_id: userId });
+        let potentialFriends = await verifyFriends(userId);
         let friends = [];
         for (let i = 0; i < friendIds.length; i++) {
-          let friend = await this.selectUserById(friendIds[i].friend_id);
-          friends.push(friend);
+          if(potentialFriends.includes(friendIds[i].friend_id)) {
+            let friend = await this.selectUserById(friendIds[i].friend_id);
+            friends.push(friend);
+          }
         }
         return friends;
       } catch (e) {
@@ -49,10 +52,10 @@ module.exports = function returnQueries(knex) {
       }
     },
 
-    selectMessages: async function(chatroomId) {
+    selectMessages: async function(chatroomId, limit) {
       let messages = await knex('message')
         .select('content', 'date', 'user_id', 'type', 'id')
-        .where({'chatroom_id': chatroomId})
+        .where({'chatroom_id': chatroomId}).orderBy('date', 'desc').limit(limit)
       return messages
     },
 
@@ -78,6 +81,46 @@ module.exports = function returnQueries(knex) {
       catch(e) {
         console.log('error selecting users chatrooms', e)
       }
+    },
+
+    selectFriendRequests: async function(userId, selectUserById) {
+      try {
+        let friends = await knex('friend').where({user_id: userId})
+        let hasUserAdded = await knex('friend').where({friend_id: userId})
+        let friendRequests = []
+        for(let i = 0; i < hasUserAdded.length; i++){
+          let inFriendsList = false;
+          friends.forEach(friend => {
+            if(friend.friend_id === hasUserAdded[i].user_id) {
+              inFriendsList = true
+            }
+          })
+          if(!inFriendsList) {
+            let friendRequest = await selectUserById(hasUserAdded[i].user_id)
+            friendRequests.push(friendRequest)
+          }
+        }
+        console.log(friendRequests)
+        return friendRequests
+      }
+      catch(e) {
+        console.log('error selecting users friend requests', e)
+      }
+    },
+
+    verifyFriends: async(userId) => {
+      try{
+        let hasUserAdded = await knex('friend').where({friend_id: userId})
+        let canStartChatWith = hasUserAdded.reduce((acc, user) => {
+          acc.push(user.user_id)
+          return acc
+        }, [])
+        return canStartChatWith
+      }
+      catch(e) {
+        console.log('error checking if users are friends', e)
+      }
     }
+
   };
 };

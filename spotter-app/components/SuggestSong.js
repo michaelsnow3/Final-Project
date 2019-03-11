@@ -59,7 +59,10 @@ export default class SuggestSong extends React.Component {
       })
 
     }).then(data => {
+
       this.props.handleChatWithFriend(this.props.inChatWith, 'showChat')
+      this.props.sendMessageToSocketServer()
+      
     })
   }
 

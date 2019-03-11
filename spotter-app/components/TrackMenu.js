@@ -11,7 +11,7 @@ import {
 
 function TrackMenu({ track }) {
 
-  
+
   handleClick = () => {
     Linking.canOpenURL(track.url).then(supported => {
       if (supported) {
@@ -24,11 +24,8 @@ function TrackMenu({ track }) {
   return(
     <View>
       <View style={styles.container}>
-        <TouchableOpacity style={styles.option} onPress={handleClick}>
+        <TouchableOpacity onPress={handleClick}>
           <Text style={styles.text}>Go to Spotify</Text>
-        </TouchableOpacity>
-        <TouchableOpacity style={{width: '50%'}} onPress={() => console.log('add playlist')}>
-          <Text style={styles.text}>Add to Playlist</Text>
         </TouchableOpacity>
       </View>
       <Text>{'\n'}</Text>
@@ -44,10 +41,6 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     borderWidth: 1,
     height: 60,
-  },
-  option: {
-    width: '50%',
-    borderRightWidth: 1
   },
   text: {
     fontSize: 25,

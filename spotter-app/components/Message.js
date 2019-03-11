@@ -22,7 +22,6 @@ function Message({ message, handleTrackPress, userId }) {
 
   // check if message is a track
   if(type === 'track') {
-    console.log(message)
     return(
       <TouchableOpacity onPress={() => handleTrackPress(message)} style={styles.suggestMessage}>
         <Text style={styles.date}>{newdate}</Text>
@@ -46,7 +45,7 @@ const styles = StyleSheet.create({
     backgroundColor: 'lightgreen',
     width: '50%',
     marginBottom: 15,
-    alignSelf: 'flex-start'
+    alignSelf: 'flex-end'
   },
   friendMessage: {
     borderRadius: 10,
@@ -55,7 +54,7 @@ const styles = StyleSheet.create({
     backgroundColor: 'lightblue',
     width: '50%',
     marginBottom: 15,
-    alignSelf: 'flex-end'
+    alignSelf: 'flex-start'
   },
   suggestMessage: {
     borderRadius: 10,
