@@ -27,9 +27,9 @@ module.exports = function(selectQueries, insertQueries) {
     })
   });
 
-  chatRoutes.get("/message/view/:chatroom_id", function(req, res) {
-    let chatroomId = req.params.chatroom_id;
-    selectQueries.selectMessages(chatroomId).then(messages => {
+  chatRoutes.get("/message/view/:chatroom_id/:limit", function(req, res) {
+    let { chatroom_id, limit } = req.params
+    selectQueries.selectMessages(chatroom_id, limit).then(messages => {
       res.json({ messages })
     })
     .catch(e => console.log("GET /message/view/:chatroom_id", e))

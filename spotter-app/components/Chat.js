@@ -76,6 +76,10 @@ class Chat extends React.Component {
     });
   };
 
+  previousMessagesCallback = () => {
+    this.props.setLimit(this.props.messages.length + 10)
+  }
+
   render() {
     let {
       sendOnPress,
@@ -163,6 +167,9 @@ class Chat extends React.Component {
           }}
           style={styles.messageList}
         >
+          <TouchableOpacity onPress={this.previousMessagesCallback} style={styles.previousMessagesButton}>
+            <Text style={styles.previousMessagesText}>Previous Messages</Text>
+          </TouchableOpacity>
           {messageList}
         </ScrollView>
         {suggestMusicMenu}
@@ -200,6 +207,19 @@ const styles = StyleSheet.create({
   },
   messageList: {
     height: "65%"
+  },
+  previousMessagesText: {
+    fontSize: 20,
+  },
+  previousMessagesButton: {
+    height: 40,
+    backgroundColor: '#d4d6d4',
+    borderWidth: 1,
+    borderColor: '#9ca39c',
+    borderRadius: 20,
+    marginBottom: 25,
+    alignItems: 'center',
+    justifyContent: 'center'
   }
 });
 

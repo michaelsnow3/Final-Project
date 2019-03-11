@@ -52,10 +52,10 @@ module.exports = function returnQueries(knex) {
       }
     },
 
-    selectMessages: async function(chatroomId, offset) {
+    selectMessages: async function(chatroomId, limit) {
       let messages = await knex('message')
         .select('content', 'date', 'user_id', 'type', 'id')
-        .where({'chatroom_id': chatroomId}).orderBy('date', 'desc').limit(20)
+        .where({'chatroom_id': chatroomId}).orderBy('date', 'desc').limit(limit)
       return messages
     },
 

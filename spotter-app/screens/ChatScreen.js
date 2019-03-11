@@ -38,7 +38,8 @@ export default class ChatScreen extends React.Component {
       socketServerUrl: null,
       username: null,
       playlists: [],
-      messages: []
+      messages: [],
+      limit: 20,
     };
 
     this._isMounted = false;
@@ -71,7 +72,7 @@ export default class ChatScreen extends React.Component {
   }
 
   fetchMessages = async () => {
-    let data = await fetch(`${this.state.url}/chat/message/view/${this.state.inChatWith.chatroomId}`, {
+    let data = await fetch(`${this.state.url}/chat/message/view/${this.state.inChatWith.chatroomId}/${this.state.limit}`, {
       method: 'GET',
       headers: {
         'Accept': 'application/json',
@@ -87,6 +88,10 @@ export default class ChatScreen extends React.Component {
     this.setState({ messages: sortedMessages });
   }
 
+  setLimit = async (limit) => {
+    await this.setState({limit})
+    this.fetchMessages()
+  }
 
   sendMessageToSocketServer = () => {
     this.socket.emit('message', {
@@ -237,6 +242,7 @@ export default class ChatScreen extends React.Component {
             sendMessageToSocketServer={this.sendMessageToSocketServer}
             fetchMessages={this.fetchMessages}
             messages={this.state.messages}
+            setLimit={this.setLimit}
           />
         );
       case 'showSuggestions':
