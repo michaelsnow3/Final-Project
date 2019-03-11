@@ -84,7 +84,7 @@ export default class NearbyScreen extends React.Component {
             }
             that.setState({matchCover: match.matchCover});
 
-            let delaySec = (that.state.timer > 3) ? 1000 : 3000;
+            let delaySec = (that.state.timer > 3) ? 1000 : 4000;
             setTimeout(that._matchingPeople, delaySec);
           }
         });
@@ -237,22 +237,21 @@ export default class NearbyScreen extends React.Component {
             isFlipped={this.state.isFlipped}
             frontView={
               <View>
-                <Text style={{ textAlign: 'center' }}>
-                  You match with :
+                <Text style={{ textAlign: 'center',fontSize:25 }}>
+                  {'\n'}You match with :
                 </Text>
-                <Text style={{textAlign: 'center',fontSize:20, fontWeight:'bold',fontStyle:'italic',color:'#008000'}}>
-                  {this.state.matchPerson}{'\n'}
+                <Text style={{textAlign: 'center',fontSize:50, fontWeight:'bold',fontStyle:'italic',color:'#008000'}}>
+                  {this.state.matchPerson}
                 </Text>
                 <TouchableHighlight style={{justifyContent: 'center',alignItems: 'center',}} onPress={() => {
                     this.setState({ isFlipped: !this.state.isFlipped })
                   }}>
                   <Image style={{width: 180, height: 180}} source={{uri: this.state.matchCover}} />
                 </TouchableHighlight>
-
-                <Text style={{textAlign: 'center'}}>
+                <Text style={{textAlign: 'center',fontSize:25}}>
                   By {this.state.matchType} :
                 </Text>
-                <Text style={{textAlign: 'center',fontSize:20, fontWeight:'bold',fontStyle:'italic',color:'#CD853F'}}>
+                <Text style={{textAlign: 'center',fontSize:50, fontWeight:'bold',fontStyle:'italic',color:'#CD853F'}}>
                   {this.state.matchContent}
                 </Text>
               </View>
