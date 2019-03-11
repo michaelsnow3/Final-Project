@@ -35,7 +35,8 @@ export default class FriendScreen extends React.Component {
       friend_id : null,
       userId: null,
       nodeServerUrl: null,
-      userToken: null
+      userToken: null,
+      user_id_from_spotify: null
     }
 
     // Create Socket Server Connection here
@@ -82,9 +83,9 @@ export default class FriendScreen extends React.Component {
   _getUserInfo = async () => {
     const nodeServerUrl = await AsyncStorage.getItem('nodeServerUrl');
     this.setState({url: nodeServerUrl});
-    const userToken = await AsyncStorage.getItem('userToken');
-    this.setState({userToken: userToken});
-    fetch(`${nodeServerUrl}/profile/user_info/${userToken}`, {
+    const userIdFromSpotify = await AsyncStorage.getItem('userIdFromSpotify');
+    this.setState({userIdFromSpotify: userIdFromSpotify});
+    fetch(`${nodeServerUrl}/nearby/get_id/${userIdFromSpotify}`, {
        method: 'GET',
        headers: {
            'Content-Type': 'application/json'
@@ -92,10 +93,10 @@ export default class FriendScreen extends React.Component {
      })
     .then((response) => response.json())
     .then((jsonData) => {
-      this.setState({userId: jsonData.name});
+      this.setState({id: jsonData.id});
     });
   }
-  
+
   componentDidMount() {
     try {
       this._getUserInfo().then( data => {
@@ -119,7 +120,7 @@ export default class FriendScreen extends React.Component {
         console.log('Problem with componentDidMount:' + error.message);
         throw error;
       }
-    } 
+    }
 
   _insertUserIfNotExist = (userToken, nodeServerUrl) => {
     fetch(`${nodeServerUrl}/profile/insert_user_if_not_exist`, {

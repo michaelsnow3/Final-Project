@@ -15,8 +15,9 @@ module.exports = function(request, selectQueries) {
     };
 
     request.get(options, function(error, response, body) {
-      if (!error && response.statusCode === 200) {
-        let avatar = (body.images.length === 0) ? null : body.images[0].url;
+      if (!error && (response.statusCode >= 200) || (response.statusCode <= 204)) {
+        console.log(body);
+        let avatar = (body.images && (body.images.length === 0)) ? null : body.images[0].url;
         let userInfo = {
           name: body.display_name,
           avatar: avatar,
@@ -49,10 +50,10 @@ module.exports = function(request, selectQueries) {
           throw error;
         });
       } else {
-        console.log("profileEditRoutes insert new user error2:");
-        console.log(error);
-        res.status(500).send({error: error});
-        throw error;
+        console.log("profileEditRoutes call spotify api, response code:", response.statusCode);
+        //console.log(error);
+        //res.status(500).send({error: error});
+        //throw error;
       }
     });
   });
@@ -61,92 +62,93 @@ module.exports = function(request, selectQueries) {
 
     knex('users').where('name', req.params.userIdFromSpotify)
     .then((rows) => {
-      let user_id = rows[0].id;
-      let userName = rows[0].name;
-      let userAvatar = rows[0].avatar;
-      let userEmail = rows[0].email;
+      if (rows.length !== 0) {
+        let user_id = rows[0].id;
+        let userName = rows[0].name;
+        let userAvatar = rows[0].avatar;
+        let userEmail = rows[0].email;
 
-      Promise.all([
-        new Promise(function(resolve, reject) {
-          knex
-          .select('*')
-          .from('favourite')
-          .innerJoin('users', user_id, 'favourite.user_id')
-          .innerJoin('favourite_genre', 'favourite.id', 'favourite_genre.favourite_id')
-          .innerJoin('genre', 'favourite_genre.genre_id', 'genre.id')
-          .then((results) => {
-            let genreArr = [];
-            for (let genre of results) {
-              genreArr.push(genre.name);
-            }
-            resolve(genreArr);
-          })
-          .catch((error) => {
-            console.log("Error when get favourite genre:", error);
-            res.status(500).send({error: error});
-            throw error;
-          });
-        }),
+        Promise.all([
+          new Promise(function(resolve, reject) {
+            knex
+            .select('*')
+            .from('favourite')
+            .innerJoin('users', user_id, 'favourite.user_id')
+            .innerJoin('favourite_genre', 'favourite.id', 'favourite_genre.favourite_id')
+            .innerJoin('genre', 'favourite_genre.genre_id', 'genre.id')
+            .then((results) => {
+              let genreArr = [];
+              for (let genre of results) {
+                genreArr.push(genre.name);
+              }
+              resolve(genreArr);
+            })
+            .catch((error) => {
+              console.log("Error when get favourite genre:", error);
+              res.status(500).send({error: error});
+              throw error;
+            });
+          }),
 
-        new Promise(function(resolve, reject) {
-          knex
-          .select('*')
-          .from('favourite')
-          .innerJoin('users', user_id, 'favourite.user_id')
-          .innerJoin('favourite_artist', 'favourite.id', 'favourite_artist.favourite_id')
-          .innerJoin('artist', 'favourite_artist.artist_id', 'artist.id')
-          .then((results) => {
-            let artistArr = [];
-            for (let artist of results) {
-              artistArr.push(artist.name);
-            }
-            resolve(artistArr);
-          })
-          .catch((error) => {
-            console.log("Error when get favourite artist:", error);
-            res.status(500).send({error: error});
-            throw error;
-          });
-        }),
+          new Promise(function(resolve, reject) {
+            knex
+            .select('*')
+            .from('favourite')
+            .innerJoin('users', user_id, 'favourite.user_id')
+            .innerJoin('favourite_artist', 'favourite.id', 'favourite_artist.favourite_id')
+            .innerJoin('artist', 'favourite_artist.artist_id', 'artist.id')
+            .then((results) => {
+              let artistArr = [];
+              for (let artist of results) {
+                artistArr.push(artist.name);
+              }
+              resolve(artistArr);
+            })
+            .catch((error) => {
+              console.log("Error when get favourite artist:", error);
+              res.status(500).send({error: error});
+              throw error;
+            });
+          }),
 
-        new Promise(function(resolve, reject) {
-          knex
-          .select('*')
-          .from('favourite')
-          .innerJoin('users', user_id, 'favourite.user_id')
-          .innerJoin('favourite_song', 'favourite.id', 'favourite_song.favourite_id')
-          .innerJoin('song', 'favourite_song.song_id', 'song.id')
-          .then((results) => {
-            let songArr = [];
-            for (let song of results) {
-              songArr.push(song.name);
-            }
-            resolve(songArr);
-          })
-          .catch((error) => {
-            console.log("Error when get favourite song:", error);
-            res.status(500).send({error: error});
-            throw error;
-          });
-        }),
-      ])
-      .then(function(values) {
-        let userDetailInfo = {
-          name: userName,
-          avatar: userAvatar,
-          email: userEmail,
-          favoriteGenres: values[0],
-          favoriteArtists: values[1],
-          favoriteSongs: values[2],
-        };
-
-        res.status(200).send(userDetailInfo);
-      })
-      .catch((error) => {
-        console.log("Error when after promise:", error);
-        res.status(500).send({error: error});
-        throw error;
-      });
+          new Promise(function(resolve, reject) {
+            knex
+            .select('*')
+            .from('favourite')
+            .innerJoin('users', user_id, 'favourite.user_id')
+            .innerJoin('favourite_song', 'favourite.id', 'favourite_song.favourite_id')
+            .innerJoin('song', 'favourite_song.song_id', 'song.id')
+            .then((results) => {
+              let songArr = [];
+              for (let song of results) {
+                songArr.push(song.name);
+              }
+              resolve(songArr);
+            })
+            .catch((error) => {
+              console.log("Error when get favourite song:", error);
+              res.status(500).send({error: error});
+              throw error;
+            });
+          }),
+        ])
+        .then(function(values) {
+          let userDetailInfo = {
+            name: userName,
+            avatar: userAvatar,
+            email: userEmail,
+            favoriteGenres: values[0],
+            favoriteArtists: values[1],
+            favoriteSongs: values[2],
+          };
+          res.status(200).send(userDetailInfo);
+        })
+        .catch((error) => {
+          console.log("Error when after promise:", error);
+          res.status(500).send({error: error});
+          throw error;
+        });
+      }
     })
     .catch((error) => {
       console.log("Error in the end at user_info:", error);

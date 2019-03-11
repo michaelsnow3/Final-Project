@@ -6,8 +6,9 @@ const PORT = process.env.SOCKET_PORT || 3005
 const QueueOperator = require("./QueueOperator");
 
 let users = {
-  'abc@gmail.com': {
-    currentMusicData: { album: 'Sweetener', artist: 'Ariana Grande', song: 'raindrops (an angel cried)' },
+  'ghi': {
+    currentMusicData: { album: '÷ (Deluxe)', artist: 'Ed Sheeran', song: 'Perfect', cover:
+         'https://i.scdn.co/image/3b673c999773ba34acd5d724d47666e407fa06f2'},
     locationInfo:
       {
         longitude: -79.40227565453004,
@@ -16,7 +17,7 @@ let users = {
       },
     doesntLike: []
   },
-  'def@gmail.com':{
+  'def':{
     currentMusicData: { album: '戀愛的力量', artist: 'Fish Leong', song: '勇氣' },
     locationInfo:
     {
@@ -25,7 +26,7 @@ let users = {
       timestamp: 1552157136.9262118
     }
   },
-  'ghi@gmail.com':{
+  'abc':{
     currentMusicData: { album: '忠孝東路走九遍', artist: 'Power Station', song: '忠孝東路走九遍' },
     locationInfo:
     {
@@ -56,7 +57,8 @@ io.on('connection', function (socket) {
 
   socket.on('findPeople', function (data) {
     console.log("In findPeople");
-    let match = userQueueOperator.pairPeopleFromQueue(users, data.myEmail, socket);
+    console.log(data);
+    let match = userQueueOperator.pairPeopleFromQueue(users, data.myName, socket);
     socket.emit('findMatchPeople', match);
   });
 });

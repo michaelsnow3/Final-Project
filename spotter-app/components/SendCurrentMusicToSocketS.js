@@ -4,6 +4,8 @@ import { Constants, Location, Permissions } from 'expo';
 
 async function sendMusicSocketServer(currentMusic, socket) {
 
+  console.log("sendMusicSocketServer");
+
   currentMusic
   .then((response) => response.json())
   .then((jsonData) => {
@@ -11,11 +13,13 @@ async function sendMusicSocketServer(currentMusic, socket) {
       let currentAlbum  = jsonData.item.album.name;
       let currentArtist = jsonData.item.album.artists[0].name;
       let currentSong   = jsonData.item.name;
+      let currentCover  = jsonData.item.album.images[0].url;
 
       let currentMusic = {
         album: currentAlbum,
         artist: currentArtist,
-        song: currentSong
+        song: currentSong,
+        cover: currentCover
       };
       console.log(`${currentAlbum} / ${currentArtist} / ${currentSong}`);
       getGeoLocation(currentMusic);
@@ -27,7 +31,7 @@ async function sendMusicSocketServer(currentMusic, socket) {
 
   async function getGeoLocation(currentMusic) {
 
-    const email = await AsyncStorage.getItem('email');
+    const userIdFromSpotify = await AsyncStorage.getItem('userIdFromSpotify');
 
     try{
       let { status } = await Permissions.askAsync(Permissions.LOCATION);
@@ -46,7 +50,7 @@ async function sendMusicSocketServer(currentMusic, socket) {
         socket.emit("usersQueue", {
           currentMusicData: currentMusic,
           locationInfo: locationInfo,
-          userInfo: email
+          userInfo: userIdFromSpotify
         });
       }
     } catch(error) {

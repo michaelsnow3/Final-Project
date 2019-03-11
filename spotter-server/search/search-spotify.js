@@ -34,12 +34,16 @@ async function searchSpotify(type, title) {
   let filteredItems = [];
   let filter = `${type}s`;
   spotifySearchResponse[filter].items.forEach((item, i) => {
+
+    console.log("item:");
+    console.log(item);
+
     filteredItems.push({
       spotifyId: item.id,
       name: item.name
     })
 
-    // get artist spotify id search type is a song 
+    // get artist spotify id search type is a song
     if(type === 'track'){
       item.artists.forEach(artist => {
         filteredItems[i].artistId = [];
@@ -47,7 +51,19 @@ async function searchSpotify(type, title) {
         filteredItems[i].artistId.push(artist.id)
         filteredItems[i].artistName.push(artist.name)
       })
-    }
+    };
+
+    if(type === 'album'){
+      item.artists.forEach(albumInfo => {
+        console.log(albumInfo);
+      })
+    };
+
+    if(type === 'artist'){
+      item.artists.forEach(artistInfo => {
+        console.log(artistInfo);
+      })
+    };
   })
   return filteredItems
 }

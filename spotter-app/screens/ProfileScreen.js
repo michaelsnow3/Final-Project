@@ -1,3 +1,4 @@
+
 import React from 'react';
 import {
   View,
@@ -31,7 +32,7 @@ export default class ProfileScreen extends React.Component {
   }
 
   componentDidMount() {
-    this._getUserInfo();
+    this.props.navigation.addListener('willFocus', this._getUserInfo);
   }
 
   static navigationOptions = {
@@ -106,8 +107,9 @@ export default class ProfileScreen extends React.Component {
     console.log(this.state.favoriteContent);
     console.log(this.state.favoriteType);
     if (this.state.favoriteContent !== '') {
-
       let updateData = null;
+
+      console.log("before switch:");
 
       switch (this.state.favoriteType) {
         case "Genre":
@@ -125,13 +127,16 @@ export default class ProfileScreen extends React.Component {
           updateData.push(this.state.favoriteContent);
           this.setState({favoriteSongs: updateData});
           break;
-        break;
-      };
+      }
+
+      console.log("updateData:");
+      console.log(updateData);
 
       this._updateFavoriteDb(this.state.favoriteType, updateData);
 
       this.setState({favoriteContent: ''});
       this._editInfo();
+
     }
   };
 
