@@ -40,6 +40,7 @@ export default class ChatScreen extends React.Component {
       playlists: [],
       messages: [],
       limit: 20,
+      scrollToBottom: true
     };
 
     this._isMounted = false;
@@ -88,8 +89,11 @@ export default class ChatScreen extends React.Component {
     this.setState({ messages: sortedMessages });
   }
 
-  setLimit = async (limit) => {
-    await this.setState({limit})
+  setLimit = async (limit, scrollToBottom) => {
+    await this.setState({
+      limit,
+      scrollToBottom
+    })
     this.fetchMessages()
   }
 
@@ -243,6 +247,7 @@ export default class ChatScreen extends React.Component {
             fetchMessages={this.fetchMessages}
             messages={this.state.messages}
             setLimit={this.setLimit}
+            scrollToBottom={this.state.scrollToBottom}
           />
         );
       case 'showSuggestions':

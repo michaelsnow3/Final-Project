@@ -42,6 +42,7 @@ class Chat extends React.Component {
 
   componentWillUnmount() {
     this._isMounted = false;
+    this.props.setLimit(20, true)
   }
 
   getSuggestedTracks = async () => {
@@ -77,8 +78,8 @@ class Chat extends React.Component {
   };
 
   previousMessagesCallback = () => {
-    this.props.setLimit(this.props.messages.length + 10)
-  }
+    this.props.setLimit(this.props.messages.length + 5, false)
+  }  
 
   render() {
     let {
@@ -163,7 +164,7 @@ class Chat extends React.Component {
         <ScrollView
           ref={ref => (this.scrollView = ref)}
           onContentSizeChange={() => {
-            this.scrollView.scrollToEnd({ animated: true });
+            this.props.scrollToBottom && this.scrollView.scrollToEnd({ animated: true });
           }}
           style={styles.messageList}
         >
