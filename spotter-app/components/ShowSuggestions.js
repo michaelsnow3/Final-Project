@@ -15,7 +15,10 @@ class ShowSuggestions extends React.Component {
   render() {
     let { handleChatWithFriend, inChatWith, suggestedTracks, handleTrackPress, selectedTrack, fetchTrackInfo} = this.props;
     let suggestions = suggestedTracks.map(track => {
-        let isSelectedTrack = track.id === selectedTrack.id;
+      let isSelectedTrack = false
+      if(selectedTrack) {
+        isSelectedTrack = track.id === selectedTrack.id;
+      }
         let trackMenu = isSelectedTrack && <TrackMenu track={track} />
         return (
           <View key={track.id}>
