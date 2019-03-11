@@ -102,9 +102,11 @@ module.exports = (knex, request, selectQueries) => {
     });
   })
   
-  showProfile.get("/friend-requests/:userId", (req, res) => {
+  showProfile.get("/friend_requests/:userId", (req, res) => {
     let userId = req.params.userId
-    selectQueries.selectFriendRequests(userId)
+    selectQueries.selectFriendRequests(userId, selectQueries.selectUserById).then(friendRequests => {
+      res.json(friendRequests)
+    })
   })
 
   return showProfile;

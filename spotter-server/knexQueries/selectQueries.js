@@ -80,13 +80,28 @@ module.exports = function returnQueries(knex) {
       }
     },
 
-    selectFriendRequests: async function(userId) {
+    selectFriendRequests: async function(userId, selectUserById) {
       try {
         let friends = await knex('friend').where({user_id: userId})
-        console.log(friends)
+        let hasUserAdded = await knex('friend').where({friend_id: userId})
+        let friendRequests = []
+        for(let i = 0; i < hasUserAdded.length; i++){
+          let inFriendsList = false;
+          friends.forEach(friend => {
+            if(friend.friend_id === hasUserAdded[i].user_id) {
+              inFriendsList = true
+            }
+          })
+          if(!inFriendsList) {
+            let friendRequest = await selectUserById(hasUserAdded[i].user_id)
+            friendRequests.push(friendRequest)
+          }
+        }
+        console.log(friendRequests)
+        return friendRequests
       }
       catch(e) {
-        console.log('error selecting users friend requests')
+        console.log('error selecting users friend requests', e)
       }
     }
 
