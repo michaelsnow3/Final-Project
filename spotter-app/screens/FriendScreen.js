@@ -24,7 +24,7 @@ export default class FriendScreen extends React.Component {
       friends: [],
       page: 'ShowFriends',
       friend_id : null,
-      primary_id : 5
+      primary_id : 3 
     }
   }
   static navigationOptions = {
@@ -32,14 +32,14 @@ export default class FriendScreen extends React.Component {
   };
   handler = (friend_id, page) => {
     this.setState({
-      page : page,
+      page : page, 
       friend_id : friend_id
     })
   }
   // heroku server: 
   // https://mysterious-gorge-24322.herokuapp.com:8888/show-friends/
-  componentDidMount() {
-    fetch('http://172.46.0.173:8888/show-friends/', {
+  componentDidMount() { 
+    fetch('http://0da00b68.ngrok.io/show-friends/', {
       method: 'POST',
       headers: {
         'Accept': 'application/json',
@@ -67,14 +67,14 @@ export default class FriendScreen extends React.Component {
               <Text>Friends</Text>
             </ScrollView>
           );
-    case 'OtherProfileScreen':
-      return ( 
-        <OtherProfileScreen 
-        handler={this.handler}
-        id={this.state.friend_id}
-        navigation={this.props.navigation}
-        handleChatWithFriend={() => {}} />
-      )
+      case 'OtherProfileScreen':
+        return ( 
+          <OtherProfileScreen 
+          handler={this.handler}
+          id={this.state.friend_id}
+          navigation={this.props.navigation}
+          handleChatWithFriend={() => {}} />
+        )
     }
   }
 

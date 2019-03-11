@@ -7,8 +7,7 @@ import {
   Text,
   TouchableOpacity,
   View,
-} from 'react-native';
-
+} from 'react-native'; 
 
 import UserCard from '../components/UserCard'
 
@@ -17,7 +16,7 @@ function People({people, handler, handleChatWithFriend}) {
     return <UserCard name={person.name} id={person.id} handler={handler} handleChatWithFriend={handleChatWithFriend} key={Math.random().toString()} />
   });
   return(
-    <View>
+    <View> 
       <Text style={styles.name}>Here are your closest matches!</Text> 
       {peopleList}
     </View>

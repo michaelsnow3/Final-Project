@@ -43,7 +43,7 @@ export default class OtherProfileScreen extends React.Component {
   }
 
   getUser = async () => {
-    fetch(`http://172.46.0.173:8888/show_profile/info`, {
+    fetch(`http://0da00b68.ngrok.io/show_profile/info`, {
       method: 'POST',
       headers: {
         'Accept': 'application/json',
@@ -66,7 +66,7 @@ export default class OtherProfileScreen extends React.Component {
   } 
   
   getFav = async () => {
-    fetch(`http://172.46.0.173:8888/show_profile/fav`, {
+    fetch(`http://0da00b68.ngrok.io/show_profile/fav`, {
       method: 'POST',
       headers: {
         'Accept': 'application/json',
@@ -93,7 +93,7 @@ export default class OtherProfileScreen extends React.Component {
   }  
 
   checkFriend = () => {
-    fetch(`http://172.46.0.173:8888/show_profile/friend_status`, {
+    fetch(`http://0da00b68.ngrok.io/show_profile/friend_status`, {
     method: 'POST',
     headers: {
       'Accept': 'application/json',
@@ -113,7 +113,7 @@ export default class OtherProfileScreen extends React.Component {
   }  
  
   addFriend = () => {
-    fetch(`http://172.46.0.173:8888/show_profile/add_friend`, {
+    fetch(`http://0da00b68.ngrok.io/show_profile/add_friend`, {
       method: 'POST',
       headers: {
         'Accept': 'application/json',  

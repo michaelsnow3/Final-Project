@@ -11,14 +11,14 @@ import {
 } from 'react-native';
 import OtherProfileScreen from './OtherProfileScreen.js';
 import People from '../components/People';
+ 
 
-
-export default class MeetScreen extends React.Component {
+export default class MeetScreen extends React.Component { 
   constructor(props) {
     super(props);
     this.state = {
       user_id : 3,
-      page : 'Greet',
+      page : 'Greet', 
       people : [],
       friend_id : null,
     }
@@ -31,7 +31,7 @@ export default class MeetScreen extends React.Component {
     this.setState({
       page: 'Meet'
     })
-    fetch(`http://172.46.0.173:8888/meet/get`, {
+    fetch(`http://0da00b68.ngrok.io/meet/get`, {
       method: 'POST',
       headers: {
         'Accept': 'application/json',   
@@ -39,24 +39,23 @@ export default class MeetScreen extends React.Component {
       },
       body: JSON.stringify({  
         user_id : this.state.user_id,
-      }), 
+      }),  
       })   
       .then(data => { 
         // parsing received data, extracting required data
         let parsedData = JSON.parse(data._bodyInit)
-        let newParsedData = []
+        let newParsedData = [];
+        // user name and id were passed in one string, and so must be extracted and separated
         for (let user of parsedData) {
-          let id = user.split(' ')[user.split(' ').length-1]
           let splitUser = user.split(' ')
+          let user_id = splitUser[splitUser.length-1]
           splitUser.pop();
-          let name = splitUser.join(' ')
+          let user_name = splitUser.join(' ')
           let newUser = {
-            id : "",
-            name : ""
+            id : user_id,
+            name : user_name
           }
-          newUser.id = id
-          newUser.name = name
-          newParsedData.push(newUser)
+          newParsedData.push(newUser);
         } 
         // need to accept in an array of people's names and ids (strecth: avatars)
         this.setState({  
@@ -81,12 +80,8 @@ export default class MeetScreen extends React.Component {
     })
   }
 
-  // page status 'meet' start with loading, on componentDidMount load everything
-
   componentDidMount() {
-
   }
-
   render() { 
  
     switch (this.state.page) {

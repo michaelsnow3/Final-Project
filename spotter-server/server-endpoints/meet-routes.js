@@ -7,9 +7,6 @@ const meetRoutes = express.Router();
 // const knex = require('knex')(knexConfig[ENV])
 // const matching = require('./test-algo')
 
-
-
-
 let input = {
   "group1": [
     {
@@ -23,30 +20,24 @@ let input = {
       }
     },
   ],
-  "group2": [
-    { 
-      "id" : "",
-      "name": "",
-      "interests": ['a'],
-      "values": ['b'],
-      "age": "22",
-      "coordinates": {
-        "lat": 43.6532,
-        "long": 79.3832
-      }
-    },
-  ]
+  "group2": []
 };
 
 module.exports = (knex) => {
 
   meetRoutes.post('/get', (req, res) => {
-// const test = (knex) => {
-  const id = 7 //req.body.user_id;
+  // const test = (knex) => {
+  console.log(11111111111)
+  const id = req.body.user_id;
+  let users;
   // filling the input array group2 with empties
   let count;
-  let users;
-  knex('users').count('id').then((result) => {count = result; return count})
+  knex('users')
+  .count('id')
+  .then((result) => {
+    count = result; 
+    return count
+  })
   .then((count) => {
     let intCount = Number(count[0].count)
     let filler = [];
