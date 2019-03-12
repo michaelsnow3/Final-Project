@@ -9,7 +9,7 @@ const fakeEntry = () => ({
 exports.seed = function(knex, Promise) {
 
   const fakeEntries = [];
-  for (let i = 0; i < 10; i++) {
+  for (let i = 0; i < 100; i++) {
     fakeEntries.push(fakeEntry());
   }
   // Deletes ALL existing entries
@@ -19,11 +19,7 @@ exports.seed = function(knex, Promise) {
     knex('users').del()
       .then(function () {
         // Inserts seed entries
-        return knex('users').insert([
-          {name: 'Yu-Ning'},
-          {name: 'Michael'},
-          {name: 'Stan'}]
-          .concat(fakeEntries));
+        return knex('users').insert(fakeEntries);
     })
   ])
 };

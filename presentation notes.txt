@@ -1,0 +1,23 @@
+Presentation notes:
+
+opening pitch:
+  - how many ppl use spotify show of hands
+  - wouldn't it be cool to chat with another person who's listening to same music as you are right now
+  - wouldn't it be nice to suggest some songs to that user?
+  - wouldn't it be awesome to meet others basing off of your shared musical interests?
+  - spotify has social network integration w fb and tweeter, but we wana add the above features
+  - 
+
+Separate intros in form of: 
+"Hi, I'm Bob the builder!"
+
+Talk about challenges:
+  - sockets.io and deep spotify integration
+  - learning reactnative
+  - nearby finding using geolocation and realtime song playing data
+  - meet matching algorhythm
+
+
+Actually play the music, should be popular choices
+
+Have one existing user with preset favorites
