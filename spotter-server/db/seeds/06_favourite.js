@@ -1,15 +1,15 @@
 
-const rand = () => {
-  return Math.floor(Math.random() * 100) + 1;
+const rand = (x) => {
+  return Math.floor(Math.random() * x) + 1;
 }
 
 const entry = () => ({
-  user_id: rand(),
+  user_id: rand(50),
 });
 
 exports.seed = function(knex, Promise) {
   const randNumbers = [];
-  for (let i = 0; i < 300; i++) {
+  for (let i = 0; i < 150; i++) {
     randNumbers.push(entry());
   }
   // Deletes ALL existing entries

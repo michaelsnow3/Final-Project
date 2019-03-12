@@ -4,13 +4,13 @@ const rand = (x) => {
 }
 
 const entry = () => ({
-  favourite_id: rand(300),
-  song_id: rand(90)
+  favourite_id: rand(150),
+  song_id: rand(50)
 });
 
 exports.seed = function(knex, Promise) {
   const randNumbers = [];
-  for (let i = 0; i < 300; i++) {
+  for (let i = 0; i < 150; i++) {
     randNumbers.push(entry());
   }
   // Deletes ALL existing entries

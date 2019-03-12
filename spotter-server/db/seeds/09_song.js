@@ -103,11 +103,12 @@ for (let i of data1) {
   songsArr.push(y.join(''))
 }
 const songs = [];
-for (let song of songsArr) {
+for (let i = 0; i < 50; i++) {
   songs.push({
-    name: song
+    name: songsArr[i]
   })
 }
+
 
 exports.seed = function(knex, Promise) {
   

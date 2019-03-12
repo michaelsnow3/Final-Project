@@ -6,17 +6,17 @@ import {
   AsyncStorage,
   WebView,
   Linking,
-} from 'react-native';
+} from 'react-native';  
 
-import { getUserProfile } from '../components/GetUserProfile';
-
+import { getUserProfile } from '../components/GetUserProfile'; 
+ 
 export default class SpotifyLoginScreen extends React.Component {
 
   constructor(props) {
     super(props);
     this.state = {
       loginClicked: false,
-      nodeServerUrl: "http://f6753146.ngrok.io",
+      nodeServerUrl: "http://89ad7470.ngrok.io",
       socketServerUrl: "http://172.46.1.177"
     }
   }

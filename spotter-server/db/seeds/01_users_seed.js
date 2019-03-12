@@ -9,7 +9,7 @@ const fakeEntry = () => ({
 exports.seed = function(knex, Promise) {
 
   const fakeEntries = [];
-  for (let i = 0; i < 100; i++) {
+  for (let i = 0; i < 50; i++) {
     fakeEntries.push(fakeEntry());
   }
   // Deletes ALL existing entries

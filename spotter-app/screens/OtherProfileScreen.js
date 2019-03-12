@@ -27,22 +27,22 @@ export default class OtherProfileScreen extends React.Component {
   static navigationOptions = {
     header: null,
   };
-
+  
   componentDidMount() {
     this._getMyId();
     //this.props.navigation.addListener('willFocus', this._getMyId);
   }
-
+  
   _getMyId = async () => {
-
+    
     console.log(`execute _getMyId`);
-
+    
     const userIdFromSpotify = await AsyncStorage.getItem('userIdFromSpotify');
     const nodeServerUrl     = await AsyncStorage.getItem('nodeServerUrl');
     this.setState({nodeServerUrl: nodeServerUrl});
-
+    
     console.log("get my id url:", `${nodeServerUrl}/nearby/get_id/${userIdFromSpotify}`);
-
+    
     fetch(`${nodeServerUrl}/nearby/get_id/${userIdFromSpotify}`, {
       method: 'GET',
       headers: {
@@ -55,7 +55,7 @@ export default class OtherProfileScreen extends React.Component {
     .then((jsonData) => {
       if (jsonData.id !== undefined) {
         this.setState({my_id: jsonData.id});
-
+        
         this.getUser(nodeServerUrl, this.props.name);
         //this.getFav();
         this.checkFriend(nodeServerUrl);
@@ -66,18 +66,18 @@ export default class OtherProfileScreen extends React.Component {
       throw error;
     });
   };
-
+  
   getUser = async (nodeServerUrl, username) => {
-
+    
     console.log("get user url:", `${nodeServerUrl}/profile/user_info/${username}`);
-
+    
     fetch(`${nodeServerUrl}/profile/user_info/${username}`)
     .then((response) => response.json())
     .then((jsonData) => {
-
+      
       console.log("jsonData:");
       console.log(jsonData);
-
+      
       this._setUserInfo(jsonData);
       this._setUserFav(jsonData);
     })
@@ -86,58 +86,77 @@ export default class OtherProfileScreen extends React.Component {
       throw error;
     });
   };
-
+  
   _setUserInfo = (jsonData) => {
     if (jsonData.name) {
       this.setState({name: jsonData.name});
     }
-
+    
     if (jsonData.avatar) {
       this.setState({avatar: jsonData.avatar});
     }
   };
-
+  onlyUnique = (value, index, self) => { 
+    return self.indexOf(value) === index;
+  }
   _setUserFav = (jsonData) => {
     if (jsonData.favoriteGenres) {
-      const fG = jsonData.favoriteGenres;
-      let top5FG = [];
+      const favGenres = jsonData.favoriteGenres;
+      let favGenresParsed = [];
       for (let i = 0; i < 5; i++) {
-        top5FG.push(fG[i])
+        if (favGenres[i]){ 
+          favGenresParsed.push(favGenres[i])       
+        } else {
+          break;
+        } 
       }
-      this.setState({favoriteGenres: top5FG});
-      console.log('genres', this.state.favoriteGenres)
+      const favGenresSorted = favGenresParsed.filter(this.onlyUnique)
+      const top5Gen = favGenresSorted.join(', ')
+      this.setState({favoriteGenres: top5Gen});
     }
-
+    
     if (jsonData.favoriteArtists) {
-      const fA = jsonData.favoriteArtists;
-      let top5FA = [];
+      const favArtists = jsonData.favoriteArtists;
+      let favAristsParsed = [];
       for (let i = 0; i < 5; i++) {
-        top5FA.push(fA[i])
+        if (favArtists[i]){
+          favAristsParsed.push(favArtists[i])    
+        } else {
+          break;
+        }
       }
-      this.setState({favoriteArtists: top5FA});
+      const favAristsSorted = favAristsParsed.filter(this.onlyUnique)
+      const top5Art = favAristsSorted.join(', ')
+      this.setState({favoriteArtists: top5Art});
     }
-
+    
     if (jsonData.favoriteSongs) {
-      const fS = jsonData.favoriteSongs;
-      let top5FS = [];
+      const favSongs = jsonData.favoriteSongs;
+      let favSongsParsed = [];
       for (let i = 0; i < 5; i++) {
-        top5FS.push(fS[i])
+        if (favSongs[i]){
+          favSongsParsed.push(favSongs[i])    
+        } else {
+          break;
+        }      
       }
-      this.setState({favoriteSongs: top5FS});
+      const favSongsSorted = favSongsParsed.filter(this.onlyUnique)
+      const top5Songs = favSongsSorted.join(', ')
+      this.setState({favoriteSongs: top5Songs});
     }
   }
-
+  
   checkFriend = (nodeServerUrl) => {
     fetch(`${nodeServerUrl}/show_profile/friend_status`, {
-    method: 'POST',
-    headers: {
-      'Accept': 'application/json',
-      'Content-Type': 'application/json',
-    },
-    body: JSON.stringify({
-      user_id : this.state.my_id,
-      friend_id : this.state.user_id
-    }),
+      method: 'POST',
+      headers: {
+        'Accept': 'application/json',
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        user_id : this.state.my_id,
+        friend_id : this.state.user_id
+      }),
     })
     .then((response) => {
       (response._bodyText === 'true') ? this.setState({friend : true}) : this.setState({friend : false});
@@ -146,15 +165,15 @@ export default class OtherProfileScreen extends React.Component {
       console.log(err);
     });
   }
-
+  
   addFriend = async () => {
-
+    
     //await this._getMyId()
-
+    
     console.log("url in addFriend:", `${this.state.nodeServerUrl}/show_profile/add_friend`);
     console.log("this.state.my_id:", this.state.my_id);
     console.log("this.state.user_id:", this.state.user_id);
-
+    
     fetch(`${this.state.nodeServerUrl}/show_profile/add_friend`, {
       method: 'POST',
       headers: {
@@ -165,85 +184,85 @@ export default class OtherProfileScreen extends React.Component {
         user_id : this.state.my_id,
         friend_id : this.state.user_id
       }),
+    })
+    .then(() => {
+      this.setState({friend : true}, async () => {
+        if (this.props.getUserId) {
+          await this.props.getUserId();
+          this.props.handler(null, 'ShowFriends')
+        }
       })
-      .then(() => {
-        this.setState({friend : true}, async () => {
-          if (this.props.getUserId) {
-            await this.props.getUserId();
-            this.props.handler(null, 'ShowFriends')
-          }
-        })
-      })
-      .catch((err) => {
-        console.log(err);
-      });
+    })
+    .catch((err) => {
+      console.log(err);
+    });
   }
-
+  
   // Doesnt work
   message = () => {
     this.props.navigation.navigate(`Chat`);
   }
-
+  
   render() {
     const addOrMsg = (this.state.friend) ?
     (<Button title="Message" onPress={this.message} style={styles.container}/>) :
     (<Button title="Add Friend" onPress={this.addFriend} style={styles.container}/>);
-
+    
     const avatar = (this.state.avatar === null ) ?
     <Text style={styles.textStyle}> No Image </Text> :
     <Image style={{width: 200, height: 200,}} source={{uri: this.state.avatar}} />
-
+    
     const viewFriendsOrMeet = (this.props.handleMeet)?
     <Button title="Back to Meet" onPress={() => {this.props.handleMeet('Meet')}} /> :
     <Button title="View Friends" onPress={() => {this.props.handler( null, 'ShowFriends')}} />
-
+    
     const favoriteGenres = (this.state.favoriteGenres !== null) ?
     (<Text> Favorite Genres: {this.state.favoriteGenres}</Text>):
     (<Text> No favorite genres :( </Text>)
-
+    
     const favoriteArtists = (this.state.favoriteArtists) ?
     (<Text> Favorite Artists: {this.state.favoriteArtists}</Text>):
     (<Text> No favorite artists :( </Text>)
-
+    
     const favoriteSongs = (this.state.favoriteSongs) ?
     (<Text> Favorite Songs: {this.state.favoriteSongs}</Text>):
     (<Text> No favorites :( </Text>)
-
-
+    
+    
     return (
       <View>
-        <Text style={styles.textStyle}>
-          {this.state.name}{'\n'}
-        </Text>
-        {avatar}
-        <Text style={styles.textStyle}>
-          {'\n'}Favourites:
-        </Text>
-        {favoriteGenres}
-        {favoriteArtists}
-        {favoriteSongs}
-        {addOrMsg}
-        {viewFriendsOrMeet}
+      <Text style={styles.textStyle}>
+      {this.state.name}{'\n'}
+      </Text>
+      {avatar}
+      <Text style={styles.textStyle}>
+      {'\n'}Favourites:
+      </Text>
+      {favoriteGenres}
+      {favoriteArtists}
+      {favoriteSongs}
+      {addOrMsg}
+      {viewFriendsOrMeet}
       </View>
-    );
+      );
+    }
   }
-}
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    marginTop: 40,
-    flexDirection: 'column',
-    justifyContent: 'flex-start',
-    backgroundColor: '#fff',
-  },
-  textStyle: {
-    textAlign: 'center',
-    fontSize:25,
-  },
-});
-
-// get favorite information from db instead of from spotify now
+  
+  const styles = StyleSheet.create({
+    container: {
+      flex: 1,
+      marginTop: 40,
+      flexDirection: 'column',
+      justifyContent: 'flex-start',
+      backgroundColor: '#fff',
+    },
+    textStyle: {
+      textAlign: 'center',
+      fontSize:25,
+    },
+  });
+  
+  // get favorite information from db instead of from spotify now
   // getFav = async () => {
   //   fetch(`${nodeServerUrl}/show_profile/fav`, {
   //     method: 'POST',
@@ -270,3 +289,4 @@ const styles = StyleSheet.create({
   //     console.log(err);
   //   });
   // }
+  

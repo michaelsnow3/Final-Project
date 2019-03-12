@@ -8,9 +8,7 @@ const meetRoutes = express.Router();
 // const matching = require('./test-algo')
 
 module.exports = (knex) => {
-
   meetRoutes.post('/get', (req, res) => {
-
   let input = {
     "group1": [
       {
@@ -26,7 +24,6 @@ module.exports = (knex) => {
     ],
     "group2": []
   };
-
   // const test = (knex) => {
   console.log(11111111111)
   const id = req.body.user_id;
@@ -58,7 +55,7 @@ module.exports = (knex) => {
     input.group2 = filler;
   })
   .then(() => {
-    // getting user's favourites
+    // getting user's favourite songs
     knex
     .select('*')
     .from('users')
@@ -77,6 +74,7 @@ module.exports = (knex) => {
       console.log(input.group1[0].interests);
       console.log("------");
     })
+    // getting user's fav artists
     .then(() => {
       knex
       .select('*')
@@ -107,7 +105,6 @@ module.exports = (knex) => {
         }
       })
       .then(() => {
-
         // Setting group2 users's favourite songs and artists (interests and values...)
         knex
         .select('*')
@@ -143,28 +140,26 @@ module.exports = (knex) => {
             }
           })
           .then(() => {
-
-
-            const result = []
-            let i = 0;
+            const matchResult = []
+            let count = 0;
             const matching = (data) => {
-            if ( i === 8) {
-              console.log('matching result: ', result)
-              res.json(result);
+            if (count === 5) {
+              console.log('matching result: ', matchResult)
+              res.json(matchResult);
             }
             else {
               Algorithmia.client("simmxo6hMreL3iS9k6Yu7G2k04B1")
-              .algo("matching/DatingAlgorithm/0.1.3") // timeout is optional
+              .algo("matching/DatingAlgorithm/0.1.3")
               .pipe(data)
               .then(function(response) {
                 const match = response.get()['User']
-                result.push(match)
-                let xxx = data;
-                xxx.group2 = data.group2.filter(x => {
-                  return x.name !== match
+                matchResult.push(match)
+                let newData = data;
+                newData.group2 = data.group2.filter(entry => {
+                  return entry.name !== match
                 })
-                i++;
-                return matching(xxx)
+                count++;
+                return matching(newData)
               });
             }
           }

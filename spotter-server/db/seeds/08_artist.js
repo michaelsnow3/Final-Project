@@ -105,9 +105,9 @@ The 5th Dimension`
 
 const artistsArr = data.split('\n')
 const artists = [];
-for (let artist of artistsArr) {
+for (let i = 0; i < 50; i++) {
   artists.push({
-    name: artist
+    name: artistsArr[i]
   })
 }
 
