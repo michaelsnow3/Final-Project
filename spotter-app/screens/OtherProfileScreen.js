@@ -4,7 +4,7 @@ import {
   Button,
   Image,
   StyleSheet,
-  Text, 
+  Text,
   AsyncStorage,
 } from 'react-native';
 
@@ -88,8 +88,7 @@ export default class OtherProfileScreen extends React.Component {
 
   _setUserInfo = (jsonData) => {
     if (jsonData.name) {
-      this.setState({name: jsonData.name}); 
-      console.log('username otherprofile', name)
+      this.setState({name: jsonData.name});
     }
 
     if (jsonData.avatar) {
@@ -107,7 +106,7 @@ export default class OtherProfileScreen extends React.Component {
       this.setState({favoriteGenres: top5FG});
       console.log('genres', this.state.favoriteGenres)
     }
-    
+
     if (jsonData.favoriteArtists) {
       const fA = jsonData.favoriteArtists;
       let top5FA = [];
@@ -122,7 +121,7 @@ export default class OtherProfileScreen extends React.Component {
       let top5FS = [];
       for (let i = 0; i < 5; i++) {
         top5FS.push(fS[i])
-      } 
+      }
       this.setState({favoriteSongs: top5FS});
     }
   }
@@ -175,11 +174,6 @@ export default class OtherProfileScreen extends React.Component {
     this.props.navigation.navigate(`Chat`);
   }
 
-  componentDidMount() {
-
-    console.log('genres didmount', this.state.favoriteGenres)
-  }
-
   render() {
     const addOrMsg = (this.state.friend) ?
     (<Button title="Message" onPress={this.message} style={styles.container}/>) :
@@ -193,19 +187,19 @@ export default class OtherProfileScreen extends React.Component {
     <Button title="Back to Meet" onPress={() => {this.props.handleMeet('Meet')}} /> :
     <Button title="View Friends" onPress={() => {this.props.handler( null, 'ShowFriends')}} />
 
-    const favoriteGenres = (this.state.favoriteGenres !== null) ? 
+    const favoriteGenres = (this.state.favoriteGenres !== null) ?
     (<Text> Favorite Genres: {this.state.favoriteGenres}</Text>):
     (<Text> No favorite genres :( </Text>)
-    
-    const favoriteArtists = (this.state.favoriteArtists) ? 
+
+    const favoriteArtists = (this.state.favoriteArtists) ?
     (<Text> Favorite Artists: {this.state.favoriteArtists}</Text>):
     (<Text> No favorite artists :( </Text>)
 
-    const favoriteSongs = (this.state.favoriteSongs) ? 
+    const favoriteSongs = (this.state.favoriteSongs) ?
     (<Text> Favorite Artists: {this.state.favoriteSongs}</Text>):
     (<Text> No favorites :( </Text>)
 
-  
+
     return (
       <View>
         <Text style={styles.textStyle}>
