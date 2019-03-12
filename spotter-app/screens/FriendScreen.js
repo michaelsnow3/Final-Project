@@ -115,7 +115,7 @@ export default class FriendScreen extends React.Component {
       page : page, 
       friend_id : friend_id
     })
-  }
+  } 
   // heroku server: 
   // https://mysterious-gorge-24322.herokuapp.com:8888/show-friends/
   // componentDidMount() { 
@@ -129,7 +129,7 @@ export default class FriendScreen extends React.Component {
     fetch(`${nodeServerUrl}/nearby/get_id/${userIdFromSpotify}`, {
        method: 'GET',
        headers: {
-           'Content-Type': 'application/json'
+           'Content-Type': 'application/json' 
        }
      })
     .then((response) => response.json())

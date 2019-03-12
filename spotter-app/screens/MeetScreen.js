@@ -21,17 +21,28 @@ export default class MeetScreen extends React.Component {
       page : 'Greet', 
       people : [],
       friend_id : null,
+      friend_name: null,
     }
   }
   static navigationOptions = {
     header: null,
   };
 
+  setFriendName = async (name) => {
+    await this.setState({
+      friend_name: name,  
+    })
+    this.setState({
+      page: 'OtherProfileScreen'
+    })
+  }
+
   meet = () => {
+    console.log('meet call');
     this.setState({
       page: 'Meet'
     })
-    fetch(`http://0da00b68.ngrok.io/meet/get`, {
+    fetch(`http://2bdd2895.ngrok.io/meet/get`, {
       method: 'POST',
       headers: {
         'Accept': 'application/json',   
@@ -55,6 +66,7 @@ export default class MeetScreen extends React.Component {
             id : user_id,
             name : user_name
           }
+          // this.setFriendName(user_name);
           newParsedData.push(newUser);
         } 
         // need to accept in an array of people's names and ids (strecth: avatars)
@@ -80,7 +92,14 @@ export default class MeetScreen extends React.Component {
     })
   }
 
+  handleMeet = (page) => {
+    this.setState({
+      page : page
+    })
+  }
+
   componentDidMount() {
+    console.log('meet render')
   }
   render() { 
  
@@ -96,7 +115,7 @@ export default class MeetScreen extends React.Component {
         return (
           <ScrollView>
             <Button title="Back" onPress={this.back} />
-            <People people={this.state.people} handler={this.handler} handleChatWithFriend={() => {}} />
+            <People people={this.state.people} handler={this.handler} setFriendName={this.setFriendName} />
           </ScrollView>
         )
       case 'OtherProfileScreen':
@@ -105,6 +124,8 @@ export default class MeetScreen extends React.Component {
           handler={this.handler}
           id={this.state.friend_id}
           navigation={this.props.navigation}
+          name={this.state.friend_name}
+          handleMeet={this.handleMeet}
           handleChatWithFriend={() => {}} />
         )
     }
@@ -114,3 +135,4 @@ export default class MeetScreen extends React.Component {
 const styles = StyleSheet.create({
 
 });
+  

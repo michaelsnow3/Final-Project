@@ -11,9 +11,10 @@ import {
 
 import UserCard from '../components/UserCard'
 
-function People({people, handler, handleChatWithFriend}) {
+function People({people, handler, setFriendName}) {
   const peopleList = people.map(person => {
-    return <UserCard name={person.name} id={person.id} handler={handler} handleChatWithFriend={handleChatWithFriend} key={Math.random().toString()} />
+    console.log('people', person.id)
+    return <UserCard name={person.name} id={person.id} handler={handler} setFriendName={setFriendName} key={Math.random().toString()} />
   });
   return(
     <View> 

@@ -4,7 +4,7 @@ import {
   Button,
   Image,
   StyleSheet,
-  Text,
+  Text, 
   AsyncStorage,
 } from 'react-native';
 
@@ -13,16 +13,13 @@ export default class OtherProfileScreen extends React.Component {
     super(props);
     this.state = {
       my_id : null,
-
       friend: false,
       user_id : this.props.id,
       name : "",
       avatar : null,
-      top3 : "",
-<<<<<<< HEAD
-      primary_id : 5
-=======
->>>>>>> master
+      favoriteSongs: null,
+      favoriteArtists: null,
+      favoriteGenres: null,
     }
     console.log(`id:${this.props.id},in OtherProfileScreen`);
   }
@@ -30,30 +27,6 @@ export default class OtherProfileScreen extends React.Component {
     header: null,
   };
 
-<<<<<<< HEAD
-  // get primary user id from async storage????????????????????
-  // getPrimaryId = async () => {
-  //   try {
-  //     const value_id = await AsyncStorage.getItem('user_id');
-  //     if (value_id !== null) {
-  //       console.log(`Primary user id : ${value_id}`);
-  //       return value_id;
-  //     }
-  //   } catch (error) { 
-  //     console.log(error);
-  //     }
-  // };
-
-  setUserId = (id, cb) =>  { 
-    this.setState({
-      user_id: id
-    }, cb)
-  }
-
-  getUser = async () => {
-    fetch(`http://0da00b68.ngrok.io/show_profile/info`, {
-      method: 'POST',
-=======
   componentDidMount() {
     this._getMyId();
   }
@@ -69,30 +42,12 @@ export default class OtherProfileScreen extends React.Component {
 
     fetch(`${nodeServerUrl}/nearby/get_id/${userIdFromSpotify}`, {
       method: 'GET',
->>>>>>> master
       headers: {
         "Accept": "application/json",
         "Content-Type": 'application/json',   
         "Connection": "close",   
       }
     })
-<<<<<<< HEAD
-    .catch((err) => {
-      console.log(err);
-    });    
-  } 
-  
-  getFav = async () => {
-    fetch(`http://0da00b68.ngrok.io/show_profile/fav`, {
-      method: 'POST',
-      headers: {
-        'Accept': 'application/json',
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        id : this.state.user_id
-      })
-=======
     .then((response) => response.json())
     .then((jsonData) => {
       if (jsonData.id !== undefined) {
@@ -102,7 +57,6 @@ export default class OtherProfileScreen extends React.Component {
         //this.getFav();
         this.checkFriend(nodeServerUrl);
       }
->>>>>>> master
     })
     .catch(function(error) {
       console.log('Problem with get my_id:', error);
@@ -130,13 +84,10 @@ export default class OtherProfileScreen extends React.Component {
     });
   };
 
-<<<<<<< HEAD
-  checkFriend = () => {
-    fetch(`http://0da00b68.ngrok.io/show_profile/friend_status`, {
-=======
   _setUserInfo = (jsonData) => {
     if (jsonData.name) {
-      this.setState({name: jsonData.name});
+      this.setState({name: jsonData.name}); 
+      console.log('username otherprofile', name)
     }
 
     if (jsonData.avatar) {
@@ -146,21 +97,36 @@ export default class OtherProfileScreen extends React.Component {
 
   _setUserFav = (jsonData) => {
     if (jsonData.favoriteGenres) {
-        this.setState({favoriteGenres: jsonData.favoriteGenres});
+      const fG = jsonData.favoriteGenres;
+      let top5FG = [];
+      for (let i = 0; i < 5; i++) {
+        top5FG.push(fG[i])
+      }
+      this.setState({favoriteGenres: top5FG});
+      console.log('genres', this.state.favoriteGenres)
     }
-
+    
     if (jsonData.favoriteArtists) {
-      this.setState({favoriteArtists: jsonData.favoriteArtists});
+      const fA = jsonData.favoriteArtists;
+      let top5FA = [];
+      for (let i = 0; i < 5; i++) {
+        top5FA.push(fA[i])
+      }
+      this.setState({favoriteArtists: top5FA});
     }
 
     if (jsonData.favoriteSongs) {
-      this.setState({favoriteSongs: jsonData.favoriteSongs});
+      const fS = jsonData.favoriteSongs;
+      let top5FS = [];
+      for (let i = 0; i < 5; i++) {
+        top5FS.push(fS[i])
+      } 
+      this.setState({favoriteSongs: top5FS});
     }
   }
 
   checkFriend = (nodeServerUrl) => {
     fetch(`${nodeServerUrl}/show_profile/friend_status`, {
->>>>>>> master
     method: 'POST',
     headers: {
       'Accept': 'application/json',
@@ -180,14 +146,10 @@ export default class OtherProfileScreen extends React.Component {
   }
 
   addFriend = () => {
-<<<<<<< HEAD
-    fetch(`http://0da00b68.ngrok.io/show_profile/add_friend`, {
-=======
 
     console.log("url in addFriend:", `${this.state.nodeServerUrl}/show_profile/add_friend`);
 
     fetch(`${this.state.nodeServerUrl}/show_profile/add_friend`, {
->>>>>>> master
       method: 'POST',
       headers: {
         'Accept': 'application/json',
@@ -204,18 +166,16 @@ export default class OtherProfileScreen extends React.Component {
       .catch((err) => {
         console.log(err);
       });
-<<<<<<< HEAD
-  } 
-  
-  message = () => { 
-    this.props.navigation.navigate(`Chat`);  
-=======
   }
 
   // Doesnt work
   message = () => {
     this.props.navigation.navigate(`Chat`);
->>>>>>> master
+  }
+
+  componentDidMount() {
+
+    console.log('genres didmount', this.state.favoriteGenres)
   }
 
   render() {
@@ -227,6 +187,23 @@ export default class OtherProfileScreen extends React.Component {
     <Text style={styles.textStyle}> No Image </Text> :
     <Image style={{width: 200, height: 200,}} source={{uri: this.state.avatar}} />
 
+    const viewFriendsOrMeet = (this.props.handleMeet)?
+    <Button title="Back to Meet" onPress={() => {this.props.handleMeet('Meet')}} /> :
+    <Button title="View Friends" onPress={() => {this.props.handler( null, 'ShowFriends')}} />
+
+    const favoriteGenres = (this.state.favoriteGenres !== null) ? 
+    (<Text> Favorite Genres: {this.state.favoriteGenres}</Text>):
+    (<Text> No favorite genres :( </Text>)
+    
+    const favoriteArtists = (this.state.favoriteArtists) ? 
+    (<Text> Favorite Artists: {this.state.favoriteArtists}</Text>):
+    (<Text> No favorite artists :( </Text>)
+
+    const favoriteSongs = (this.state.favoriteSongs) ? 
+    (<Text> Favorite Artists: {this.state.favoriteSongs}</Text>):
+    (<Text> No favorites :( </Text>)
+
+  
     return (
       <View>
         <Text style={styles.textStyle}>
@@ -234,14 +211,13 @@ export default class OtherProfileScreen extends React.Component {
         </Text>
         {avatar}
         <Text style={styles.textStyle}>
-          {'\n'}Top 3 Favourite Songs:
+          {'\n'}Favourites:
         </Text>
-        <Text style={styles.textStyle}>
-          {this.state.top3}
-        </Text>
+        {favoriteGenres}
+        {favoriteArtists}
+        {favoriteSongs}
         {addOrMsg}
-        <Button title="View Friends" 
-                onPress={() => {this.props.handler( null, 'ShowFriends')}} />
+        {viewFriendsOrMeet}
       </View>
     );
   }

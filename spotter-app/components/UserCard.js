@@ -5,8 +5,9 @@ import {
   TouchableOpacity,
 } from 'react-native';
 
-function UserCard({name, id, handler, handleChatWithFriend, friend, userId, url, fetchChatrooms, backgroundColor}) {
+function UserCard({name, id, handler, setFriendName, handleChatWithFriend, friend, userId, url, fetchChatrooms, backgroundColor}) {
   handler2 = () => {
+    console.log(111111,'usercard', id)
     handler (id, 'OtherProfileScreen')
   }
   async function startNewChat() {
@@ -29,14 +30,22 @@ function UserCard({name, id, handler, handleChatWithFriend, friend, userId, url,
       fetchChatrooms()
     })
   }
-  if(handleChatWithFriend) {
+  if (handleChatWithFriend) {
     handler2 = () => {
       startNewChat()
     }
   }
+
+  if (setFriendName) {
+    handler2 = () => {
+      console.log(22222222,'usercard', id)
+      setFriendName(name);
+      handler (id, 'OtherProfileScreen')
+    }
+  }
   
   return (
-    <TouchableOpacity style={styles.container} onPress={callHandler}>
+    <TouchableOpacity style={styles.container} onPress={handler2}>
       <Text style={styles.name}>{name}</Text>
     </TouchableOpacity>
   )
