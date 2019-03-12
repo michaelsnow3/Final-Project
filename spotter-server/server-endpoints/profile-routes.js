@@ -76,6 +76,7 @@ module.exports = function(request, selectQueries) {
             .innerJoin('users', user_id, 'favourite.user_id')
             .innerJoin('favourite_genre', 'favourite.id', 'favourite_genre.favourite_id')
             .innerJoin('genre', 'favourite_genre.genre_id', 'genre.id')
+            .where({'users.id': user_id})
             .then((results) => {
               let genreArr = [];
               for (let genre of results) {
@@ -97,6 +98,7 @@ module.exports = function(request, selectQueries) {
             .innerJoin('users', user_id, 'favourite.user_id')
             .innerJoin('favourite_artist', 'favourite.id', 'favourite_artist.favourite_id')
             .innerJoin('artist', 'favourite_artist.artist_id', 'artist.id')
+            .where({'users.id': user_id})
             .then((results) => {
               let artistArr = [];
               for (let artist of results) {
@@ -118,6 +120,7 @@ module.exports = function(request, selectQueries) {
             .innerJoin('users', user_id, 'favourite.user_id')
             .innerJoin('favourite_song', 'favourite.id', 'favourite_song.favourite_id')
             .innerJoin('song', 'favourite_song.song_id', 'song.id')
+            .where({'users.id': user_id})
             .then((results) => {
               let songArr = [];
               for (let song of results) {
