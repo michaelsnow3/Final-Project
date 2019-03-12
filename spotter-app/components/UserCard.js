@@ -11,6 +11,9 @@ function UserCard({name, id, handler, setName, setFriendName, handleChatWithFrie
     handler (id, 'OtherProfileScreen')
   }
   async function startNewChat() {
+
+    console.log("url startNewChat:", `${url}/chat/chatroom/create`);
+
     await fetch(`${url}/chat/chatroom/create`, {
       method: "POST",
       headers: {
@@ -23,12 +26,18 @@ function UserCard({name, id, handler, setName, setFriendName, handleChatWithFrie
       })
     }).then(data => {
       let chatroomId = JSON.parse(data._bodyInit).chatroomId
+
+      console.log("chatroomIdchatroomId:");
+      console.log(chatroomId);
+
       handleChatWithFriend({
         name: friend.name,
         chatroomId: chatroomId
       }, 'showChat')
-      fetchChatrooms()
     })
+    .then(() => {
+      fetchChatrooms()
+    });
   }
   if (handleChatWithFriend) {
     handler2 = () => {

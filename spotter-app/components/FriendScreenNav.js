@@ -8,13 +8,14 @@ import {
   View,
 } from 'react-native';
 
-function FriendScreenNav({ handler, GetfriendsList }) {
+function FriendScreenNav({ handler, getUserId }) {
   handleShowFriendsPress = () => {
     handler(null, 'ShowFriends');
-    GetfriendsList();
+    getUserId();
   }
   handleShowFriendRequestsPress = () => {
     handler(null, 'FriendRequests')
+    getUserId();
   }
   return(
     <View style={styles.container}>

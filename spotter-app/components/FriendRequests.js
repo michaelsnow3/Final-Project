@@ -17,32 +17,19 @@ class FriendRequests extends React.Component {
   }
 
   componentDidMount() {
-    this.props.friendRequestsFunc();
-    // fetch(`${this.props.url}/show_profile/friend_requests/${this.props.userId}`, {
-    //   method: 'GET',
-    //   headers: {
-    //     'Accept': 'application/json',
-    //     'Content-Type': 'application/json',
-    //   },
-    // }).then(data => {
-    //   console.log("datadatadatadata:");
-    //   console.log(data);
-
-    //   let friendRequests = JSON.parse(data._bodyInit)
-    //   this.setState({ friendRequests })
-    // })
+    this.props.getUserId();
   }
 
   render() {
 
     const friendRequestsList =  this.props.friendRequests.map(friendRequest => {
-      return <UserCard name={friendRequest.name} id={friendRequest.id} handler={this.props.handler} key={Math.random().toString()} />
+      return <UserCard setFriendName={this.props.setFriendName} name={friendRequest.name} id={friendRequest.id} handler={this.props.handler} key={Math.random().toString()} />
     });
 
     return(
       <View style={styles.container}>
         <Text style={styles.name}>Friend Requests</Text>
-        <View style={styles.nav}><FriendScreenNav handler={this.props.handler} GetfriendsList={this.props.GetfriendsList} /></View>
+        <View style={styles.nav}><FriendScreenNav handler={this.props.handler} getUserId={this.props.getUserId} /></View>
         <ScrollView style={styles.requestList}>{friendRequestsList}</ScrollView>
       </View>
     )

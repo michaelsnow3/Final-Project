@@ -30,6 +30,7 @@ export default class OtherProfileScreen extends React.Component {
 
   componentDidMount() {
     this._getMyId();
+    //this.props.navigation.addListener('willFocus', this._getMyId);
   }
 
   _getMyId = async () => {
@@ -146,9 +147,13 @@ export default class OtherProfileScreen extends React.Component {
     });
   }
 
-  addFriend = () => {
+  addFriend = async () => {
+
+    //await this._getMyId()
 
     console.log("url in addFriend:", `${this.state.nodeServerUrl}/show_profile/add_friend`);
+    console.log("this.state.my_id:", this.state.my_id);
+    console.log("this.state.user_id:", this.state.user_id);
 
     fetch(`${this.state.nodeServerUrl}/show_profile/add_friend`, {
       method: 'POST',
@@ -162,7 +167,12 @@ export default class OtherProfileScreen extends React.Component {
       }),
       })
       .then(() => {
-        this.setState({friend : true})
+        this.setState({friend : true}, async () => {
+          if (this.props.getUserId) {
+            await this.props.getUserId();
+            this.props.handler(null, 'ShowFriends')
+          }
+        })
       })
       .catch((err) => {
         console.log(err);

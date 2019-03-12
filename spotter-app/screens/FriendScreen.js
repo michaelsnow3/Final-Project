@@ -56,8 +56,10 @@ export default class FriendScreen extends React.Component {
   }
 
   componentDidMount() {
-    this.props.navigation.addListener('willFocus', this.fetchFriends);
-    this.props.navigation.addListener('willFocus', this.fetchFriendRequest);
+    //this.props.navigation.addListener('willFocus', this.fetchFriends);
+    //this.props.navigation.addListener('willFocus', this.fetchFriendRequest);
+    this.props.navigation.addListener('willFocus', this.getUserId);
+    //this.getUserId();
   }
 
   setFriendName = (name) => {
@@ -232,7 +234,7 @@ export default class FriendScreen extends React.Component {
           <ScrollView style={styles.container}>
             <ShowFriends
               friends={this.state.friends}
-              GetfriendsList={this.fetchFriends}
+              getUserId={this.getUserId}
               handler={this.handler}
               setFriendName={this.setFriendName}
               backgroundColor={'#ff704c'}            />
@@ -245,6 +247,7 @@ export default class FriendScreen extends React.Component {
             id={this.state.friend_id}
             navigation={this.props.navigation}
             name={this.state.name}
+            getUserId={this.getUserId}
           />
         );
       case 'FriendRequests':
@@ -254,10 +257,10 @@ export default class FriendScreen extends React.Component {
             handler={this.handler}
             url={this.state.nodeServerUrl}
             userId={this.state.userId}
-            friendRequestsFunc={this.fetchFriendRequest}
+            getUserId={this.getUserId}
             friendRequests={this.state.friendRequests}
             backgroundColor={'#ff704c'}
-            GetfriendsList={this.fetchFriends}
+            setFriendName={this.setFriendName}
           />
         </View>
       )
