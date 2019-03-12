@@ -39,7 +39,8 @@ export default class FriendScreen extends React.Component {
       userToken: null,
       user_id_from_spotify: null,
       username: null,
-      friendRequests: []
+      friendRequests: [],
+      name: null
     }
 
     // Create Socket Server Connection here
@@ -58,6 +59,12 @@ export default class FriendScreen extends React.Component {
     this.props.navigation.addListener('willFocus', this.fetchFriends);
     this.props.navigation.addListener('willFocus', this.fetchFriendRequest);
   }
+
+  setFriendName = (name) => {
+    this.setState({
+      name: name,
+    });
+  };
 
   fetchFriendRequest = () => {
 
@@ -148,13 +155,13 @@ export default class FriendScreen extends React.Component {
   };
   handler = (friend_id, page) => {
     this.setState({
-      page : page, 
+      page : page,
       friend_id : friend_id
     })
-  } 
-  // heroku server: 
+  }
+  // heroku server:
   // https://mysterious-gorge-24322.herokuapp.com:8888/show-friends/
-  // componentDidMount() { 
+  // componentDidMount() {
   //   fetch('http://0da00b68.ngrok.io/show-friends/', {
 
   _getUserInfo = async () => {
@@ -165,7 +172,7 @@ export default class FriendScreen extends React.Component {
     fetch(`${nodeServerUrl}/nearby/get_id/${userIdFromSpotify}`, {
        method: 'GET',
        headers: {
-           'Content-Type': 'application/json' 
+           'Content-Type': 'application/json'
        }
      })
     .then((response) => response.json())
@@ -227,6 +234,7 @@ export default class FriendScreen extends React.Component {
               friends={this.state.friends}
               GetfriendsList={this.fetchFriends}
               handler={this.handler}
+              setFriendName={this.setFriendName}
               backgroundColor={'#ff704c'}            />
           </ScrollView>
         );
@@ -236,6 +244,7 @@ export default class FriendScreen extends React.Component {
             handler={this.handler}
             id={this.state.friend_id}
             navigation={this.props.navigation}
+            name={this.state.name}
           />
         );
       case 'FriendRequests':

@@ -35,7 +35,7 @@ module.exports = (knex) => {
   knex('users')
   .count('id')
   .then((result) => {
-    count = result; 
+    count = result;
     return count
   })
   .then((count) => {
@@ -65,7 +65,7 @@ module.exports = (knex) => {
     .join('favourite', {'users.id': 'favourite.user_id'})
     .join('favourite_song', {'favourite.id': 'favourite_id'})
     .join('song', {'song.id': 'song_id'})
-    .then((results) => {  
+    .then((results) => {
       for (let song of results) {
         if (input.group1[0].interests.length === 10){
           break;
@@ -79,14 +79,14 @@ module.exports = (knex) => {
       .select('*')
       .from('users')
       .then((resultsUsers) => {
-        users = resultsUsers; 
+        users = resultsUsers;
         for (let i = 0; i < users.length; i++) {
           input.group2[i].name = users[i].name + " " + users[i].id;
           // input.group2[i].id = users[i].id;
         }
       })
       .then(() => {
-        
+
         // Setting group2 users's favourite songs and artists (interests and values...)
         knex
         .select('*')
@@ -125,9 +125,9 @@ module.exports = (knex) => {
 
 
             const result = []
-            let i = 0; 
+            let i = 0;
             const matching = (data) => {
-            if ( i === 5) {
+            if ( i === 8) {
               console.log('matching result: ', result)
               res.json(result);
             }
@@ -136,9 +136,9 @@ module.exports = (knex) => {
               .algo("matching/DatingAlgorithm/0.1.3") // timeout is optional
               .pipe(data)
               .then(function(response) {
-                const match = response.get()['User'] 
+                const match = response.get()['User']
                 result.push(match)
-                let xxx = data; 
+                let xxx = data;
                 xxx.group2 = data.group2.filter(x => {
                   return x.name !== match
                 })

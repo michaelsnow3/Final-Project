@@ -13,9 +13,9 @@ import {
 import UserCard from '../components/UserCard';
 import FriendScreenNav from '../components/FriendScreenNav';
 
-function ShowFriends({friends, handler, GetfriendsList}) {
+function ShowFriends({friends, handler, GetfriendsList, setFriendName}) {
   const friendsList = friends.map(friend => {
-    return <UserCard backgroundColor={'#ff704c'} name={friend.name} id={friend.id} handler={handler} key={Math.random().toString()} />
+    return <UserCard setFriendName={setFriendName} backgroundColor={'#ff704c'} name={friend.name} id={friend.id} handler={handler} key={Math.random().toString()} />
   });
   return(
     <View style={styles.container}>

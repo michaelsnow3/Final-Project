@@ -5,7 +5,7 @@ import {
   TouchableOpacity,
 } from 'react-native';
 
-function UserCard({name, id, handler, setFriendName, handleChatWithFriend, friend, userId, url, fetchChatrooms, backgroundColor}) {
+function UserCard({name, id, handler, setName, setFriendName, handleChatWithFriend, friend, userId, url, fetchChatrooms, backgroundColor}) {
   handler2 = () => {
     console.log(111111,'usercard', id)
     handler (id, 'OtherProfileScreen')
@@ -19,7 +19,7 @@ function UserCard({name, id, handler, setFriendName, handleChatWithFriend, frien
       },
       body: JSON.stringify({
         userId: userId,
-        friendId: id 
+        friendId: id
       })
     }).then(data => {
       let chatroomId = JSON.parse(data._bodyInit).chatroomId
@@ -43,7 +43,7 @@ function UserCard({name, id, handler, setFriendName, handleChatWithFriend, frien
       handler (id, 'OtherProfileScreen')
     }
   }
-  
+
   return (
     <TouchableOpacity style={styles.container} onPress={handler2}>
       <Text style={styles.name}>{name}</Text>
