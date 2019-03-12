@@ -7,25 +7,26 @@ const meetRoutes = express.Router();
 // const knex = require('knex')(knexConfig[ENV])
 // const matching = require('./test-algo')
 
-let input = {
-  "group1": [
-    {
-      "name": "User",
-      "interests": ['c'],
-      "values": ['d'],
-      "age": "22",
-      "coordinates": {
-        "lat": 43.6532,
-        "long": 79.3832
-      }
-    },
-  ],
-  "group2": []
-};
-
 module.exports = (knex) => {
 
   meetRoutes.post('/get', (req, res) => {
+
+  let input = {
+    "group1": [
+      {
+        "name": "User",
+        "interests": [''],
+        "values": [''],
+        "age": "22",
+        "coordinates": {
+          "lat": 43.6532,
+          "long": 79.3832
+        }
+      },
+    ],
+    "group2": []
+  };
+
   // const test = (knex) => {
   console.log(11111111111)
   const id = req.body.user_id;
@@ -43,10 +44,10 @@ module.exports = (knex) => {
     let filler = [];
     for (let i = 0; i < intCount; i++) {
       filler[i] = {
-        // "id" : null,
+        "id" : null,
         "name": "",
-        "interests": ['a'],
-        "values": ['a'],
+        "interests": [''],
+        "values": [''],
         "age": "22",
         "coordinates": {
           "lat": 43.6532,
@@ -72,6 +73,26 @@ module.exports = (knex) => {
         }
         input.group1[0].interests.push(song.name)
       }
+      console.log("------");
+      console.log(input.group1[0].interests);
+      console.log("------");
+    })
+    .then(() => {
+      knex
+      .select('*')
+      .from('users')
+      .where('users.id', id)
+      .join('favourite', {'users.id': 'favourite.user_id'})
+      .join('favourite_artist', {'favourite.id': 'favourite_id'})
+      .join('artist', {'artist.id': 'artist_id'})
+      .then((results) => {
+        for (let artist of results) {
+          if (input.group1[0].values.length === 10){
+            break;
+          }
+          input.group1[0].values.push(artist.name)
+        }
+      })
     })
     .then(() => {
       // getting a list of all users and setting their names to be in input
@@ -82,7 +103,7 @@ module.exports = (knex) => {
         users = resultsUsers;
         for (let i = 0; i < users.length; i++) {
           input.group2[i].name = users[i].name + " " + users[i].id;
-          // input.group2[i].id = users[i].id;
+          input.group2[i].id   = users[i].id;
         }
       })
       .then(() => {

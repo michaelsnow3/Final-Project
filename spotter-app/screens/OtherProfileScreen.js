@@ -196,7 +196,7 @@ export default class OtherProfileScreen extends React.Component {
     (<Text> No favorite artists :( </Text>)
 
     const favoriteSongs = (this.state.favoriteSongs) ?
-    (<Text> Favorite Artists: {this.state.favoriteSongs}</Text>):
+    (<Text> Favorite Songs: {this.state.favoriteSongs}</Text>):
     (<Text> No favorites :( </Text>)
 
 

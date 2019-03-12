@@ -153,7 +153,7 @@ export default class ProfileScreen extends React.Component {
           let genreList = [];
           this.state.favoriteGenres.forEach(genre => {
             genreList.push(
-              <Text key={genre} onLongPress={() =>
+              <Text style={{marginLeft:20}} key={genre} onLongPress={() =>
                 Alert.alert('Delete Genre', genre,
                   [
                     {text: 'Cancel', onPress: () => console.log('Cancel Pressed!')},
@@ -172,7 +172,7 @@ export default class ProfileScreen extends React.Component {
           let artistList = [];
           this.state.favoriteArtists.forEach(artist => {
             artistList.push(
-              <Text key={artist} onLongPress={() =>
+              <Text style={{marginLeft:20}} key={artist} onLongPress={() =>
                 Alert.alert('Delete Artist', artist,
                   [
                     {text: 'Cancel', onPress: () => console.log('Cancel Pressed!')},
@@ -191,7 +191,7 @@ export default class ProfileScreen extends React.Component {
           let songList = [];
           this.state.favoriteSongs.forEach(song => {
             songList.push(
-              <Text key={song} onLongPress={() =>
+              <Text style={{marginLeft:20}} key={song} onLongPress={() =>
                 Alert.alert('Delete Song', song,
                   [
                     {text: 'Cancel', onPress: () => console.log('Cancel Pressed!')},
