@@ -46,11 +46,17 @@ export default class ProfileScreen extends React.Component {
     const editTitle = `Add Favorite ${this.state.favoriteType}`;
 
     return (
-      <View>
+      <View style={{alignItems: 'center',}}>
         <Text style={styles.name}>Profile</Text>
-        <Button title={editTitle} onPress={this._editInfo} />
-        {editOrDisplay}
-        <Button title="Logout this amazing App :)" onPress={this._signOutAsync} />
+        <TouchableOpacity style={{backgroundColor: 'powderblue', width: 250, alignItems: 'center',}} onPress={this._editInfo}>
+          <Text>
+            {editTitle}
+          </Text>
+        </TouchableOpacity>
+          {editOrDisplay}
+        <TouchableOpacity  onPress={this._signOutAsync}>
+          <Text>Logout this amazing App :)</Text>
+        </TouchableOpacity>
       </View>
     );
   }
@@ -71,14 +77,14 @@ export default class ProfileScreen extends React.Component {
             <Text>Email: {this.state.email}</Text>
           </View>
           <View style={styles.favoriteBtn}>
-            <TouchableOpacity style={{width: 100, height: 25, backgroundColor: 'powderblue'}} onPress={this._accessGenere}>
-              <Text>Genre</Text>
+            <TouchableOpacity style={{width: 130, height: 30, backgroundColor: 'powderblue'}} onPress={this._accessGenere}>
+              <Text style={styles.text}>Genre</Text>
             </TouchableOpacity>
-            <TouchableOpacity style={{width: 100, height: 25, backgroundColor: 'skyblue'}} onPress={this._accessArtist}>
-              <Text>Artist</Text>
+            <TouchableOpacity style={{width: 130, height: 30, backgroundColor: 'skyblue'}} onPress={this._accessArtist}>
+              <Text style={styles.text}>Artist</Text>
             </TouchableOpacity>
-            <TouchableOpacity style={{width: 100, height: 25, backgroundColor: 'steelblue'}} onPress={this._accessSong}>
-              <Text>Song</Text>
+            <TouchableOpacity style={{width: 130, height: 30, backgroundColor: 'steelblue'}} onPress={this._accessSong}>
+              <Text style={styles.text}>Song</Text>
             </TouchableOpacity>
           </View>
           {favoriteInfo}
@@ -339,5 +345,10 @@ const styles = StyleSheet.create({
   name: {
     fontSize: 50,
     textAlign: 'center'
+  },
+  text: {
+    fontSize: 20,
+    textAlign: 'center',
+    marginTop: 5,
   }
 });
