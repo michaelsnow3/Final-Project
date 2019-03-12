@@ -30,7 +30,6 @@ export default class FriendScreen extends React.Component {
 
   constructor(props) {
     super(props)
-
     this.state = {
       friends: [],
       page: 'ShowFriends',
@@ -147,13 +146,16 @@ export default class FriendScreen extends React.Component {
   static navigationOptions = {
     header: null,
   };
-
   handler = (friend_id, page) => {
     this.setState({
-      page : page,
+      page : page, 
       friend_id : friend_id
     })
-  }
+  } 
+  // heroku server: 
+  // https://mysterious-gorge-24322.herokuapp.com:8888/show-friends/
+  // componentDidMount() { 
+  //   fetch('http://0da00b68.ngrok.io/show-friends/', {
 
   _getUserInfo = async () => {
     const nodeServerUrl = await AsyncStorage.getItem('nodeServerUrl');
@@ -163,7 +165,7 @@ export default class FriendScreen extends React.Component {
     fetch(`${nodeServerUrl}/nearby/get_id/${userIdFromSpotify}`, {
        method: 'GET',
        headers: {
-           'Content-Type': 'application/json'
+           'Content-Type': 'application/json' 
        }
      })
     .then((response) => response.json())
@@ -220,13 +222,13 @@ export default class FriendScreen extends React.Component {
     switch (this.state.page) {
       case 'ShowFriends':
         return (
-          <View style={styles.container}>
+          <ScrollView style={styles.container}>
             <ShowFriends
               friends={this.state.friends}
               GetfriendsList={this.fetchFriends}
               handler={this.handler}
               backgroundColor={'#ff704c'}            />
-          </View>
+          </ScrollView>
         );
       case 'OtherProfileScreen':
         return (

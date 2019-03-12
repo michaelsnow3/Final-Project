@@ -6,44 +6,128 @@ import {
   StyleSheet,
   Text,
   TouchableOpacity,
+  Button,
   View,
 } from 'react-native';
+import OtherProfileScreen from './OtherProfileScreen.js';
+import People from '../components/People';
+ 
 
-import { MonoText } from '../components/StyledText';
-
-export default class MeetScreen extends React.Component {
+export default class MeetScreen extends React.Component { 
+  constructor(props) {
+    super(props);
+    this.state = {
+      user_id : 3,
+      page : 'Greet', 
+      people : [],
+      friend_id : null,
+      friend_name: null,
+    }
+  }
   static navigationOptions = {
     header: null,
   };
 
-  render() {
-    return (
-      <View style={styles.container}>
-        <Text>Meet</Text>
-      </View>
-    );
+  setFriendName = async (name) => {
+    await this.setState({
+      friend_name: name,  
+    })
+    this.setState({
+      page: 'OtherProfileScreen'
+    })
   }
 
-  _maybeRenderDevelopmentModeWarning() {
-    if (__DEV__) {
-      const learnMoreButton = (
-        <Text onPress={this._handleLearnMorePress} style={styles.helpLinkText}>
-          Learn more
-        </Text>
-      );
+  meet = () => {
+    console.log('meet call');
+    this.setState({
+      page: 'Meet'
+    })
+    fetch(`http://2bdd2895.ngrok.io/meet/get`, {
+      method: 'POST',
+      headers: {
+        'Accept': 'application/json',   
+        'Content-Type': 'application/json',  
+      },
+      body: JSON.stringify({  
+        user_id : this.state.user_id,
+      }),  
+      })   
+      .then(data => { 
+        // parsing received data, extracting required data
+        let parsedData = JSON.parse(data._bodyInit)
+        let newParsedData = [];
+        // user name and id were passed in one string, and so must be extracted and separated
+        for (let user of parsedData) {
+          let splitUser = user.split(' ')
+          let user_id = splitUser[splitUser.length-1]
+          splitUser.pop();
+          let user_name = splitUser.join(' ')
+          let newUser = {
+            id : user_id,
+            name : user_name
+          }
+          // this.setFriendName(user_name);
+          newParsedData.push(newUser);
+        } 
+        // need to accept in an array of people's names and ids (strecth: avatars)
+        this.setState({  
+          people : newParsedData
+        })
+      })
+      .catch((err) => {
+        console.log(err);  
+      });
+  }
 
-      return (
-        <Text style={styles.developmentModeText}>
-          Development mode is enabled, your app will be slower but you can use useful development
-          tools. {learnMoreButton}
-        </Text>
-      );
-    } else {
-      return (
-        <Text style={styles.developmentModeText}>
-          You are not in development mode, your app will run at full speed.
-        </Text>
-      );
+  back = () => {
+    this.setState ({
+      page : 'Greet'
+    })
+  }
+
+  handler = (friend_id, page) => {
+    this.setState({
+      friend_id : friend_id,
+      page : page
+    })
+  }
+
+  handleMeet = (page) => {
+    this.setState({
+      page : page
+    })
+  }
+
+  componentDidMount() {
+    console.log('meet render')
+  }
+  render() { 
+ 
+    switch (this.state.page) {
+      case 'Greet':
+        return (
+          <View style={styles.container}>
+            <Text>Meet others who share your music tastes!</Text> 
+            <Button title="Meet!" onPress={this.meet} /> 
+          </View>
+        ) 
+      case 'Meet':
+        return (
+          <ScrollView>
+            <Button title="Back" onPress={this.back} />
+            <People people={this.state.people} handler={this.handler} setFriendName={this.setFriendName} />
+          </ScrollView>
+        )
+      case 'OtherProfileScreen':
+        return ( 
+          <OtherProfileScreen 
+          handler={this.handler}
+          id={this.state.friend_id}
+          navigation={this.props.navigation}
+          name={this.state.friend_name}
+          handleMeet={this.handleMeet}
+          handleChatWithFriend={() => {}} />
+        )
     }
   }
 }
@@ -51,3 +135,4 @@ export default class MeetScreen extends React.Component {
 const styles = StyleSheet.create({
 
 });
+  

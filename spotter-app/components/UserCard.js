@@ -1,16 +1,13 @@
 import React from 'react';
 import {
-  Image,
-  Platform,
-  ScrollView,
   StyleSheet,
   Text,
   TouchableOpacity,
-  View,
 } from 'react-native';
 
-function UserCard({name, id, handler, handleChatWithFriend, friend, userId, url, fetchChatrooms, backgroundColor}) {
+function UserCard({name, id, handler, setFriendName, handleChatWithFriend, friend, userId, url, fetchChatrooms, backgroundColor}) {
   handler2 = () => {
+    console.log(111111,'usercard', id)
     handler (id, 'OtherProfileScreen')
   }
   async function startNewChat() {
@@ -22,7 +19,7 @@ function UserCard({name, id, handler, handleChatWithFriend, friend, userId, url,
       },
       body: JSON.stringify({
         userId: userId,
-        friendId: id
+        friendId: id 
       })
     }).then(data => {
       let chatroomId = JSON.parse(data._bodyInit).chatroomId
@@ -33,9 +30,17 @@ function UserCard({name, id, handler, handleChatWithFriend, friend, userId, url,
       fetchChatrooms()
     })
   }
-  if(handleChatWithFriend) {
+  if (handleChatWithFriend) {
     handler2 = () => {
       startNewChat()
+    }
+  }
+
+  if (setFriendName) {
+    handler2 = () => {
+      console.log(22222222,'usercard', id)
+      setFriendName(name);
+      handler (id, 'OtherProfileScreen')
     }
   }
   

@@ -5,7 +5,8 @@ module.exports = (knex, request, selectQueries) => {
 
   // getUserInfo
   showProfile.post("/info", (req, res) => {
-      const id = req.body.id;
+    const id = req.body.id;
+    console.log('userinfo', id)
       knex('users')
         .select()
         .where({id : id})

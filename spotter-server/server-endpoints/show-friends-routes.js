@@ -9,10 +9,6 @@ module.exports = function(selectQueries) {
     .then((data) => {
       res.json(data)
     })
-
-
-    console.log("show friends ");
   });
-
   return friendRoutes;
 };

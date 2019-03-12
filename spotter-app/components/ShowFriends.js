@@ -17,7 +17,6 @@ function ShowFriends({friends, handler, GetfriendsList}) {
   const friendsList = friends.map(friend => {
     return <UserCard backgroundColor={'#ff704c'} name={friend.name} id={friend.id} handler={handler} key={Math.random().toString()} />
   });
-
   return(
     <View style={styles.container}>
       <Text style={styles.name}>Friends</Text>
