@@ -3,9 +3,18 @@ import {
   StyleSheet,
   Text,
   TouchableOpacity,
+  View,
 } from 'react-native';
 
-function UserCard({name, id, handler, setName, setFriendName, handleChatWithFriend, friend, userId, url, fetchChatrooms, backgroundColor}) {
+function UserCard({name, id, handler, page, setFriendName, handleChatWithFriend, friend, userId, url, fetchChatrooms, prevFriend}) {
+  let newLetter = false
+  if(!prevFriend || name[0].toUpperCase() !== prevFriend.name[0].toUpperCase()) {
+    newLetter = <View style={styles.newLetterContainer}><Text style={styles.newLetterText}>{name[0].toUpperCase()}</Text></View>
+  }
+  if(page === 'FriendRequests') {
+    newLetter = false
+  }
+
   handler2 = () => {
     console.log(111111,'usercard', id)
     handler (id, 'OtherProfileScreen')
@@ -54,26 +63,35 @@ function UserCard({name, id, handler, setName, setFriendName, handleChatWithFrie
   }
 
   return (
-    <TouchableOpacity style={styles.container} onPress={handler2}>
-      <Text style={styles.name}>{name}</Text>
-    </TouchableOpacity>
+    <View>
+      {newLetter}
+      <TouchableOpacity style={styles.container} onPress={handler2}>
+        <Text style={styles.name}>{name}</Text>
+      </TouchableOpacity>
+    </View>
   )
 }
 
 const styles = StyleSheet.create({
   container: {
     height: 60,
-    borderRadius: 10,
-    borderWidth: 0.5,
+    borderBottomWidth: 1,
     borderColor: 'black',
-    marginTop: 5,
-    marginBottom: 5,
     justifyContent: 'center',
-    backgroundColor: '#ffc787'
   },
   name: {
     fontSize: 30,
-    textAlignVertical: 'center'
+    textAlignVertical: 'center',
+    marginLeft: 15,
+  },
+  newLetterContainer: {
+    backgroundColor: 'rgba(36, 207, 95, 0.1)',
+    borderBottomWidth: 1,
+  },
+  newLetterText: {
+    fontSize: 20,
+    paddingLeft: 15,
+    
   }
 });
 

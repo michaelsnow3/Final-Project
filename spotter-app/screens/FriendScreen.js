@@ -231,14 +231,16 @@ export default class FriendScreen extends React.Component {
     switch (this.state.page) {
       case 'ShowFriends':
         return (
-          <ScrollView style={styles.container}>
+          <View style={styles.container}>
             <ShowFriends
               friends={this.state.friends}
               getUserId={this.getUserId}
               handler={this.handler}
               setFriendName={this.setFriendName}
-              backgroundColor={'#ff704c'}            />
-          </ScrollView>
+              backgroundColor={'#ff704c'} 
+              page={this.state.page}
+            />
+          </View>
         );
       case 'OtherProfileScreen':
         return (
@@ -261,6 +263,7 @@ export default class FriendScreen extends React.Component {
             friendRequests={this.state.friendRequests}
             backgroundColor={'#ff704c'}
             setFriendName={this.setFriendName}
+            page={this.state.page}
           />
         </View>
       )
