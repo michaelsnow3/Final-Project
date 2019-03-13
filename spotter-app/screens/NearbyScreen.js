@@ -206,7 +206,7 @@ export default class NearbyScreen extends React.Component {
           />
           </View>
           <View style={{flexDirection: 'row'}}>
-            <Text style={{fontSize: 32}}>  Search</Text>
+            <Text style={{fontSize: 32}}>  Searching</Text>
             <Text style={{fontSize: 32}}>{this.state.searchingDot}</Text>
           </View>
         </View>

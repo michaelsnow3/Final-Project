@@ -22,7 +22,11 @@ export default class MeetScreen extends React.Component {
       page : 'Greet',
       people : [],
       friend_id : null,
-      friend_name: null
+      friend_name: null,
+
+      searching: true,
+      searchingDot: "",
+      timer: 0,
     }
   }
   static navigationOptions = {
@@ -40,13 +44,34 @@ export default class MeetScreen extends React.Component {
     this.setState({
       page: 'OtherProfileScreen'
     })
-  }
+  };
+
+  _trunOnSearching = () => {
+    if (this.state.timer === 0) {
+
+      let that = this;
+
+      this.timerSearchingText = setInterval(() => {
+          this._setSearchingText(that);
+      }, 800);
+    }
+  };
+
+  _setSearchingText = (that) => {
+    if (that.state.searchingDot.length > 30) {
+      that.setState({searchingDot: ""});
+    } else {
+      that.setState({searchingDot: that.state.searchingDot + " . "});
+    }
+  };
 
   meet = async () => {
     console.log('meet call');
     this.setState({
       page: 'Meet'
-    })
+    });
+
+    this._trunOnSearching();
 
     const nodeServerUrl = await AsyncStorage.getItem('nodeServerUrl');
     const userIdFromSpotify = await AsyncStorage.getItem('userIdFromSpotify');
@@ -92,8 +117,12 @@ export default class MeetScreen extends React.Component {
           }
           // need to accept in an array of people's names and ids (strecth: avatars)
           this.setState({
-            people : newParsedData
-          })
+            people : newParsedData,
+            searching: false,
+            searchingDot: "",
+            timer: 0,
+          });
+          clearInterval(this.timerSearchingText);
         })
         .catch((err) => {
           console.log(err);
@@ -108,7 +137,9 @@ export default class MeetScreen extends React.Component {
 
   back = () => {
     this.setState ({
-      page : 'Greet'
+      page : 'Greet',
+      people : [],
+      searching: true,
     })
   }
 
@@ -125,7 +156,20 @@ export default class MeetScreen extends React.Component {
     })
   }
 
+  _showSearchingOrResult = () => {
+    return (this.state.searching) ?
+      (<View style={{flexDirection: 'row'}}>
+        <Text style={{fontSize: 32}}>  Searching</Text>
+        <Text style={{fontSize: 32}}>{this.state.searchingDot}</Text>
+       </View>) :
+      (<View>
+        <People people={this.state.people} handler={this.handler} setFriendName={this.setFriendName} />
+       </View>);
+  };
+
   render() {
+
+    const showSearchingOrResult = this._showSearchingOrResult();
 
     switch (this.state.page) {
       case 'Greet':
@@ -139,9 +183,8 @@ export default class MeetScreen extends React.Component {
         return (
           <View>
             <Button title="Back" onPress={this.back} />
-            <People people={this.state.people} handler={this.handler} setFriendName={this.setFriendName} />
-          </View>
-        )
+            {showSearchingOrResult}
+          </View>);
       case 'OtherProfileScreen':
         return (
           <OtherProfileScreen

@@ -106,7 +106,7 @@ export default class FriendScreen extends React.Component {
     })
     .catch(function(error) {
       console.log('Problem with fetch friends:', error);
-      throw error;
+      this._signOutAsync();
     });
   }
 
@@ -209,6 +209,7 @@ export default class FriendScreen extends React.Component {
     }
 
   _insertUserIfNotExist = (userToken, nodeServerUrl) => {
+    console.log("url _insertUserIfNotExist:", `${nodeServerUrl}/profile/insert_user_if_not_exist`);
     fetch(`${nodeServerUrl}/profile/insert_user_if_not_exist`, {
       method: 'POST',
       headers: {
