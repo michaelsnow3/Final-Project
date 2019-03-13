@@ -38,7 +38,7 @@ const styles = StyleSheet.create({
     height: 50,
     borderWidth: 0.5,
     borderColor: '#d6d7da',
-    backgroundColor: '#ff9a47',
+    backgroundColor: 'rgba(249, 195, 69, 0.5)',
     justifyContent: 'center',
   }
 });

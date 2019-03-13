@@ -30,6 +30,7 @@ function ShowFriends({friends, handler, getUserId, setFriendName, page}) {
         handler={handler} 
         key={i} 
         friend={friend}
+        page={page}
       />
     )
   });

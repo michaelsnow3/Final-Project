@@ -14,6 +14,21 @@ function UserCard({
   fetchChatrooms,
   prevFriend
 }) {
+
+  let newLetterContainerStyle;
+
+  if(page === 'ShowFriends') {
+    newLetterContainerStyle = {
+      backgroundColor: "rgba(36, 207, 95, 0.2)",
+      borderBottomWidth: 1
+    }
+  }else {
+    newLetterContainerStyle = {
+      backgroundColor: "#f2f2f2",
+      borderBottomWidth: 1
+    }
+  }
+
   let newLetter = false;
 
   if (
@@ -21,7 +36,7 @@ function UserCard({
     name[0].toUpperCase() !== prevFriend.name[0].toUpperCase()
   ) {
     newLetter = (
-      <View style={styles.newLetterContainer}>
+      <View style={newLetterContainerStyle}>
         <Text style={styles.newLetterText}>{name[0].toUpperCase()}</Text>
       </View>
     );
@@ -65,10 +80,6 @@ function UserCard({
     })
       .then(data => {
         let chatroomId = JSON.parse(data._bodyInit).chatroomId;
-
-        console.log("chatroomIdchatroomId:");
-        console.log(chatroomId);
-
         handleChatWithFriend(
           {
             name: friend.name,
@@ -94,7 +105,7 @@ function UserCard({
       handler(id, "OtherProfileScreen");
     };
   }
-
+  
   return (
     <View>
       {newLetter}

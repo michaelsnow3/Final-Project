@@ -80,7 +80,7 @@ const styles = StyleSheet.create({
   },
   backButtonText: {
     fontSize: 20,
-    textAlign: "center"
+    textAlign: "center",
   },
   suggestions: {
     height: '70%'
