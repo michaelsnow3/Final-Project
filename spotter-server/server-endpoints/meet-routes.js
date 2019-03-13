@@ -153,7 +153,7 @@ module.exports = (knex) => {
               res.json(result);
             }
             else {
-              Algorithmia.client("simmxo6hMreL3iS9k6Yu7G2k04B1")
+              Algorithmia.client("simP4D95tgvoG3/Ju6E4fp6kQFA1")
               .algo("matching/DatingAlgorithm/0.1.3") // timeout is optional
               .pipe(data)
               .then(function(response) {
