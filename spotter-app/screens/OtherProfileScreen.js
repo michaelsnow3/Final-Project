@@ -6,6 +6,7 @@ import {
   StyleSheet,
   Text,
   AsyncStorage,
+  TouchableOpacity,
 } from 'react-native';
 
 export default class OtherProfileScreen extends React.Component {
@@ -198,95 +199,94 @@ export default class OtherProfileScreen extends React.Component {
     });
   }
   
-  // Doesnt work
   message = () => {
     this.props.navigation.navigate(`Chat`);
   }
   
   render() {
-    const addOrMsg = (this.state.friend) ?
-    (<Button title="Message" onPress={this.message} style={styles.container}/>) :
-    (<Button title="Add Friend" onPress={this.addFriend} style={styles.container}/>);
     
     const avatar = (this.state.avatar === null ) ?
-    <Text style={styles.textStyle}> No Image </Text> :
-    <Image style={{width: 200, height: 200,}} source={{uri: this.state.avatar}} />
+    <Text style={styles.textStyle1}> No Image Available </Text> :
+    <Image style={styles.imgStyle1} source={{uri: this.state.avatar}} />
     
-    const viewFriendsOrMeet = (this.props.handleMeet)?
-    <Button title="Back to Meet" onPress={() => {this.props.handleMeet('Meet')}} /> :
-    <Button title="View Friends" onPress={() => {this.props.handler( null, 'ShowFriends')}} />
+    const addOrMsg = (this.state.friend) ?    
+    (<TouchableOpacity onPress={this.message}>
+      <Image style={styles.imgStyle2} source={require('../assets/images/message.jpg')} />
+    </TouchableOpacity>) :
     
-    const favoriteGenres = (this.state.favoriteGenres !== null) ?
-    (<Text> Favorite Genres: {this.state.favoriteGenres}</Text>):
-    (<Text> No favorite genres :( </Text>)
-    
+    (<TouchableOpacity onPress={this.addfriend}>
+        <Image style={styles.imgStyle2} source={require('../assets/images/add_friend.jpg')} />
+    </TouchableOpacity>)
+
+    const backButton = (this.props.handleMeet)?
+    (<TouchableOpacity onPress={() => {this.props.handleMeet('Meet')}} >
+      <Image style={styles.imgStyle2} source={require('../assets/images/back_button.png')} />
+    </TouchableOpacity>) :
+    (<TouchableOpacity title="View Friends" onPress={() => {this.props.handler( null, 'ShowFriends')}}>
+      <Image style={styles.imgStyle2} source={require('../assets/images/back_button.png')} />
+    </TouchableOpacity>)
+  
+    const favoriteGenres = (this.state.favoriteGenres) ? 
+    (<Text style={styles.textStyle2} adjustsFontSizeToFit={true}  numberOfLines={1}> Genres - {this.state.favoriteGenres}</Text>): 
+    null
+     
     const favoriteArtists = (this.state.favoriteArtists) ?
-    (<Text> Favorite Artists: {this.state.favoriteArtists}</Text>):
-    (<Text> No favorite artists :( </Text>)
+    (<Text style={styles.textStyle2} adjustsFontSizeToFit={true}  numberOfLines={1}> Artists - {this.state.favoriteArtists}</Text>):  
+    null
     
-    const favoriteSongs = (this.state.favoriteSongs) ?
-    (<Text> Favorite Songs: {this.state.favoriteSongs}</Text>):
-    (<Text> No favorites :( </Text>)
-    
+    const favoriteSongs = (this.state.favoriteSongs) ? 
+    (<Text style={styles.textStyle2} adjustsFontSizeToFit={true} numberOfLines={1} > Songs - {this.state.favoriteSongs}</Text>):
+    null
+  
+    const likes = (!this.state.favoriteGenres && !this.state.favoriteArtists && !this.state.favoriteSongs) ? 
+    (<Text style={styles.textStyle1} adjustsFontSizeToFit={true} >No favorites yet</Text>) : 
+    (<Text style={styles.textStyle1} adjustsFontSizeToFit={true} >Likes:</Text>)
     
     return (
-      <View>
-      <Text style={styles.textStyle}>
-      {this.state.name}{'\n'}
-      </Text>
-      {avatar}
-      <Text style={styles.textStyle}>
-      {'\n'}Favourites:
-      </Text>
-      {favoriteGenres}
-      {favoriteArtists}
-      {favoriteSongs}
-      {addOrMsg}
-      {viewFriendsOrMeet}
+      <View style={{flex : 1, flexDirection: 'column', justifyContent: 'space-between'}}> 
+        <View style={{flex : 1, flexDirection: 'row', justifyContent: 'space-between'}} >
+          {backButton}  
+          <Text style={styles.textStyle1} adjustsFontSizeToFit={true} >
+            {this.state.name}{'\n'}
+          </Text>
+          {addOrMsg}
+        </View>
+          <View style={{flex:1, justifyContent: "center", alignItems: "center"}} >
+            {avatar}
+          </View>
+          <View style={{flex:1, flexDirection: "column",}}>
+            {likes}
+            {favoriteGenres}
+            {favoriteArtists}
+            {favoriteSongs}
+          </View> 
       </View>
       );
     }
   }
   
   const styles = StyleSheet.create({
-    container: {
-      flex: 1,
-      marginTop: 40,
-      flexDirection: 'column',
-      justifyContent: 'flex-start',
-      backgroundColor: '#fff',
-    },
-    textStyle: {
+    textStyle1: {
+      flex: 0.9,
+      marginTop: 3,
       textAlign: 'center',
-      fontSize:25,
+      fontSize: 34,
+    }, 
+    imgStyle1: {
+      width: 180, 
+      height: 180, 
+      marginBottom: 100, 
+      justifyContent: "center",
+      alignItems: "center"
+    }, 
+    imgStyle2: {
+      width: 45, 
+      height: 45,
+      margin: 5
+    },
+    textStyle2: {
+      fontSize:22,
+      marginBottom: 5
     },
   });
-  
-  // get favorite information from db instead of from spotify now
-  // getFav = async () => {
-  //   fetch(`${nodeServerUrl}/show_profile/fav`, {
-  //     method: 'POST',
-  //     headers: {
-  //       'Accept': 'application/json',
-  //       'Content-Type': 'application/json',
-  //     },
-  //     body: JSON.stringify({
-  //       id : this.state.user_id
-  //     })
-  //   })
-  //   .then((data) => data.json())
-  //   .then(json => {
-  //     const songNames = [];
-  //     json.forEach(entry => {
-  //       songNames.push(entry.name)
-  //     })
-  //     top3 = songNames.join("\r\n");
-  //     this.setState({
-  //       top3: top3
-  //     })
-  //   })
-  //   .catch((err) => {
-  //     console.log(err);
-  //   });
-  // }
   
