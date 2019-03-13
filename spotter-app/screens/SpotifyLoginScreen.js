@@ -19,14 +19,15 @@ export default class SpotifyLoginScreen extends React.Component {
     super(props);
     this.state = {
       loginClicked: false,
-      nodeServerUrl: "http://d429ac5a.ngrok.io",
-      socketServerUrl: "http://172.46.1.177",
+      nodeServerUrl: "http://d27b8ee2.ngrok.io",
+      socketServerUrl: "http://192.168.1.41",
 
       loading: true
     }
   }
 
   async componentWillMount() {
+    await AsyncStorage.clear();
     await Font.loadAsync({
       AmarulaPersonalUse: require('./../assets/fonts/Amarula_Personal_Use.ttf'),
     });

@@ -10,6 +10,9 @@ import {
   Form,
   TextInput,
   Alert,
+  TouchableHighlight,
+  Image,
+  ScrollView
 } from 'react-native';
 
 export default class ProfileScreen extends React.Component {
@@ -27,7 +30,7 @@ export default class ProfileScreen extends React.Component {
       favoriteSongs: [],
       favoriteType: "Genre",
       displayInfo: true,
-      favoriteContent: ''
+      favoriteContent: '',
     };
   }
 
@@ -44,19 +47,62 @@ export default class ProfileScreen extends React.Component {
     const favoriteInfo = this._selectfavorite(this.state.favoriteType);
     const editOrDisplay = this._selectPageContent(favoriteInfo, this.state.favoriteType);
     const editTitle = `Add Favorite ${this.state.favoriteType}`;
+    let profilePic = (this.state.avatar) ?
+      (<Image style={{justifyContent: 'center',alignItems: 'center',width: 175, height: 175,}} source={{uri: this.state.avatar}}/>) :
+      (<Image style={{justifyContent: 'center',alignItems: 'center',width: 175, height: 175,}} source={{uri: "https://www.nocowboys.co.nz/images/v3/no-image-available.png"}} />);
 
     return (
       <View style={{alignItems: 'center',}}>
         <Text style={styles.name}>Profile</Text>
-        <TouchableOpacity style={{backgroundColor: 'powderblue', width: 250, alignItems: 'center',}} onPress={this._editInfo}>
-          <Text>
+          {profilePic}
+          <View style={{alignItems:'flex-start'}}>
+            <Text style={
+                {
+                  fontSize: 20,
+
+                }
+              }
+              >
+                Id: {this.state.userIdFromSpotify}
+              </Text>
+              <Text style={
+                {
+                  fontSize: 20,
+                 }
+               }
+              >
+              Email: {this.state.email}
+            </Text>
+          </View>
+          {editOrDisplay}
+          {favoriteInfo}
+        <Text></Text>
+        <TouchableOpacity
+          style={
+            {
+              backgroundColor: 'white',
+              width: 200,
+              height: 30,
+              justifyContent: 'center',
+              alignItems:'center',
+              borderRadius:10,
+              borderWidth:2,
+            }
+          }
+          onPress={this._editInfo}>
+          <Text style={{fontSize:20,color:'black',fontWeight: 'bold'}}>
             {editTitle}
           </Text>
         </TouchableOpacity>
-          {editOrDisplay}
-        <TouchableOpacity  onPress={this._signOutAsync}>
-          <Text>Logout this amazing App :)</Text>
-        </TouchableOpacity>
+        <Text></Text>
+        <TouchableHighlight
+          style={{justifyContent: 'center',alignItems: 'center'}}
+          onPress={this._signOutAsync}>
+          <Image
+            style={{width: 60, height: 60}}
+            source={{uri: "https://cdn2.iconfinder.com/data/icons/picons-essentials/57/logout-512.png"}}
+          />
+        </TouchableHighlight>
       </View>
     );
   }
@@ -71,23 +117,51 @@ export default class ProfileScreen extends React.Component {
 
     if (this.state.displayInfo) {
       return (
-        <View style={styles.container}>
-          <View>
-            <Text>Id: {this.state.userIdFromSpotify}</Text>
-            <Text>Email: {this.state.email}</Text>
-          </View>
-          <View style={styles.favoriteBtn}>
-            <TouchableOpacity style={{width: 130, height: 30, backgroundColor: 'powderblue'}} onPress={this._accessGenere}>
-              <Text style={styles.text}>Genre</Text>
-            </TouchableOpacity>
-            <TouchableOpacity style={{width: 130, height: 30, backgroundColor: 'skyblue'}} onPress={this._accessArtist}>
-              <Text style={styles.text}>Artist</Text>
-            </TouchableOpacity>
-            <TouchableOpacity style={{width: 130, height: 30, backgroundColor: 'steelblue'}} onPress={this._accessSong}>
-              <Text style={styles.text}>Song</Text>
-            </TouchableOpacity>
-          </View>
-          {favoriteInfo}
+        <View style={{flexDirection: 'row',}}>
+          <TouchableOpacity
+            style={{
+             borderWidth:0.5,
+             borderColor:'rgba(0,0,0,0.2)',
+             alignItems:'center',
+             justifyContent:'center',
+             width:70,
+             height:70,
+             backgroundColor:'powderblue',
+             borderRadius:50,
+           }}
+            onPress={this._accessGenere}>
+            <Text style={styles.text}>Genre</Text>
+          </TouchableOpacity>
+          <Text>          </Text>
+          <TouchableOpacity
+            style={{
+             borderWidth:0.5,
+             borderColor:'rgba(0,0,0,0.2)',
+             alignItems:'center',
+             justifyContent:'center',
+             width:70,
+             height:70,
+             backgroundColor:'skyblue',
+             borderRadius:50,
+           }}
+            onPress={this._accessArtist}>
+            <Text style={styles.text}>Artist</Text>
+          </TouchableOpacity>
+          <Text>          </Text>
+          <TouchableOpacity
+            style={{
+             borderWidth:0.5,
+             borderColor:'rgba(0,0,0,0.2)',
+             alignItems:'center',
+             justifyContent:'center',
+             width:70,
+             height:70,
+             backgroundColor:'steelblue',
+             borderRadius:50,
+           }}
+            onPress={this._accessSong}>
+            <Text style={styles.text}>Song</Text>
+          </TouchableOpacity>
         </View>
       );
     } else {
@@ -149,62 +223,80 @@ export default class ProfileScreen extends React.Component {
   _selectfavorite = (type) => {
     switch (type) {
       case "Genre":
-        if (this.state.favoriteGenres !== null) {
-          let genreList = [];
-          this.state.favoriteGenres.forEach(genre => {
-            genreList.push(
-              <Text style={{marginLeft:20}} key={genre} onLongPress={() =>
-                Alert.alert('Delete Genre', genre,
-                  [
-                    {text: 'Cancel', onPress: () => console.log('Cancel Pressed!')},
-                    {text: 'OK', onPress: () => this._deleteFavoriteItem("Genre", genre) },
-                  ]
-              )}>
-                {genre}
-              </Text>
-            );
-          });
-          return genreList;
-        }
-        break;
+        return (
+          <ScrollView style={{height:80}}>
+           {
+            this.state.favoriteGenres.map((item, index) => (
+              <View key = {index}>
+                <Text
+                  style={{}}
+                  onLongPress={() => Alert.alert(
+                    'Delete Genre',
+                    item,
+                    [
+                      {text: 'Cancel', onPress: () => console.log('Cancel Pressed!')},
+                      {text: 'OK', onPress: () => this._deleteFavoriteItem("Genre", item)},
+                    ]
+                  )}
+                >
+                {item}
+                </Text>
+              </View>
+            ))
+           }
+          </ScrollView>
+        );
       case "Artist":
         if (this.state.favoriteArtists !== null) {
-          let artistList = [];
-          this.state.favoriteArtists.forEach(artist => {
-            artistList.push(
-              <Text style={{marginLeft:20}} key={artist} onLongPress={() =>
-                Alert.alert('Delete Artist', artist,
-                  [
-                    {text: 'Cancel', onPress: () => console.log('Cancel Pressed!')},
-                    {text: 'OK', onPress: () => this._deleteFavoriteItem("Artist", artist)},
-                  ]
-              )}>
-                {artist}
-              </Text>
-            );
-          });
-          return artistList;
+          return (
+            <ScrollView style={{height:80}}>
+             {
+              this.state.favoriteArtists.map((item, index) => (
+                 <View key = {index}>
+                  <Text
+                    style={{}}
+                    onLongPress={() => Alert.alert(
+                      'Delete Artist',
+                      item,
+                      [
+                        {text: 'Cancel', onPress: () => console.log('Cancel Pressed!')},
+                        {text: 'OK', onPress: () => this._deleteFavoriteItem("Artist", item)},
+                      ]
+                    )}
+                  >
+                  {item}
+                  </Text>
+                </View>
+              ))
+             }
+            </ScrollView>
+          );
         }
         break;
       case "Song":
-        if (this.state.favoriteSongs !== null) {
-          let songList = [];
-          this.state.favoriteSongs.forEach(song => {
-            songList.push(
-              <Text style={{marginLeft:20}} key={song} onLongPress={() =>
-                Alert.alert('Delete Song', song,
-                  [
-                    {text: 'Cancel', onPress: () => console.log('Cancel Pressed!')},
-                    {text: 'OK', onPress: () => this._deleteFavoriteItem("Song", song)},
-                  ]
-              )}>
-                {song}
-              </Text>
-            );
-          });
-          return songList;
-        }
-        break;
+        return (
+          <ScrollView style={{height:80}}>
+           {
+            this.state.favoriteSongs.map((item, index) => (
+              <View key = {index}>
+                <Text
+                  style={{}}
+                  onLongPress={() => Alert.alert(
+                    'Delete Song',
+                    item,
+                    [
+                      {text: 'Cancel', onPress: () => console.log('Cancel Pressed!')},
+                      {text: 'OK', onPress: () => this._deleteFavoriteItem("Song", item)},
+                    ]
+                  )}
+                >
+                {item}
+                </Text>
+              </View>
+            ))
+           }
+          </ScrollView>
+        );
     };
   };
 
@@ -223,7 +315,7 @@ export default class ProfileScreen extends React.Component {
       }),
     }).catch(function(error) {
       console.log('There has been a problem with your fetch operation: ' + error.message);
-      throw error;
+      this._signOutAsync();
     });
   };
 
@@ -301,6 +393,11 @@ export default class ProfileScreen extends React.Component {
      })
     .then((response) => response.json())
     .then((jsonData) => {
+
+      if (jsonData.avatar) {
+        this.setState({avatar: jsonData.avatar});
+      }
+
       if (jsonData.favoriteGenres) {
         this.setState({favoriteGenres: jsonData.favoriteGenres});
       }
@@ -315,7 +412,7 @@ export default class ProfileScreen extends React.Component {
     })
     .catch((error) => {
       console.error(error);
-      throw error;
+      this._signOutAsync();
     });
   };
 
