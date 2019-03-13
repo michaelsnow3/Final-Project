@@ -150,11 +150,10 @@ export default class ProfileScreen extends React.Component {
 
       return (
       <View style={{flexDirection: 'row',}}>
-        <View style={{flexDirection: 'column',alignItems:'center',opacity: opacityGenre}}>
+        <View style={{width:130, flexDirection: 'column',alignItems:'center',opacity: opacityGenre}}>
           <TouchableOpacity
             style={{
              borderRadius:10,
-             borderWidth:2,
              borderColor: "transparent",
              alignItems:'center',
              justifyContent:'center',
@@ -167,30 +166,26 @@ export default class ProfileScreen extends React.Component {
           </TouchableOpacity>
           {contentGenre}
         </View>
-        <Text>        </Text>
-        <View style={{flexDirection: 'column',alignItems:'center',opacity: opacityArtist}}>
+        <View style={{width:130, flexDirection: 'column',alignItems:'center',opacity: opacityArtist}}>
           <TouchableOpacity
             style={{
              borderRadius:10,
-             borderWidth:2,
              borderColor: "transparent",
              alignItems:'center',
              justifyContent:'center',
              width:100,
              height:30,
-             backgroundColor:'skyblue',
+             backgroundColor:'steelblue',
            }}
             onPress={this._accessArtist}>
             <Text style={{fontSize:20,color:'black'}}>Artist</Text>
           </TouchableOpacity>
           {contentArtist}
         </View>
-        <Text>        </Text>
-        <View style={{flexDirection: 'column',alignItems:'center',opacity: opacitySong}}>
+        <View style={{width:130, flexDirection: 'column',alignItems:'center',opacity: opacitySong}}>
           <TouchableOpacity
             style={{
              borderRadius:10,
-             borderWidth:2,
              borderColor: "transparent",
              alignItems:'center',
              justifyContent:'center',
