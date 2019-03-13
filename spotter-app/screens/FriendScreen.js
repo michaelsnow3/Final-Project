@@ -238,7 +238,7 @@ export default class FriendScreen extends React.Component {
               getUserId={this.getUserId}
               handler={this.handler}
               setFriendName={this.setFriendName}
-              backgroundColor={'#ff704c'} 
+              backgroundColor={'#ff704c'}
               page={this.state.page}
             />
           </View>

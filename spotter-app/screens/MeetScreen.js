@@ -9,6 +9,7 @@ import {
   Button,
   View,
   AsyncStorage,
+  TouchableHighlight,
 } from 'react-native';
 import Spinner from 'react-native-loading-spinner-overlay';
 import OtherProfileScreen from './OtherProfileScreen.js';
@@ -151,17 +152,72 @@ export default class MeetScreen extends React.Component {
     switch (this.state.page) {
       case 'Greet':
         return (
-          <View style={styles.container}>
-            <Text>Meet others who share your music tastes!</Text>
-            <Button title="Meet!" onPress={this.meet} />
+          <View style={{justifyContent: 'center',textAlign: 'center'}}>
+          <View>
+            <Text style={{fontSize: 50,textAlign: 'center'}}>Meet</Text>
+            <Text></Text>
+          </View>
+          <View style={{justifyContent: 'center',textAlign: 'center',}}>
+            <Text style={{fontSize: 20,textAlign: 'center'}}>Meet others who share your music tastes!</Text>
+            <Text>{'\n'}</Text>
+
+            <View style={{
+              borderWidth:1,
+              borderRadius: 10,
+              width:350,
+              justifyContent: 'center',
+              textAlign: 'center',
+              alignItems: 'center',
+              alignSelf: 'center',
+            }}>
+              <Text style={{
+                justifyContent: 'center',
+                fontSize: 15,
+                textAlign: 'center',
+                width: 350,
+                alignSelf: 'center',
+              }}>Make finding more precise{'\n'}add your favorite music{'\n'}at your Profile!</Text>
+              <Image
+                  style={{width: 300, height: 200}}
+                  source={{uri: "https://media.giphy.com/media/8L0wzMc4bVkkI78r4x/giphy.gif"}}
+              />
+              </View>
+            <Text>{'\n'}</Text>
+          </View>
+            <TouchableHighlight
+              style={{justifyContent: 'center',alignItems: 'center',borderRadius: 40}}
+              onPress={this.meet}>
+              <Image
+                style={{width: 80, height: 80, borderRadius: 40}}
+                source={{uri: "http://blog.tourradar.com/wp-content/uploads/2013/10/TourRadar_App_icon.png"}}
+              />
+            </TouchableHighlight>
           </View>
         )
       case 'Meet':
         return (
           <View>
-            <Button title="Back" onPress={this.back} />
-            {showSearchingOrResult}
-          </View>);
+            <TouchableOpacity
+            style={
+              {
+                backgroundColor: 'white',
+                width: 100,
+                height: 30,
+                top:10,
+                justifyContent: 'center',
+                alignItems:'center',
+                borderRadius:10,
+                borderWidth:2,
+                alignSelf: 'center'
+              }
+            }
+            onPress={this.back}>
+            <Text style={{fontSize:20,color:'black',fontWeight: 'bold'}}>
+              Back
+            </Text>
+          </TouchableOpacity>
+          {showSearchingOrResult}
+        </View>);
       case 'OtherProfileScreen':
         return (
           <OtherProfileScreen
