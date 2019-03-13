@@ -177,7 +177,9 @@ export default class NearbyScreen extends React.Component {
     return (
       <View>
         <Text style={styles.name}>Nearby</Text>
-        {searchingOrFind}
+          <View style={{borderTopWidth:1,}}>
+            {searchingOrFind}
+          </View>
       </View>
     );
   }
