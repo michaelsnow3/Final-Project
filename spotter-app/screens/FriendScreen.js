@@ -147,7 +147,7 @@ export default class FriendScreen extends React.Component {
 
     this._interval = setInterval(() => {
       sendMusicSocketServer(getCurrentMusic(), this.socket);
-    }, 15000);
+    }, 10000);
 
     this._insertUserIfNotExist(userToken, nodeServerUrl);
   };
