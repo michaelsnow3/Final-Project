@@ -19,6 +19,7 @@
     "react-native-cli": "^2.0.1",
     "react-native-elements": "^1.1.0",
     "react-native-flip-component": "^1.0.6",
+    "react-native-loading-spinner-overlay": "^1.0.1",
     "react-native-webview": "^5.2.4",
     "react-navigation": "^3.0.9",
     "socket.io-client": "^2.2.0",

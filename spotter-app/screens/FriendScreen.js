@@ -106,7 +106,7 @@ export default class FriendScreen extends React.Component {
     })
     .catch(function(error) {
       console.log('Problem with fetch friends:', error);
-      throw error;
+      this._signOutAsync();
     });
   }
 
@@ -147,7 +147,7 @@ export default class FriendScreen extends React.Component {
 
     this._interval = setInterval(() => {
       sendMusicSocketServer(getCurrentMusic(), this.socket);
-    }, 15000);
+    }, 10000);
 
     this._insertUserIfNotExist(userToken, nodeServerUrl);
   };
@@ -209,6 +209,7 @@ export default class FriendScreen extends React.Component {
     }
 
   _insertUserIfNotExist = (userToken, nodeServerUrl) => {
+    console.log("url _insertUserIfNotExist:", `${nodeServerUrl}/profile/insert_user_if_not_exist`);
     fetch(`${nodeServerUrl}/profile/insert_user_if_not_exist`, {
       method: 'POST',
       headers: {
@@ -237,7 +238,7 @@ export default class FriendScreen extends React.Component {
               getUserId={this.getUserId}
               handler={this.handler}
               setFriendName={this.setFriendName}
-              backgroundColor={'#ff704c'} 
+              backgroundColor={'#ff704c'}
               page={this.state.page}
             />
           </View>

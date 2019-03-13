@@ -18,14 +18,15 @@ import io from 'socket.io-client';
 import UserCard from '../components/UserCard';
 import FlipComponent from 'react-native-flip-component';
 import OtherProfileScreen from './OtherProfileScreen.js';
+import Spinner from 'react-native-loading-spinner-overlay';
 
 export default class NearbyScreen extends React.Component {
 
   constructor(props) {
     super(props);
     this.state = {
+      spinner: true,
       searching: true,
-      searchingDot: "",
       email: null,
       userIdFromSpotify: null,
 
@@ -128,27 +129,17 @@ export default class NearbyScreen extends React.Component {
     }
   };
 
-  _setSearchingText = (that) => {
-    if (that.state.searchingDot.length > 30) {
-      that.setState({searchingDot: ""});
-    } else {
-      that.setState({searchingDot: that.state.searchingDot + " . "});
-    }
-  };
-
   _countDownTimer = (that) => {
     that.setState({timer: that.state.timer + 1});
     if(this.state.timer === 6) {
 
       this.setState({timer: 0});
-      this.setState({searchingDot: ""});
-      clearInterval(this.timerSearchingText);
       clearInterval(this.timerCountDown);
 
       let that = this;
       Alert.alert('Finding People', "No people listening similar music nearby",
         [
-          {text: 'Ok', onPress: () => {} },
+          {text: 'Ok', onPress: () => {this.setState({spinner: false})} },
           {text: 'Search Again', onPress: () => this._searchAgain(that) },
         ]
       );
@@ -158,12 +149,8 @@ export default class NearbyScreen extends React.Component {
   _trunOnSearching = () => {
     if (this.state.timer === 0) {
 
+      this.setState({spinner: true});
       let that = this;
-
-      this.timerSearchingText = setInterval(() => {
-          this._setSearchingText(that);
-      }, 800);
-
       this.timerCountDown = setInterval(() => {
           this._countDownTimer(that);
       }, 1000);
@@ -190,7 +177,9 @@ export default class NearbyScreen extends React.Component {
     return (
       <View>
         <Text style={styles.name}>Nearby</Text>
-        {searchingOrFind}
+          <View style={{borderTopWidth:1,}}>
+            {searchingOrFind}
+          </View>
       </View>
     );
   }
@@ -205,10 +194,11 @@ export default class NearbyScreen extends React.Component {
             size={256}
           />
           </View>
-          <View style={{flexDirection: 'row'}}>
-            <Text style={{fontSize: 32}}>  Search</Text>
-            <Text style={{fontSize: 32}}>{this.state.searchingDot}</Text>
-          </View>
+          <Spinner
+            visible={this.state.spinner}
+            textContent={'Searching...'}
+            textStyle={styles.spinnerTextStyle}
+          />
         </View>
       );
     } else {
@@ -261,5 +251,9 @@ const styles = StyleSheet.create({
   name: {
     fontSize: 50,
     textAlign: 'center'
-  }
+  },
+  spinnerTextStyle: {
+    color: '#FFF',
+    fontSize: 30
+  },
 });
