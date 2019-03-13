@@ -2,7 +2,6 @@
 import React from 'react';
 import {
   View,
-  Button,
   AsyncStorage,
   StyleSheet,
   Text,
@@ -46,36 +45,47 @@ export default class ProfileScreen extends React.Component {
 
     const favoriteInfo = this._selectfavorite(this.state.favoriteType);
     const editOrDisplay = this._selectPageContent(favoriteInfo, this.state.favoriteType);
-    const editTitle = `Add Favorite ${this.state.favoriteType}`;
+    const editTitle = (this.state.displayInfo) ?
+    (`Add Favorite ${this.state.favoriteType}`) :
+    (`Go Back`);
     let profilePic = (this.state.avatar) ?
       (<Image style={{justifyContent: 'center',alignItems: 'center',width: 175, height: 175,}} source={{uri: this.state.avatar}}/>) :
       (<Image style={{justifyContent: 'center',alignItems: 'center',width: 175, height: 175,}} source={{uri: "https://www.nocowboys.co.nz/images/v3/no-image-available.png"}} />);
 
     return (
       <View style={{alignItems: 'center',}}>
-        <Text style={styles.name}>Profile</Text>
-          {profilePic}
-          <View style={{alignItems:'flex-start'}}>
-            <Text style={
-                {
-                  fontSize: 20,
+        <View style={{flexDirection: 'row',}}>
+          <Text style={{fontSize: 50,textAlign: 'center'}}>Profile</Text>
+          <TouchableHighlight
+            style={{position: 'relative', left:88, top:6}}
+            onPress={this._signOutAsync}>
+            <Image
+              style={{width: 50, height: 50}}
+              source={{uri: "https://cdn2.iconfinder.com/data/icons/picons-essentials/57/logout-512.png"}}
+            />
+          </TouchableHighlight>
+        </View>
+        {profilePic}
+        <View style={{alignItems:'flex-start'}}>
+          <Text style={
+              {
+                fontSize: 20,
 
-                }
               }
-              >
-                Id: {this.state.userIdFromSpotify}
-              </Text>
-              <Text style={
-                {
-                  fontSize: 20,
-                 }
-               }
-              >
-              Email: {this.state.email}
+            }
+            >
+              Id: {this.state.userIdFromSpotify}
             </Text>
-          </View>
-          {editOrDisplay}
-          {favoriteInfo}
+            <Text style={
+              {
+                fontSize: 20,
+               }
+             }
+            >
+            Email: {this.state.email}
+          </Text>
+        </View>
+        {editOrDisplay}
         <Text></Text>
         <TouchableOpacity
           style={
@@ -94,15 +104,6 @@ export default class ProfileScreen extends React.Component {
             {editTitle}
           </Text>
         </TouchableOpacity>
-        <Text></Text>
-        <TouchableHighlight
-          style={{justifyContent: 'center',alignItems: 'center'}}
-          onPress={this._signOutAsync}>
-          <Image
-            style={{width: 60, height: 60}}
-            source={{uri: "https://cdn2.iconfinder.com/data/icons/picons-essentials/57/logout-512.png"}}
-          />
-        </TouchableHighlight>
       </View>
     );
   }
@@ -116,8 +117,25 @@ export default class ProfileScreen extends React.Component {
     let addNewPlaceHolder = `New ${type}`;
 
     if (this.state.displayInfo) {
+
+      let contentGenre  = null;
+      let contentArtist = null;
+      let contentSong   = null;
+
+      switch (type) {
+        case "Genre":
+          contentGenre = favoriteInfo;
+          break;
+        case "Artist":
+          contentArtist = favoriteInfo;
+          break;
+        case "Song":
+          contentSong = favoriteInfo;
+          break;
+      };
       return (
-        <View style={{flexDirection: 'row',}}>
+      <View style={{flexDirection: 'row',}}>
+        <View style={{flexDirection: 'column',alignItems:'center'}}>
           <TouchableOpacity
             style={{
              borderWidth:0.5,
@@ -132,7 +150,10 @@ export default class ProfileScreen extends React.Component {
             onPress={this._accessGenere}>
             <Text style={styles.text}>Genre</Text>
           </TouchableOpacity>
-          <Text>          </Text>
+          {contentGenre}
+        </View>
+        <Text>        </Text>
+        <View style={{flexDirection: 'column',alignItems:'center'}}>
           <TouchableOpacity
             style={{
              borderWidth:0.5,
@@ -145,9 +166,12 @@ export default class ProfileScreen extends React.Component {
              borderRadius:50,
            }}
             onPress={this._accessArtist}>
-            <Text style={styles.text}>Artist</Text>
+            <Text style={styles.text}>Artit</Text>
           </TouchableOpacity>
-          <Text>          </Text>
+          {contentArtist}
+        </View>
+        <Text>        </Text>
+        <View style={{flexDirection: 'column',alignItems:'center'}}>
           <TouchableOpacity
             style={{
              borderWidth:0.5,
@@ -162,22 +186,43 @@ export default class ProfileScreen extends React.Component {
             onPress={this._accessSong}>
             <Text style={styles.text}>Song</Text>
           </TouchableOpacity>
+          {contentSong}
         </View>
+      </View>
       );
     } else {
       return (
-        <View style={styles.AddNewcontainer}>
-          <TextInput style={
-            {
-              width: 120,
-              borderColor: 'gray',
-              borderWidth: 1,
+        <View>
+          <Text></Text>
+          <View style={{flexDirection: 'row',}}>
+            <TextInput style={
+              {
+                width: 125,
+                height: 30,
+                borderColor: 'gray',
+                borderWidth: 1,
+              }
             }
-          }
-          onChangeText={(text) => this.setState({favoriteContent: text})}
-          value={this.state.favoriteContent}
-          placeholder={addNewPlaceHolder} />
-        <Button title='Submit' onPress={this._addNewValue} />
+              onChangeText={(text) => this.setState({favoriteContent: text})}
+              value={this.state.favoriteContent}
+              placeholder={addNewPlaceHolder} />
+            <Text>   </Text>
+            <TouchableOpacity
+              style={
+                {
+                  borderRadius:10,
+                  borderWidth:1,
+                  width: 50,
+                  justifyContent: 'center',
+                  alignItems: 'center'
+                }
+              }
+              onPress={this._addNewValue}>
+              <Text style={{fontSize:12,}}>
+                Submit
+              </Text>
+            </TouchableOpacity>
+          </View>
         </View>
       );
     }
@@ -213,10 +258,8 @@ export default class ProfileScreen extends React.Component {
       console.log(updateData);
 
       this._updateFavoriteDb(this.state.favoriteType, updateData);
-
       this.setState({favoriteContent: ''});
       this._editInfo();
-
     }
   };
 
@@ -224,12 +267,12 @@ export default class ProfileScreen extends React.Component {
     switch (type) {
       case "Genre":
         return (
-          <ScrollView style={{height:80}}>
+          <ScrollView style={{height:135}}>
            {
             this.state.favoriteGenres.map((item, index) => (
               <View key = {index}>
                 <Text
-                  style={{}}
+                  style={{fontSize:20}}
                   onLongPress={() => Alert.alert(
                     'Delete Genre',
                     item,
@@ -247,40 +290,37 @@ export default class ProfileScreen extends React.Component {
           </ScrollView>
         );
       case "Artist":
-        if (this.state.favoriteArtists !== null) {
-          return (
-            <ScrollView style={{height:80}}>
-             {
-              this.state.favoriteArtists.map((item, index) => (
-                 <View key = {index}>
-                  <Text
-                    style={{}}
-                    onLongPress={() => Alert.alert(
-                      'Delete Artist',
-                      item,
-                      [
-                        {text: 'Cancel', onPress: () => console.log('Cancel Pressed!')},
-                        {text: 'OK', onPress: () => this._deleteFavoriteItem("Artist", item)},
-                      ]
-                    )}
-                  >
-                  {item}
-                  </Text>
-                </View>
-              ))
-             }
-            </ScrollView>
-          );
-        }
-        break;
+        return (
+          <ScrollView style={{height:135}}>
+           {
+            this.state.favoriteArtists.map((item, index) => (
+               <View key = {index}>
+                <Text
+                  style={{fontSize:20}}
+                  onLongPress={() => Alert.alert(
+                    'Delete Artist',
+                    item,
+                    [
+                      {text: 'Cancel', onPress: () => console.log('Cancel Pressed!')},
+                      {text: 'OK', onPress: () => this._deleteFavoriteItem("Artist", item)},
+                    ]
+                  )}
+                >
+                {item}
+                </Text>
+              </View>
+            ))
+           }
+          </ScrollView>
+        );
       case "Song":
         return (
-          <ScrollView style={{height:80}}>
+          <ScrollView style={{height:135}}>
            {
             this.state.favoriteSongs.map((item, index) => (
               <View key = {index}>
                 <Text
-                  style={{}}
+                  style={{fontSize:20,}}
                   onLongPress={() => Alert.alert(
                     'Delete Song',
                     item,
@@ -423,26 +463,6 @@ export default class ProfileScreen extends React.Component {
 }
 
 const styles = StyleSheet.create({
-  container: {
-    height: 150,
-    backgroundColor: '#fff',
-    flexDirection: 'column',
-  },
-  favoriteBtn: {
-    flex: 1,
-    flexDirection: 'row',
-    height: 25,
-  },
-  favoriteText: {
-    backgroundColor: '#fff',
-  },
-  AddNewcontainer: {
-    alignItems: 'center',
-  },
-  name: {
-    fontSize: 50,
-    textAlign: 'center'
-  },
   text: {
     fontSize: 20,
     textAlign: 'center',
