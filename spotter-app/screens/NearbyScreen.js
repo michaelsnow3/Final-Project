@@ -203,7 +203,7 @@ export default class NearbyScreen extends React.Component {
       );
     } else {
       return (
-        <View>
+        <View style={{ height: '100%', width: '100%' }}>
           <FlipComponent
             isFlipped={this.state.isFlipped}
             frontView={

@@ -32,8 +32,7 @@ function UserCard({
   let newLetter = false;
   let userCardStyle = styles.container
   if (
-    !prevFriend ||
-    name[0].toUpperCase() !== prevFriend.name[0].toUpperCase()
+    (!prevFriend || name[0].toUpperCase() !== prevFriend.name[0].toUpperCase()) && (page === 'ShowFriends' || 'FriendRequests')
   ) {
     userCardStyle = [styles.container, { borderBottomWidth: 1 }]
     newLetter = (

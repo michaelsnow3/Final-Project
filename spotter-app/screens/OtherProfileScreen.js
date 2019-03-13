@@ -227,15 +227,15 @@ export default class OtherProfileScreen extends React.Component {
     </TouchableOpacity>)
   
     const favoriteGenres = (this.state.favoriteGenres) ? 
-    (<Text style={styles.textStyle2} adjustsFontSizeToFit={true}  numberOfLines={1}> Genres - {this.state.favoriteGenres}</Text>): 
+    (<Text style={styles.textStyle2} numberOfLines={1}> Genres - {this.state.favoriteGenres}</Text>): 
     null
      
     const favoriteArtists = (this.state.favoriteArtists) ?
-    (<Text style={styles.textStyle2} adjustsFontSizeToFit={true}  numberOfLines={1}> Artists - {this.state.favoriteArtists}</Text>):  
+    (<Text style={styles.textStyle2} numberOfLines={1}> Artists - {this.state.favoriteArtists}</Text>):  
     null
     
     const favoriteSongs = (this.state.favoriteSongs) ? 
-    (<Text style={styles.textStyle2} adjustsFontSizeToFit={true} numberOfLines={1} > Songs - {this.state.favoriteSongs}</Text>):
+    (<Text style={styles.textStyle2} numberOfLines={1} > Songs - {this.state.favoriteSongs}</Text>):
     null
   
     const likes = (!this.state.favoriteGenres && !this.state.favoriteArtists && !this.state.favoriteSongs) ? 
