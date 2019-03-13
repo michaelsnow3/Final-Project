@@ -78,7 +78,6 @@ export default class MeetScreen extends React.Component {
             let splitUser = user.split(' ')
             let user_id = splitUser[splitUser.length-1]
             splitUser.pop();
-
             let user_name = splitUser.join(' ')
             if (user_name === userIdFromSpotify) {
               continue;

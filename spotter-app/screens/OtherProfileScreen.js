@@ -6,6 +6,7 @@ import {
   StyleSheet,
   Text,
   AsyncStorage,
+  TouchableOpacity,
 } from 'react-native';
 
 export default class OtherProfileScreen extends React.Component {
@@ -27,22 +28,22 @@ export default class OtherProfileScreen extends React.Component {
   static navigationOptions = {
     header: null,
   };
-
+  
   componentDidMount() {
     this._getMyId();
     //this.props.navigation.addListener('willFocus', this._getMyId);
   }
-
+  
   _getMyId = async () => {
-
+    
     console.log(`execute _getMyId`);
-
+    
     const userIdFromSpotify = await AsyncStorage.getItem('userIdFromSpotify');
     const nodeServerUrl     = await AsyncStorage.getItem('nodeServerUrl');
     this.setState({nodeServerUrl: nodeServerUrl});
-
+    
     console.log("get my id url:", `${nodeServerUrl}/nearby/get_id/${userIdFromSpotify}`);
-
+    
     fetch(`${nodeServerUrl}/nearby/get_id/${userIdFromSpotify}`, {
       method: 'GET',
       headers: {
@@ -55,7 +56,7 @@ export default class OtherProfileScreen extends React.Component {
     .then((jsonData) => {
       if (jsonData.id !== undefined) {
         this.setState({my_id: jsonData.id});
-
+        
         this.getUser(nodeServerUrl, this.props.name);
         //this.getFav();
         this.checkFriend(nodeServerUrl);
@@ -66,18 +67,18 @@ export default class OtherProfileScreen extends React.Component {
       throw error;
     });
   };
-
+  
   getUser = async (nodeServerUrl, username) => {
-
+    
     console.log("get user url:", `${nodeServerUrl}/profile/user_info/${username}`);
-
+    
     fetch(`${nodeServerUrl}/profile/user_info/${username}`)
     .then((response) => response.json())
     .then((jsonData) => {
-
+      
       console.log("jsonData:");
       console.log(jsonData);
-
+      
       this._setUserInfo(jsonData);
       this._setUserFav(jsonData);
     })
@@ -86,58 +87,77 @@ export default class OtherProfileScreen extends React.Component {
       throw error;
     });
   };
-
+  
   _setUserInfo = (jsonData) => {
     if (jsonData.name) {
       this.setState({name: jsonData.name});
     }
-
+    
     if (jsonData.avatar) {
       this.setState({avatar: jsonData.avatar});
     }
   };
-
+  onlyUnique = (value, index, self) => { 
+    return self.indexOf(value) === index;
+  }
   _setUserFav = (jsonData) => {
     if (jsonData.favoriteGenres) {
-      const fG = jsonData.favoriteGenres;
-      let top5FG = [];
+      const favGenres = jsonData.favoriteGenres;
+      let favGenresParsed = [];
       for (let i = 0; i < 5; i++) {
-        top5FG.push(fG[i])
+        if (favGenres[i]){ 
+          favGenresParsed.push(favGenres[i])       
+        } else {
+          break;
+        } 
       }
-      this.setState({favoriteGenres: top5FG});
-      console.log('genres', this.state.favoriteGenres)
+      const favGenresSorted = favGenresParsed.filter(this.onlyUnique)
+      const top5Gen = favGenresSorted.join(', ')
+      this.setState({favoriteGenres: top5Gen});
     }
-
+    
     if (jsonData.favoriteArtists) {
-      const fA = jsonData.favoriteArtists;
-      let top5FA = [];
+      const favArtists = jsonData.favoriteArtists;
+      let favAristsParsed = [];
       for (let i = 0; i < 5; i++) {
-        top5FA.push(fA[i])
+        if (favArtists[i]){
+          favAristsParsed.push(favArtists[i])    
+        } else {
+          break;
+        }
       }
-      this.setState({favoriteArtists: top5FA});
+      const favAristsSorted = favAristsParsed.filter(this.onlyUnique)
+      const top5Art = favAristsSorted.join(', ')
+      this.setState({favoriteArtists: top5Art});
     }
-
+    
     if (jsonData.favoriteSongs) {
-      const fS = jsonData.favoriteSongs;
-      let top5FS = [];
+      const favSongs = jsonData.favoriteSongs;
+      let favSongsParsed = [];
       for (let i = 0; i < 5; i++) {
-        top5FS.push(fS[i])
+        if (favSongs[i]){
+          favSongsParsed.push(favSongs[i])    
+        } else {
+          break;
+        }      
       }
-      this.setState({favoriteSongs: top5FS});
+      const favSongsSorted = favSongsParsed.filter(this.onlyUnique)
+      const top5Songs = favSongsSorted.join(', ')
+      this.setState({favoriteSongs: top5Songs});
     }
   }
-
+  
   checkFriend = (nodeServerUrl) => {
     fetch(`${nodeServerUrl}/show_profile/friend_status`, {
-    method: 'POST',
-    headers: {
-      'Accept': 'application/json',
-      'Content-Type': 'application/json',
-    },
-    body: JSON.stringify({
-      user_id : this.state.my_id,
-      friend_id : this.state.user_id
-    }),
+      method: 'POST',
+      headers: {
+        'Accept': 'application/json',
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        user_id : this.state.my_id,
+        friend_id : this.state.user_id
+      }),
     })
     .then((response) => {
       (response._bodyText === 'true') ? this.setState({friend : true}) : this.setState({friend : false});
@@ -146,15 +166,15 @@ export default class OtherProfileScreen extends React.Component {
       console.log(err);
     });
   }
-
+  
   addFriend = async () => {
-
+    
     //await this._getMyId()
-
+    
     console.log("url in addFriend:", `${this.state.nodeServerUrl}/show_profile/add_friend`);
     console.log("this.state.my_id:", this.state.my_id);
     console.log("this.state.user_id:", this.state.user_id);
-
+    
     fetch(`${this.state.nodeServerUrl}/show_profile/add_friend`, {
       method: 'POST',
       headers: {
@@ -165,108 +185,108 @@ export default class OtherProfileScreen extends React.Component {
         user_id : this.state.my_id,
         friend_id : this.state.user_id
       }),
+    })
+    .then(() => {
+      this.setState({friend : true}, async () => {
+        if (this.props.getUserId) {
+          await this.props.getUserId();
+          this.props.handler(null, 'ShowFriends')
+        }
       })
-      .then(() => {
-        this.setState({friend : true}, async () => {
-          if (this.props.getUserId) {
-            await this.props.getUserId();
-            this.props.handler(null, 'ShowFriends')
-          }
-        })
-      })
-      .catch((err) => {
-        console.log(err);
-      });
+    })
+    .catch((err) => {
+      console.log(err);
+    });
   }
-
-  // Doesnt work
+  
   message = () => {
     this.props.navigation.navigate(`Chat`);
   }
-
+  
   render() {
-    const addOrMsg = (this.state.friend) ?
-    (<Button title="Message" onPress={this.message} style={styles.container}/>) :
-    (<Button title="Add Friend" onPress={this.addFriend} style={styles.container}/>);
-
+    
     const avatar = (this.state.avatar === null ) ?
-    <Text style={styles.textStyle}> No Image </Text> :
-    <Image style={{width: 200, height: 200,}} source={{uri: this.state.avatar}} />
+    <Text style={styles.textStyle1}> No Image Available </Text> :
+    <Image style={styles.imgStyle1} source={{uri: this.state.avatar}} />
+    
+    const addOrMsg = (this.state.friend) ?    
+    (<TouchableOpacity onPress={this.message}>
+      <Image style={styles.imgStyle2} source={require('../assets/images/message.jpg')} />
+    </TouchableOpacity>) :
+    
+    (<TouchableOpacity onPress={this.addfriend}>
+        <Image style={styles.imgStyle2} source={require('../assets/images/add_friend.jpg')} />
+    </TouchableOpacity>)
 
-    const viewFriendsOrMeet = (this.props.handleMeet)?
-    <Button title="Back to Meet" onPress={() => {this.props.handleMeet('Meet')}} /> :
-    <Button title="View Friends" onPress={() => {this.props.handler( null, 'ShowFriends')}} />
-
-    const favoriteGenres = (this.state.favoriteGenres !== null) ?
-    (<Text> Favorite Genres: {this.state.favoriteGenres}</Text>):
-    (<Text> No favorite genres :( </Text>)
-
+    const backButton = (this.props.handleMeet)?
+    (<TouchableOpacity onPress={() => {this.props.handleMeet('Meet')}} >
+      <Image style={styles.imgStyle2} source={require('../assets/images/back_button.png')} />
+    </TouchableOpacity>) :
+    (<TouchableOpacity title="View Friends" onPress={() => {this.props.handler( null, 'ShowFriends')}}>
+      <Image style={styles.imgStyle2} source={require('../assets/images/back_button.png')} />
+    </TouchableOpacity>)
+  
+    const favoriteGenres = (this.state.favoriteGenres) ? 
+    (<Text style={styles.textStyle2} adjustsFontSizeToFit={true}  numberOfLines={1}> Genres - {this.state.favoriteGenres}</Text>): 
+    null
+     
     const favoriteArtists = (this.state.favoriteArtists) ?
-    (<Text> Favorite Artists: {this.state.favoriteArtists}</Text>):
-    (<Text> No favorite artists :( </Text>)
-
-    const favoriteSongs = (this.state.favoriteSongs) ?
-    (<Text> Favorite Songs: {this.state.favoriteSongs}</Text>):
-    (<Text> No favorites :( </Text>)
-
-
+    (<Text style={styles.textStyle2} adjustsFontSizeToFit={true}  numberOfLines={1}> Artists - {this.state.favoriteArtists}</Text>):  
+    null
+    
+    const favoriteSongs = (this.state.favoriteSongs) ? 
+    (<Text style={styles.textStyle2} adjustsFontSizeToFit={true} numberOfLines={1} > Songs - {this.state.favoriteSongs}</Text>):
+    null
+  
+    const likes = (!this.state.favoriteGenres && !this.state.favoriteArtists && !this.state.favoriteSongs) ? 
+    (<Text style={styles.textStyle1} adjustsFontSizeToFit={true} >No favorites yet</Text>) : 
+    (<Text style={styles.textStyle1} adjustsFontSizeToFit={true} >Likes:</Text>)
+    
     return (
-      <View>
-        <Text style={styles.textStyle}>
-          {this.state.name}{'\n'}
-        </Text>
-        {avatar}
-        <Text style={styles.textStyle}>
-          {'\n'}Favourites:
-        </Text>
-        {favoriteGenres}
-        {favoriteArtists}
-        {favoriteSongs}
-        {addOrMsg}
-        {viewFriendsOrMeet}
+      <View style={{flex : 1, flexDirection: 'column', justifyContent: 'space-between'}}> 
+        <View style={{flex : 1, flexDirection: 'row', justifyContent: 'space-between'}} >
+          {backButton}  
+          <Text style={styles.textStyle1} adjustsFontSizeToFit={true} >
+            {this.state.name}{'\n'}
+          </Text>
+          {addOrMsg}
+        </View>
+          <View style={{flex:1, justifyContent: "center", alignItems: "center"}} >
+            {avatar}
+          </View>
+          <View style={{flex:1, flexDirection: "column",}}>
+            {likes}
+            {favoriteGenres}
+            {favoriteArtists}
+            {favoriteSongs}
+          </View> 
       </View>
-    );
+      );
+    }
   }
-}
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    marginTop: 40,
-    flexDirection: 'column',
-    justifyContent: 'flex-start',
-    backgroundColor: '#fff',
-  },
-  textStyle: {
-    textAlign: 'center',
-    fontSize:25,
-  },
-});
-
-// get favorite information from db instead of from spotify now
-  // getFav = async () => {
-  //   fetch(`${nodeServerUrl}/show_profile/fav`, {
-  //     method: 'POST',
-  //     headers: {
-  //       'Accept': 'application/json',
-  //       'Content-Type': 'application/json',
-  //     },
-  //     body: JSON.stringify({
-  //       id : this.state.user_id
-  //     })
-  //   })
-  //   .then((data) => data.json())
-  //   .then(json => {
-  //     const songNames = [];
-  //     json.forEach(entry => {
-  //       songNames.push(entry.name)
-  //     })
-  //     top3 = songNames.join("\r\n");
-  //     this.setState({
-  //       top3: top3
-  //     })
-  //   })
-  //   .catch((err) => {
-  //     console.log(err);
-  //   });
-  // }
+  
+  const styles = StyleSheet.create({
+    textStyle1: {
+      flex: 0.9,
+      marginTop: 3,
+      textAlign: 'center',
+      fontSize: 34,
+    }, 
+    imgStyle1: {
+      width: 180, 
+      height: 180, 
+      marginBottom: 100, 
+      justifyContent: "center",
+      alignItems: "center"
+    }, 
+    imgStyle2: {
+      width: 45, 
+      height: 45,
+      margin: 5
+    },
+    textStyle2: {
+      fontSize:22,
+      marginBottom: 5
+    },
+  });
+  

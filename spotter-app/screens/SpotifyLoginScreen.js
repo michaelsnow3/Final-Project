@@ -6,10 +6,10 @@ import {
   AsyncStorage,
   WebView,
   Linking,
-} from 'react-native';
+} from 'react-native';  
 
-import { getUserProfile } from '../components/GetUserProfile';
-
+import { getUserProfile } from '../components/GetUserProfile'; 
+ 
 export default class SpotifyLoginScreen extends React.Component {
 
   constructor(props) {

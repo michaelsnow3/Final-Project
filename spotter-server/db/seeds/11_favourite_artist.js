@@ -1,16 +1,16 @@
 
-const rand = () => {
-  return Math.floor(Math.random() * 10) + 1;
+const rand = (x) => {
+  return Math.floor(Math.random() * x) + 1;
 }
 
 const entry = () => ({
-  favourite_id: rand(),
-  artist_id: rand()
+  favourite_id: rand(150),
+  artist_id: rand(50)
 });
 
 exports.seed = function(knex, Promise) {
   const randNumbers = [];
-  for (let i = 0; i < 10; i++) {
+  for (let i = 0; i < 100; i++) {
     randNumbers.push(entry());
   }
   // Deletes ALL existing entries
