@@ -192,8 +192,9 @@ export default class ChatScreen extends React.Component {
       })
     }).then( async () => {
       await this.fetchMessages();
-      await this.fetchChatrooms()
+      await this.fetchChatrooms();
       sendMessageToSocketServer();
+      this.clearTextInput();
     });
   };
 
