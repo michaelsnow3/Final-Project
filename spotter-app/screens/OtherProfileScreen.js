@@ -28,22 +28,22 @@ export default class OtherProfileScreen extends React.Component {
   static navigationOptions = {
     header: null,
   };
-  
+
   componentDidMount() {
     this._getMyId();
     //this.props.navigation.addListener('willFocus', this._getMyId);
   }
-  
+
   _getMyId = async () => {
-    
+
     console.log(`execute _getMyId`);
-    
+
     const userIdFromSpotify = await AsyncStorage.getItem('userIdFromSpotify');
     const nodeServerUrl     = await AsyncStorage.getItem('nodeServerUrl');
     this.setState({nodeServerUrl: nodeServerUrl});
-    
+
     console.log("get my id url:", `${nodeServerUrl}/nearby/get_id/${userIdFromSpotify}`);
-    
+
     fetch(`${nodeServerUrl}/nearby/get_id/${userIdFromSpotify}`, {
       method: 'GET',
       headers: {
@@ -56,7 +56,7 @@ export default class OtherProfileScreen extends React.Component {
     .then((jsonData) => {
       if (jsonData.id !== undefined) {
         this.setState({my_id: jsonData.id});
-        
+
         this.getUser(nodeServerUrl, this.props.name);
         //this.getFav();
         this.checkFriend(nodeServerUrl);
@@ -67,18 +67,18 @@ export default class OtherProfileScreen extends React.Component {
       throw error;
     });
   };
-  
+
   getUser = async (nodeServerUrl, username) => {
-    
+
     console.log("get user url:", `${nodeServerUrl}/profile/user_info/${username}`);
-    
+
     fetch(`${nodeServerUrl}/profile/user_info/${username}`)
     .then((response) => response.json())
     .then((jsonData) => {
-      
+
       console.log("jsonData:");
       console.log(jsonData);
-      
+
       this._setUserInfo(jsonData);
       this._setUserFav(jsonData);
     })
@@ -87,17 +87,17 @@ export default class OtherProfileScreen extends React.Component {
       throw error;
     });
   };
-  
+
   _setUserInfo = (jsonData) => {
     if (jsonData.name) {
       this.setState({name: jsonData.name});
     }
-    
+
     if (jsonData.avatar) {
       this.setState({avatar: jsonData.avatar});
     }
   };
-  onlyUnique = (value, index, self) => { 
+  onlyUnique = (value, index, self) => {
     return self.indexOf(value) === index;
   }
   _setUserFav = (jsonData) => {
@@ -105,23 +105,23 @@ export default class OtherProfileScreen extends React.Component {
       const favGenres = jsonData.favoriteGenres;
       let favGenresParsed = [];
       for (let i = 0; i < 5; i++) {
-        if (favGenres[i]){ 
-          favGenresParsed.push(favGenres[i])       
+        if (favGenres[i]){
+          favGenresParsed.push(favGenres[i])
         } else {
           break;
-        } 
+        }
       }
       const favGenresSorted = favGenresParsed.filter(this.onlyUnique)
       const top5Gen = favGenresSorted.join(', ')
       this.setState({favoriteGenres: top5Gen});
     }
-    
+
     if (jsonData.favoriteArtists) {
       const favArtists = jsonData.favoriteArtists;
       let favAristsParsed = [];
       for (let i = 0; i < 5; i++) {
         if (favArtists[i]){
-          favAristsParsed.push(favArtists[i])    
+          favAristsParsed.push(favArtists[i])
         } else {
           break;
         }
@@ -130,23 +130,23 @@ export default class OtherProfileScreen extends React.Component {
       const top5Art = favAristsSorted.join(', ')
       this.setState({favoriteArtists: top5Art});
     }
-    
+
     if (jsonData.favoriteSongs) {
       const favSongs = jsonData.favoriteSongs;
       let favSongsParsed = [];
       for (let i = 0; i < 5; i++) {
         if (favSongs[i]){
-          favSongsParsed.push(favSongs[i])    
+          favSongsParsed.push(favSongs[i])
         } else {
           break;
-        }      
+        }
       }
       const favSongsSorted = favSongsParsed.filter(this.onlyUnique)
       const top5Songs = favSongsSorted.join(', ')
       this.setState({favoriteSongs: top5Songs});
     }
   }
-  
+
   checkFriend = (nodeServerUrl) => {
     fetch(`${nodeServerUrl}/show_profile/friend_status`, {
       method: 'POST',
@@ -166,15 +166,15 @@ export default class OtherProfileScreen extends React.Component {
       console.log(err);
     });
   }
-  
+
   addFriend = async () => {
-    
+
     //await this._getMyId()
-    
+
     console.log("url in addFriend:", `${this.state.nodeServerUrl}/show_profile/add_friend`);
     console.log("this.state.my_id:", this.state.my_id);
     console.log("this.state.user_id:", this.state.user_id);
-    
+
     fetch(`${this.state.nodeServerUrl}/show_profile/add_friend`, {
       method: 'POST',
       headers: {
@@ -198,54 +198,59 @@ export default class OtherProfileScreen extends React.Component {
       console.log(err);
     });
   }
-  
+
   message = () => {
     this.props.navigation.navigate(`Chat`);
   }
-  
+
   render() {
-    
+
     const avatar = (this.state.avatar === null ) ?
     <Text style={styles.textStyle1}> No Image Available </Text> :
     <Image style={styles.imgStyle1} source={{uri: this.state.avatar}} />
-    
-    const addOrMsg = (this.state.friend) ?    
+
+    const addOrMsg = (this.state.friend) ?
     (<TouchableOpacity onPress={this.message}>
       <Image style={styles.imgStyle2} source={require('../assets/images/message.jpg')} />
     </TouchableOpacity>) :
-    
+
     (<TouchableOpacity onPress={this.addfriend}>
         <Image style={styles.imgStyle2} source={require('../assets/images/add_friend.jpg')} />
     </TouchableOpacity>)
 
-    const backButton = (this.props.handleMeet)?
+    const backButton = (this.props.handleMeet) ?
     (<TouchableOpacity onPress={() => {this.props.handleMeet('Meet')}} >
       <Image style={styles.imgStyle2} source={require('../assets/images/back_button.png')} />
     </TouchableOpacity>) :
+    (this.props.handleNearBy) ?
+    (<TouchableOpacity onPress={() => {this.props.handleNearBy()}}>
+      <Image style={styles.imgStyle2} source={require('../assets/images/back_button.png')} />
+    </TouchableOpacity>)
+    :
     (<TouchableOpacity title="View Friends" onPress={() => {this.props.handler( null, 'ShowFriends')}}>
       <Image style={styles.imgStyle2} source={require('../assets/images/back_button.png')} />
     </TouchableOpacity>)
-  
-    const favoriteGenres = (this.state.favoriteGenres) ? 
-    (<Text style={styles.textStyle2} numberOfLines={1}> Genres - {this.state.favoriteGenres}</Text>): 
+
+    const favoriteGenres = (this.state.favoriteGenres) ?
+    (<Text style={styles.textStyle2} numberOfLines={1}> Genres - {this.state.favoriteGenres}</Text>):
     null
-     
+
     const favoriteArtists = (this.state.favoriteArtists) ?
-    (<Text style={styles.textStyle2} numberOfLines={1}> Artists - {this.state.favoriteArtists}</Text>):  
+    (<Text style={styles.textStyle2} numberOfLines={1}> Artists - {this.state.favoriteArtists}</Text>):
     null
-    
-    const favoriteSongs = (this.state.favoriteSongs) ? 
+
+    const favoriteSongs = (this.state.favoriteSongs) ?
     (<Text style={styles.textStyle2} numberOfLines={1} > Songs - {this.state.favoriteSongs}</Text>):
     null
-  
-    const likes = (!this.state.favoriteGenres && !this.state.favoriteArtists && !this.state.favoriteSongs) ? 
-    (<Text style={styles.textStyle1} adjustsFontSizeToFit={true} >No favorites yet</Text>) : 
+
+    const likes = (!this.state.favoriteGenres && !this.state.favoriteArtists && !this.state.favoriteSongs) ?
+    (<Text style={styles.textStyle1} adjustsFontSizeToFit={true} >No favorites yet</Text>) :
     (<Text style={styles.textStyle1} adjustsFontSizeToFit={true} >Likes:</Text>)
-    
+
     return (
-      <View style={{flex : 1, flexDirection: 'column', justifyContent: 'space-between'}}> 
+      <View style={{flex : 1, flexDirection: 'column', justifyContent: 'space-between'}}>
         <View style={{flex : 1, flexDirection: 'row', justifyContent: 'space-between'}} >
-          {backButton}  
+          {backButton}
           <Text style={styles.textStyle1} adjustsFontSizeToFit={true} >
             {this.state.name}{'\n'}
           </Text>
@@ -259,28 +264,28 @@ export default class OtherProfileScreen extends React.Component {
             {favoriteGenres}
             {favoriteArtists}
             {favoriteSongs}
-          </View> 
+          </View>
       </View>
       );
     }
   }
-  
+
   const styles = StyleSheet.create({
     textStyle1: {
       flex: 0.9,
       marginTop: 3,
       textAlign: 'center',
       fontSize: 34,
-    }, 
+    },
     imgStyle1: {
-      width: 180, 
-      height: 180, 
-      marginBottom: 100, 
+      width: 180,
+      height: 180,
+      marginBottom: 100,
       justifyContent: "center",
       alignItems: "center"
-    }, 
+    },
     imgStyle2: {
-      width: 45, 
+      width: 45,
       height: 45,
       margin: 5
     },
@@ -289,4 +294,3 @@ export default class OtherProfileScreen extends React.Component {
       marginBottom: 5
     },
   });
-  
