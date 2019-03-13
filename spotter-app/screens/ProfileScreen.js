@@ -85,6 +85,7 @@ export default class ProfileScreen extends React.Component {
             Email: {this.state.email}
           </Text>
         </View>
+        <Text></Text>
         {editOrDisplay}
         <Text></Text>
         <TouchableOpacity
@@ -122,69 +123,83 @@ export default class ProfileScreen extends React.Component {
       let contentArtist = null;
       let contentSong   = null;
 
+      let opacityGenre  = 0.3;
+      let opacityArtist = 0.3;
+      let opacitySong   = 0.3;
+
       switch (type) {
         case "Genre":
-          contentGenre = favoriteInfo;
+          contentGenre  = favoriteInfo;
+          opacityGenre  = 1;
+          opacityArtist = 0.3;
+          opacitySong   = 0.3;
           break;
         case "Artist":
           contentArtist = favoriteInfo;
+          opacityGenre  = 0.3;
+          opacityArtist = 1;
+          opacitySong   = 0.3;
           break;
         case "Song":
-          contentSong = favoriteInfo;
+          contentSong   = favoriteInfo;
+          opacityGenre  = 0.3;
+          opacityArtist = 0.3;
+          opacitySong   = 1;
           break;
       };
+
       return (
       <View style={{flexDirection: 'row',}}>
-        <View style={{flexDirection: 'column',alignItems:'center'}}>
+        <View style={{flexDirection: 'column',alignItems:'center',opacity: opacityGenre}}>
           <TouchableOpacity
             style={{
-             borderWidth:0.5,
-             borderColor:'rgba(0,0,0,0.2)',
+             borderRadius:10,
+             borderWidth:2,
+             borderColor: "transparent",
              alignItems:'center',
              justifyContent:'center',
-             width:70,
-             height:70,
+             width:100,
+             height:30,
              backgroundColor:'powderblue',
-             borderRadius:50,
            }}
             onPress={this._accessGenere}>
-            <Text style={styles.text}>Genre</Text>
+            <Text style={{fontSize:20,color:'black'}}>Genre</Text>
           </TouchableOpacity>
           {contentGenre}
         </View>
         <Text>        </Text>
-        <View style={{flexDirection: 'column',alignItems:'center'}}>
+        <View style={{flexDirection: 'column',alignItems:'center',opacity: opacityArtist}}>
           <TouchableOpacity
             style={{
-             borderWidth:0.5,
-             borderColor:'rgba(0,0,0,0.2)',
+             borderRadius:10,
+             borderWidth:2,
+             borderColor: "transparent",
              alignItems:'center',
              justifyContent:'center',
-             width:70,
-             height:70,
+             width:100,
+             height:30,
              backgroundColor:'skyblue',
-             borderRadius:50,
            }}
             onPress={this._accessArtist}>
-            <Text style={styles.text}>Artit</Text>
+            <Text style={{fontSize:20,color:'black'}}>Artist</Text>
           </TouchableOpacity>
           {contentArtist}
         </View>
         <Text>        </Text>
-        <View style={{flexDirection: 'column',alignItems:'center'}}>
+        <View style={{flexDirection: 'column',alignItems:'center',opacity: opacitySong}}>
           <TouchableOpacity
             style={{
-             borderWidth:0.5,
-             borderColor:'rgba(0,0,0,0.2)',
+             borderRadius:10,
+             borderWidth:2,
+             borderColor: "transparent",
              alignItems:'center',
              justifyContent:'center',
-             width:70,
-             height:70,
+             width:100,
+             height:30,
              backgroundColor:'steelblue',
-             borderRadius:50,
            }}
             onPress={this._accessSong}>
-            <Text style={styles.text}>Song</Text>
+            <Text style={{fontSize:20,color:'black'}}>Song</Text>
           </TouchableOpacity>
           {contentSong}
         </View>
@@ -267,7 +282,7 @@ export default class ProfileScreen extends React.Component {
     switch (type) {
       case "Genre":
         return (
-          <ScrollView style={{height:135}}>
+          <ScrollView style={{height:150}}>
            {
             this.state.favoriteGenres.map((item, index) => (
               <View key = {index}>
@@ -291,7 +306,7 @@ export default class ProfileScreen extends React.Component {
         );
       case "Artist":
         return (
-          <ScrollView style={{height:135}}>
+          <ScrollView style={{height:150}}>
            {
             this.state.favoriteArtists.map((item, index) => (
                <View key = {index}>
@@ -315,7 +330,7 @@ export default class ProfileScreen extends React.Component {
         );
       case "Song":
         return (
-          <ScrollView style={{height:135}}>
+          <ScrollView style={{height:150}}>
            {
             this.state.favoriteSongs.map((item, index) => (
               <View key = {index}>
@@ -466,6 +481,7 @@ const styles = StyleSheet.create({
   text: {
     fontSize: 20,
     textAlign: 'center',
+    justifyContent: 'center',
     marginTop: 5,
   }
 });
