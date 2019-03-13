@@ -17,6 +17,7 @@ import { MonoText } from "../components/StyledText";
 
 import io from 'socket.io-client';
 import { ScrollView } from "react-native-gesture-handler";
+import Chatroom from "../components/Chatroom";
 
 export default class ChatScreen extends React.Component {
   static navigationOptions = {
@@ -59,7 +60,6 @@ export default class ChatScreen extends React.Component {
   }
   
   initSocket = () => {
-    console.log(`${this.state.socketServerUrl}:3005`)
     this.socket = io.connect(`${this.state.socketServerUrl}:3005`)
 
     console.log('in insocket')
@@ -118,6 +118,35 @@ export default class ChatScreen extends React.Component {
     })
   }
 
+  orderChatrooms = async (chatrooms) => {
+    let chatroomWithLastMessage = []
+    for (let i = 0; i < chatrooms.length; i++) {
+        let data = await fetch(`${this.state.url}/chat/message/last/${chatrooms[i].chatroom_id}`, {
+          method: 'GET',
+          headers: {
+            'Accept': 'application/json',
+            'Content-Type': 'application/json',
+          }
+        })
+        let lastMessage = JSON.parse(data._bodyInit).message;
+        chatroomWithLastMessage.push({
+          chatroomId: chatrooms[i].chatroom_id,
+          name: chatrooms[i].name,
+          avatar: chatrooms[i].avatar,
+          lastMessage,
+          name: chatrooms[i].name,
+          user_id: chatrooms[i].user_id
+        });
+    }
+    let orderedChatrooms = chatroomWithLastMessage.sort((a, b) => {
+      let aDate = a.lastMessage ? new Date(a.lastMessage.date) : 0
+      let bDate = b.lastMessage ? new Date(b.lastMessage.date) : 0
+      return  bDate - aDate
+      
+    })
+    this.setState({ chatrooms: orderedChatrooms }) 
+  }
+
   fetchChatrooms = () => {
     fetch(`${this.state.url}/chat/chatrooms/${this.state.userId}`, {
       method: "GET",
@@ -127,7 +156,7 @@ export default class ChatScreen extends React.Component {
       }
     }).then(data => {
       let chatrooms = JSON.parse(data._bodyInit).chatrooms;
-      this.setState({ chatrooms });
+      this.orderChatrooms(chatrooms)
     });
   }
   
@@ -161,9 +190,11 @@ export default class ChatScreen extends React.Component {
         userId: this.state.userId,
         chatroomId: this.state.inChatWith.chatroomId
       })
-    }).then(() => {
-      this.fetchMessages();
+    }).then( async () => {
+      await this.fetchMessages();
+      await this.fetchChatrooms();
       sendMessageToSocketServer();
+      this.clearTextInput();
     });
   };
 
@@ -191,10 +222,7 @@ export default class ChatScreen extends React.Component {
     this.setState({ text: "" });
   };
 
-  handleChatWithFriend = (friend, page, callback) => {
-    // if(callback) {
-    //   callback()
-    // }
+  handleChatWithFriend = (friend, page) => {
     this.setState({
       inChatWith: friend,
       page: page
@@ -277,6 +305,7 @@ export default class ChatScreen extends React.Component {
             chatrooms={this.state.chatrooms}
             handleChatWithFriend={this.handleChatWithFriend}
             url={this.state.url}
+            navigation={this.props.navigation}
           />
         );
       case 'startChat':

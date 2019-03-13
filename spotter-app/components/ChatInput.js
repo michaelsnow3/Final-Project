@@ -5,9 +5,14 @@ import {
   TouchableOpacity, 
   TextInput, 
   StyleSheet,
+  Keyboard
 } from 'react-native'
 
 function ChatInput( { suggestMusicButtonHandler, text, onChangeText, sendMessageToSocketServer, fetchMessages, sendOnPress }) {
+  handleOnSend = async () => {
+    await sendOnPress(sendMessageToSocketServer, fetchMessages)
+    Keyboard.dismiss()
+  }
   return(
     <View style={styles.input}>
       <TouchableOpacity onPress={suggestMusicButtonHandler}>
@@ -21,7 +26,7 @@ function ChatInput( { suggestMusicButtonHandler, text, onChangeText, sendMessage
         onChangeText={onChangeText}
       />
 
-      <TouchableOpacity onPress={() => sendOnPress(sendMessageToSocketServer, fetchMessages)}>
+      <TouchableOpacity onPress={handleOnSend}>
         <Text style={styles.sendText}>Send</Text>
       </TouchableOpacity>
     </View>

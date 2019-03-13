@@ -19,22 +19,23 @@ function UserCard({
 
   if(page === 'ShowFriends') {
     newLetterContainerStyle = {
-      backgroundColor: "rgba(36, 207, 95, 0.2)",
+      backgroundColor: "#e8e8e8",
       borderBottomWidth: 1
     }
   }else {
     newLetterContainerStyle = {
-      backgroundColor: "#f2f2f2",
+      backgroundColor: "#e8e8e8",
       borderBottomWidth: 1
     }
   }
 
   let newLetter = false;
-
+  let userCardStyle = styles.container
   if (
     !prevFriend ||
     name[0].toUpperCase() !== prevFriend.name[0].toUpperCase()
   ) {
+    userCardStyle = [styles.container, { borderBottomWidth: 1 }]
     newLetter = (
       <View style={newLetterContainerStyle}>
         <Text style={styles.newLetterText}>{name[0].toUpperCase()}</Text>
@@ -123,19 +124,18 @@ function UserCard({
 const styles = StyleSheet.create({
   container: {
     height: 60,
-    borderBottomWidth: 1,
-    borderColor: "black",
     flexDirection: 'row',
     alignItems: 'center',
   },
   name: {
-    fontSize: 30,
+    fontSize: 25,
     textAlignVertical: "center",
     marginLeft: 15
   },
   newLetterContainer: {
-    backgroundColor: "#ededed",
-    borderBottomWidth: 1
+    backgroundColor: "#e8e8e8",
+    borderBottomWidth: 1,
+    borderTopWidth: 1
   },
   newLetterText: {
     fontSize: 20,
