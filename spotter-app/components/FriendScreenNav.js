@@ -73,12 +73,12 @@ const styles = {
     marginTop: 5,
     opacity: 0.7,
   },
-  focusedButton: {
-    backgroundColor: 'rgba(36, 207, 95, 0.75)',
-  },
-  unfocusedButton: {
-    backgroundColor: 'rgba(36, 207, 95, 0.5)',
-  }
+  // focusedButton: {
+  //   backgroundColor: '#dbdbdb)',
+  // },
+  // unfocusedButton: {
+  //   backgroundColor: '#e8e8e8',
+  // }
 }
 
 export default FriendScreenNav

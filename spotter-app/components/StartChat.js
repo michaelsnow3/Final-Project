@@ -14,7 +14,13 @@ import UserCard from '../components/UserCard'
 
 function StartChat({friends, handleChatWithFriend, userId, url, fetchChatrooms}) {
 
-  const friendsList = friends.map(friend => {
+  let orderedFriends = friends.sort((a, b) => {
+    if (a.name.toLowerCase() < b.name.toLowerCase()) return -1;
+    if (a.name.toLowerCase() > b.name.toLowerCase()) return 1;
+    return 0;
+  })
+
+  const friendsList = orderedFriends.map(friend => {
     return <UserCard 
       name={friend.name} 
       id={friend.id} 
@@ -38,7 +44,7 @@ function StartChat({friends, handleChatWithFriend, userId, url, fetchChatrooms})
 
         <Text style={styles.text}>Start a Chat</Text>
       </View>
-      <ScrollView>{friendsList}</ScrollView>
+      <ScrollView style={styles.friendsList}>{friendsList}</ScrollView>
     </View>
   )
 }
@@ -66,6 +72,9 @@ const styles = StyleSheet.create({
     width: 60,
     backgroundColor: '#d5dae2',
     borderRadius: 20,
+  },
+  friendsList: {
+    height: '70%'
   }
 });
 export default StartChat

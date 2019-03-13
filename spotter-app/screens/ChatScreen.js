@@ -9,13 +9,14 @@ import {
   Button,
   Image,
   Platform,
-  ScrollView,
+  View,
   AsyncStorage,
   YellowBox,
 } from "react-native";
 import { MonoText } from "../components/StyledText";
 
 import io from 'socket.io-client';
+import { ScrollView } from "react-native-gesture-handler";
 
 export default class ChatScreen extends React.Component {
   static navigationOptions = {
@@ -280,7 +281,7 @@ export default class ChatScreen extends React.Component {
         );
       case 'startChat':
         return (
-          <ScrollView style={styles.container}>
+          <View style={styles.container}>
             <StartChat 
               friends={this.state.friends} 
               handleChatWithFriend={this.handleChatWithFriend} 
@@ -288,7 +289,7 @@ export default class ChatScreen extends React.Component {
               url={this.state.url}
               fetchChatrooms={this.fetchChatrooms}
             />
-          </ScrollView>
+          </View>
         );
       case "suggestSong":
         return (
@@ -328,4 +329,8 @@ export default class ChatScreen extends React.Component {
   }
 }
 
-const styles = StyleSheet.create({});
+const styles = StyleSheet.create({
+  container: {
+    height: '100%'
+  }
+});

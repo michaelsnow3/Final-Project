@@ -92,6 +92,7 @@ class Chat extends React.Component {
       handleTrackPress,
       messages
     } = this.props;
+
     backToShowFriends = () => {
       handleChatWithFriend(null, "showChatrooms");
     };
@@ -105,6 +106,12 @@ class Chat extends React.Component {
         />
       );
     });
+
+    let previousMessagesButton = messageList.length >= 20 &&  (
+      <TouchableOpacity onPress={this.previousMessagesCallback} style={styles.previousMessagesButton}>
+        <Text style={styles.previousMessagesText}>Previous Messages</Text>
+      </TouchableOpacity>
+    )
 
     // only render suggest music menu if suggest music button is clicked
     let suggestMusicMenu = (
@@ -169,9 +176,7 @@ class Chat extends React.Component {
           }}
           style={styles.messageList}
         >
-          <TouchableOpacity onPress={this.previousMessagesCallback} style={styles.previousMessagesButton}>
-            <Text style={styles.previousMessagesText}>Previous Messages</Text>
-          </TouchableOpacity>
+          {previousMessagesButton}
           {messageList}
         </ScrollView>
         {suggestMusicMenu}

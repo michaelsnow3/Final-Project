@@ -120,7 +120,7 @@ const styles = StyleSheet.create({
     marginLeft: 15
   },
   newLetterContainer: {
-    backgroundColor: "rgba(36, 207, 95, 0.1)",
+    backgroundColor: "#ededed",
     borderBottomWidth: 1
   },
   newLetterText: {
