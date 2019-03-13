@@ -10,6 +10,7 @@ import {
   View,
   AsyncStorage,
 } from 'react-native';
+import Spinner from 'react-native-loading-spinner-overlay';
 import OtherProfileScreen from './OtherProfileScreen.js';
 import People from '../components/People';
 
@@ -18,15 +19,12 @@ export default class MeetScreen extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
+      searching: true,
       user_id : null,
       page : 'Greet',
       people : [],
       friend_id : null,
       friend_name: null,
-
-      searching: true,
-      searchingDot: "",
-      timer: 0,
     }
   }
   static navigationOptions = {
@@ -46,32 +44,11 @@ export default class MeetScreen extends React.Component {
     })
   };
 
-  _trunOnSearching = () => {
-    if (this.state.timer === 0) {
-
-      let that = this;
-
-      this.timerSearchingText = setInterval(() => {
-          this._setSearchingText(that);
-      }, 800);
-    }
-  };
-
-  _setSearchingText = (that) => {
-    if (that.state.searchingDot.length > 30) {
-      that.setState({searchingDot: ""});
-    } else {
-      that.setState({searchingDot: that.state.searchingDot + " . "});
-    }
-  };
-
   meet = async () => {
     console.log('meet call');
     this.setState({
       page: 'Meet'
     });
-
-    this._trunOnSearching();
 
     const nodeServerUrl = await AsyncStorage.getItem('nodeServerUrl');
     const userIdFromSpotify = await AsyncStorage.getItem('userIdFromSpotify');
@@ -119,7 +96,6 @@ export default class MeetScreen extends React.Component {
           this.setState({
             people : newParsedData,
             searching: false,
-            searchingDot: "",
             timer: 0,
           });
           clearInterval(this.timerSearchingText);
@@ -158,10 +134,11 @@ export default class MeetScreen extends React.Component {
 
   _showSearchingOrResult = () => {
     return (this.state.searching) ?
-      (<View style={{flexDirection: 'row'}}>
-        <Text style={{fontSize: 32}}>  Searching</Text>
-        <Text style={{fontSize: 32}}>{this.state.searchingDot}</Text>
-       </View>) :
+      (<Spinner
+        visible={this.state.searching}
+        textContent={'Searching...'}
+        textStyle={styles.spinnerTextStyle}
+       />) :
       (<View>
         <People people={this.state.people} handler={this.handler} setFriendName={this.setFriendName} />
        </View>);
@@ -200,5 +177,8 @@ export default class MeetScreen extends React.Component {
 }
 
 const styles = StyleSheet.create({
-
+  spinnerTextStyle: {
+    color: '#FFF',
+    fontSize: 30
+  },
 });
