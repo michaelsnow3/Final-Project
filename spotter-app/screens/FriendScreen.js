@@ -222,10 +222,6 @@ export default class FriendScreen extends React.Component {
     .then((response) => {
       console.log("_insertUserIfNotExist:", response);
     })
-    .catch((error) => {
-      console.error("_insertUserIfNotExist error:", error);
-      throw error;
-    });
   };
 
   render() {

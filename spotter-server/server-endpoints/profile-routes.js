@@ -37,11 +37,13 @@ module.exports = function(request, selectQueries) {
               .then(()=> {
                 console.log("Insert New User");
                 res.status(200);
+                return;
               });
             });
           } else {
             console.log("User exist");
             res.status(200);
+            return;
           }
         })
         .catch((error) => {
