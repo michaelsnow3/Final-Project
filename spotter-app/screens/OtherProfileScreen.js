@@ -212,11 +212,11 @@ export default class OtherProfileScreen extends React.Component {
     const addOrMsg = (this.state.friend) ?
     (<TouchableOpacity onPress={this.message}>
       <Image style={styles.imgStyle2} source={require('../assets/images/message.jpg')} />
-    </TouchableOpacity>) :
-
-    (<TouchableOpacity onPress={this.addfriend}>
-        <Image style={styles.imgStyle2} source={require('../assets/images/add_friend.jpg')} />
     </TouchableOpacity>)
+    :
+    (<TouchableOpacity onPress={this.addFriend}>
+        <Image style={styles.imgStyle2} source={require('../assets/images/add_friend.jpg')} />
+    </TouchableOpacity>);
 
     const backButton = (this.props.handleMeet) ?
     (<TouchableOpacity onPress={() => {this.props.handleMeet('Meet')}} >
