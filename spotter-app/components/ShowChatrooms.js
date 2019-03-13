@@ -12,17 +12,20 @@ import {
 import Chatroom from '../components/Chatroom.js'
 
 class ShowChatrooms extends React.Component {
-  render(){
+
+  render() {
     let { chatrooms, handleChatWithFriend, url } = this.props;
-    const chatroomList = chatrooms.map((chatroom, i) => {
+    
+    chatroomList = chatrooms.map((chatroom, i) => {
       return (
         <Chatroom 
           name={chatroom.name} 
-          chatroomId={chatroom.chatroom_id} 
+          chatroomId={chatroom.chatroomId} 
           handleChatWithFriend={handleChatWithFriend} 
           key={i} 
           url={url}
           avatar={chatroom.avatar}
+          lastMessage={chatroom.lastMessage}
         />
       )
     });
