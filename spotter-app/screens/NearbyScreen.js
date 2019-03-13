@@ -39,7 +39,8 @@ export default class NearbyScreen extends React.Component {
       matchCover: null,
 
       myIdInDb: null,
-      pictureFromSpotify: null
+      pictureFromSpotify: null,
+      showMatch: true
     }
   }
 
@@ -170,21 +171,61 @@ export default class NearbyScreen extends React.Component {
     });
   };
 
+  handleNearBy = () => {
+    this.setState({showMatch: true});
+  };
+
+  _showMatchOrProfile = () => {
+    return (this.state.showMatch) ?
+      (<View>
+        <Text style={{ textAlign: 'center',fontSize:25 }}>
+          {'\n'}You match with :
+        </Text>
+        <Text style={{textAlign: 'center',fontSize:50, fontWeight:'bold',fontStyle:'italic',color:'#008000'}}>
+          {this.state.matchPerson}
+        </Text>
+        <TouchableHighlight style={{justifyContent: 'center',alignItems: 'center',}} onPress={() => {
+            this.setState({ showMatch: false })
+          }}>
+          <Image style={{width: 180, height: 180}} source={{uri: this.state.matchCover}} />
+        </TouchableHighlight>
+        <Text style={{textAlign: 'center',fontSize:25}}>
+          By {this.state.matchType} :
+        </Text>
+        <Text style={{textAlign: 'center',fontSize:50, fontWeight:'bold',fontStyle:'italic',color:'#CD853F'}}>
+          {this.state.matchContent}
+        </Text>
+      </View>)
+      :
+      (<View style={{height:'100%'}}>
+        <OtherProfileScreen
+          handler={this.handler}
+          id={this.state.matchedPersonDbId}
+          name={this.state.matchPerson}
+          navigation={this.props.navigation}
+          handleNearBy={this.handleNearBy}
+          handleChatWithFriend={() => {
+            console.log(111111)
+          }}
+        />
+      </View>);
+  };
+
   render() {
 
     const searchingOrFind = this._showSearchingOrFind();
 
     return (
-      <View>
-        <Text style={styles.name}>Nearby</Text>
-          <View style={{borderTopWidth:1,}}>
-            {searchingOrFind}
-          </View>
+      <View style={{borderTopWidth:1,}}>
+        {searchingOrFind}
       </View>
     );
   }
 
   _showSearchingOrFind = () => {
+
+    const matchOrProfile  = this._showMatchOrProfile();
+
     if (this.state.searching) {
       return (
         <View>
@@ -202,47 +243,7 @@ export default class NearbyScreen extends React.Component {
         </View>
       );
     } else {
-      return (
-        <View style={{ height: '100%', width: '100%' }}>
-          <FlipComponent
-            isFlipped={this.state.isFlipped}
-            frontView={
-              <View>
-                <Text style={{ textAlign: 'center',fontSize:25 }}>
-                  {'\n'}You match with :
-                </Text>
-                <Text style={{textAlign: 'center',fontSize:50, fontWeight:'bold',fontStyle:'italic',color:'#008000'}}>
-                  {this.state.matchPerson}
-                </Text>
-                <TouchableHighlight style={{justifyContent: 'center',alignItems: 'center',}} onPress={() => {
-                    this.setState({ isFlipped: !this.state.isFlipped })
-                  }}>
-                  <Image style={{width: 180, height: 180}} source={{uri: this.state.matchCover}} />
-                </TouchableHighlight>
-                <Text style={{textAlign: 'center',fontSize:25}}>
-                  By {this.state.matchType} :
-                </Text>
-                <Text style={{textAlign: 'center',fontSize:50, fontWeight:'bold',fontStyle:'italic',color:'#CD853F'}}>
-                  {this.state.matchContent}
-                </Text>
-              </View>
-            }
-            backView={
-              <View>
-                <OtherProfileScreen
-                  handler={this.handler}
-                  id={this.state.matchedPersonDbId}
-                  name={this.state.matchPerson}
-                  navigation={this.props.navigation}
-                  handleChatWithFriend={() => {
-                    console.log(111111)
-                  }}
-                />
-              </View>
-            }
-            />
-        </View>
-      );
+      return (matchOrProfile);
     }
   };
 }

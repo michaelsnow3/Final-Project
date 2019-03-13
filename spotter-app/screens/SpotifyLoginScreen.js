@@ -12,20 +12,21 @@ import {
 
 import { AppLoading, Font } from 'expo';
 import { getUserProfile } from '../components/GetUserProfile';
- 
+
 export default class SpotifyLoginScreen extends React.Component {
 
   constructor(props) {
     super(props);
     this.state = {
       loginClicked: false,
-      nodeServerUrl: "http://c99bee89.ngrok.io",
-      socketServerUrl: "http://172.46.0.236"
+      nodeServerUrl: "http://158f0274.ngrok.io",
+      socketServerUrl: "http://172.46.0.236",
+
+      loading: true
     }
   }
 
   async componentWillMount() {
-    await AsyncStorage.clear();
     await Font.loadAsync({
       AmarulaPersonalUse: require('./../assets/fonts/Amarula_Personal_Use.ttf'),
     });
