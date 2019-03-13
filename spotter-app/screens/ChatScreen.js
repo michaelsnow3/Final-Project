@@ -275,6 +275,7 @@ export default class ChatScreen extends React.Component {
           <ShowChatrooms
             chatrooms={this.state.chatrooms}
             handleChatWithFriend={this.handleChatWithFriend}
+            url={this.state.url}
           />
         );
       case 'startChat':

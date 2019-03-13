@@ -21,7 +21,17 @@ function ShowFriends({friends, handler, getUserId, setFriendName, page}) {
   })
 
   const friendsList = orderedFriends.map((friend, i) => {
-    return <UserCard setFriendName={setFriendName} name={friend.name} prevFriend={friends[i - 1]} id={friend.id} handler={handler} key={i} />
+    return (
+      <UserCard 
+        setFriendName={setFriendName} 
+        name={friend.name} 
+        prevFriend={friends[i - 1]} 
+        id={friend.id} 
+        handler={handler} 
+        key={i} 
+        friend={friend}
+      />
+    )
   });
   return(
     <View style={styles.container}>

@@ -35,6 +35,15 @@ module.exports = function(selectQueries, insertQueries) {
     .catch(e => console.log("GET /message/view/:chatroom_id", e))
   })
 
+  chatRoutes.get("/message/last/:chatroom_id", function(req, res) {
+    let { chatroom_id } = req.params
+    selectQueries.selectLastMessage(chatroom_id).then(message => {
+      console.log(message)
+      res.json({ message })
+    })
+    .catch(e => console.log("GET /message/view/:chatroom_id", e))
+  })
+
   chatRoutes.post("/message/create", function(req, res) {
     let { content, type, userId, chatroomId, spotifyId } = req.body
     let id = type === 'track' ? spotifyId + '-' + uuidv4() : uuidv4()

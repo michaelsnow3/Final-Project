@@ -9,18 +9,60 @@ import {
   View,
 } from 'react-native';
 
-function Chatroom({name, chatroomId, handleChatWithFriend}) {
-  handleFriendPress = () => {
-    handleChatWithFriend({
-      name: name,
-      chatroomId: chatroomId
-    }, 'showChat')
+class Chatroom extends React.Component {
+  constructor(props) {
+    super(props)
+
+    this.state = {
+      lastMessage: null
+    }
+
+    this._isMounted = false
   }
-  return (
-    <TouchableOpacity style={styles.container} onPress={handleFriendPress}>
-      <Text style={styles.name}>{name}</Text>
-    </TouchableOpacity>
-  )
+  componentDidMount() {
+    this._isMounted = true
+    if(this._isMounted) {
+      this.fetchLastMessage()
+    }
+  }
+
+  fetchLastMessage = async () => {
+    let data = await fetch(`${this.props.url}/chat/message/last/${this.props.chatroomId}`, {
+      method: 'GET',
+      headers: {
+        'Accept': 'application/json',
+        'Content-Type': 'application/json',
+      }
+    })
+    let message = JSON.parse(data._bodyInit).message;
+    // sort messages by date
+    this.setState({ lastMessage: message })
+
+    // this.setState({ messages: sortedMessages });
+  }
+
+  render() {
+    let { name, chatroomId, handleChatWithFriend } = this.props
+    handleFriendPress = () => {
+      handleChatWithFriend({
+        name: name,
+        chatroomId: chatroomId
+      }, 'showChat')
+    }
+
+    let lastMessageContent = this.state.lastMessage && this.state.lastMessage.content
+    let lastMessageDate = this.state.lastMessage && this.state.lastMessage.date
+    
+    return (
+      <TouchableOpacity style={styles.container} onPress={handleFriendPress}>
+      <View style={styles.chatroomInfo}>
+        <Text style={styles.name}>{name}</Text>
+        <Text>{lastMessageContent}</Text>
+      </View>
+      <Text>{lastMessageDate}</Text>
+      </TouchableOpacity>
+    )
+  }
 }
 
 const styles = StyleSheet.create({

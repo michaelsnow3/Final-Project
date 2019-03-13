@@ -21,20 +21,24 @@ function FriendScreenNav({ handler, getUserId, page }) {
   let showFriendRequestsText = {};
   if(page === 'ShowFriends') {
     showFriendsTextSyle = styles.focusedText
-    showFriendRequestsText = styles.unfocusedText
+    showFriendRequestsTextstyle = styles.unfocusedText
+    showFriendsButtonStyle = styles.focusedButton
+    showFriendRequestsButtonStyle = styles.unfocusedButton
   }else {
     showFriendsTextSyle = styles.unfocusedText
-    showFriendRequestsText = styles.focusedText
+    showFriendRequestsTextstyle = styles.focusedText
+    showFriendsButtonStyle = styles.unfocusedButton
+    showFriendRequestsButtonStyle = styles.focusedButton
   }
   return(
     <View style={styles.container}>
 
-    <TouchableOpacity onPress={handleShowFriendsPress} style={styles.showFriends}>
+    <TouchableOpacity onPress={handleShowFriendsPress} style={[styles.showFriends, showFriendsButtonStyle]}>
       <Text style={showFriendsTextSyle}>Friends</Text>
     </TouchableOpacity>
 
-    <TouchableOpacity onPress={handleShowFriendRequestsPress} style={styles.showFriendRequests}>
-      <Text style={showFriendRequestsText}>Friend Requests</Text>
+    <TouchableOpacity onPress={handleShowFriendRequestsPress} style={[styles.showFriendRequests, showFriendRequestsButtonStyle]}>
+      <Text style={showFriendRequestsTextstyle}>Friend Requests</Text>
     </TouchableOpacity>
 
     </View>
@@ -48,7 +52,6 @@ const styles = {
     justifyContent: 'space-around',
     borderTopWidth: 1,
     borderBottomWidth: 1,
-    backgroundColor: 'rgba(36, 207, 95, 0.75)',
   },
   showFriends: {
     width: '50%',
@@ -69,6 +72,12 @@ const styles = {
     textAlign: 'center',
     marginTop: 5,
     opacity: 0.7,
+  },
+  focusedButton: {
+    backgroundColor: 'rgba(36, 207, 95, 0.75)',
+  },
+  unfocusedButton: {
+    backgroundColor: 'rgba(36, 207, 95, 0.5)',
   }
 }
 

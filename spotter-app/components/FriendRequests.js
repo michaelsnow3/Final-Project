@@ -31,6 +31,7 @@ class FriendRequests extends React.Component {
           handler={this.props.handler} 
           key={Math.random().toString()} 
           page={this.props.page}
+          friend={friendRequest}
         />
       )
     });

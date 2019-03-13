@@ -3,7 +3,7 @@ module.exports = function returnQueries(knex) {
     selectUserById: async function(userId) {
       try {
         let user = await knex("users")
-          .select("name", "id")
+          .select("name", "id", "avatar")
           .where({ id: userId });
         return user[0];
       } catch (e) {
@@ -57,6 +57,13 @@ module.exports = function returnQueries(knex) {
         .select('content', 'date', 'user_id', 'type', 'id')
         .where({'chatroom_id': chatroomId}).orderBy('date', 'desc').limit(limit)
       return messages
+    },
+
+    selectLastMessage: async function(chatroomId) {
+      let messages = await knex('message')
+        .select('content', 'date', 'user_id', 'type', 'id')
+        .where({'chatroom_id': chatroomId}).orderBy('date', 'desc').limit(1)
+      return messages[0]
     },
 
     checkIfChatroomExists: async function(userId, friendId) {
