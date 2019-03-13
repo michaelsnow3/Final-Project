@@ -10,6 +10,7 @@ import {
   View,
   AsyncStorage,
 } from 'react-native';
+import Spinner from 'react-native-loading-spinner-overlay';
 import OtherProfileScreen from './OtherProfileScreen.js';
 import People from '../components/People';
 
@@ -18,11 +19,12 @@ export default class MeetScreen extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
+      searching: true,
       user_id : null,
       page : 'Greet',
       people : [],
       friend_id : null,
-      friend_name: null
+      friend_name: null,
     }
   }
   static navigationOptions = {
@@ -40,13 +42,13 @@ export default class MeetScreen extends React.Component {
     this.setState({
       page: 'OtherProfileScreen'
     })
-  }
+  };
 
   meet = async () => {
     console.log('meet call');
     this.setState({
       page: 'Meet'
-    })
+    });
 
     const nodeServerUrl = await AsyncStorage.getItem('nodeServerUrl');
     const userIdFromSpotify = await AsyncStorage.getItem('userIdFromSpotify');
@@ -92,8 +94,11 @@ export default class MeetScreen extends React.Component {
           }
           // need to accept in an array of people's names and ids (strecth: avatars)
           this.setState({
-            people : newParsedData
-          })
+            people : newParsedData,
+            searching: false,
+            timer: 0,
+          });
+          clearInterval(this.timerSearchingText);
         })
         .catch((err) => {
           console.log(err);
@@ -108,7 +113,9 @@ export default class MeetScreen extends React.Component {
 
   back = () => {
     this.setState ({
-      page : 'Greet'
+      page : 'Greet',
+      people : [],
+      searching: true,
     })
   }
 
@@ -125,7 +132,21 @@ export default class MeetScreen extends React.Component {
     })
   }
 
+  _showSearchingOrResult = () => {
+    return (this.state.searching) ?
+      (<Spinner
+        visible={this.state.searching}
+        textContent={'Searching...'}
+        textStyle={styles.spinnerTextStyle}
+       />) :
+      (<View>
+        <People people={this.state.people} handler={this.handler} setFriendName={this.setFriendName} />
+       </View>);
+  };
+
   render() {
+
+    const showSearchingOrResult = this._showSearchingOrResult();
 
     switch (this.state.page) {
       case 'Greet':
@@ -139,9 +160,8 @@ export default class MeetScreen extends React.Component {
         return (
           <View>
             <Button title="Back" onPress={this.back} />
-            <People people={this.state.people} handler={this.handler} setFriendName={this.setFriendName} />
-          </View>
-        )
+            {showSearchingOrResult}
+          </View>);
       case 'OtherProfileScreen':
         return (
           <OtherProfileScreen
@@ -157,5 +177,8 @@ export default class MeetScreen extends React.Component {
 }
 
 const styles = StyleSheet.create({
-
+  spinnerTextStyle: {
+    color: '#FFF',
+    fontSize: 30
+  },
 });

@@ -2,7 +2,6 @@
 import React from 'react';
 import {
   View,
-  Button,
   AsyncStorage,
   StyleSheet,
   Text,
@@ -10,6 +9,9 @@ import {
   Form,
   TextInput,
   Alert,
+  TouchableHighlight,
+  Image,
+  ScrollView
 } from 'react-native';
 
 export default class ProfileScreen extends React.Component {
@@ -27,7 +29,7 @@ export default class ProfileScreen extends React.Component {
       favoriteSongs: [],
       favoriteType: "Genre",
       displayInfo: true,
-      favoriteContent: ''
+      favoriteContent: '',
     };
   }
 
@@ -43,19 +45,65 @@ export default class ProfileScreen extends React.Component {
 
     const favoriteInfo = this._selectfavorite(this.state.favoriteType);
     const editOrDisplay = this._selectPageContent(favoriteInfo, this.state.favoriteType);
-    const editTitle = `Add Favorite ${this.state.favoriteType}`;
+    const editTitle = (this.state.displayInfo) ?
+    (`Add Favorite ${this.state.favoriteType}`) :
+    (`Go Back`);
+    let profilePic = (this.state.avatar) ?
+      (<Image style={{justifyContent: 'center',alignItems: 'center',width: 175, height: 175,}} source={{uri: this.state.avatar}}/>) :
+      (<Image style={{justifyContent: 'center',alignItems: 'center',width: 175, height: 175,}} source={{uri: "https://www.nocowboys.co.nz/images/v3/no-image-available.png"}} />);
 
     return (
       <View style={{alignItems: 'center',}}>
-        <Text style={styles.name}>Profile</Text>
-        <TouchableOpacity style={{backgroundColor: 'powderblue', width: 250, alignItems: 'center',}} onPress={this._editInfo}>
-          <Text>
+        <View style={{flexDirection: 'row',}}>
+          <Text style={{fontSize: 50,textAlign: 'center'}}>Profile</Text>
+          <TouchableHighlight
+            style={{position: 'relative', left:88, top:6}}
+            onPress={this._signOutAsync}>
+            <Image
+              style={{width: 50, height: 50}}
+              source={{uri: "https://cdn2.iconfinder.com/data/icons/picons-essentials/57/logout-512.png"}}
+            />
+          </TouchableHighlight>
+        </View>
+        {profilePic}
+        <View style={{alignItems:'flex-start'}}>
+          <Text style={
+              {
+                fontSize: 20,
+
+              }
+            }
+            >
+              Id: {this.state.userIdFromSpotify}
+            </Text>
+            <Text style={
+              {
+                fontSize: 20,
+               }
+             }
+            >
+            Email: {this.state.email}
+          </Text>
+        </View>
+        <Text></Text>
+        {editOrDisplay}
+        <Text></Text>
+        <TouchableOpacity
+          style={
+            {
+              backgroundColor: 'white',
+              width: 200,
+              height: 30,
+              justifyContent: 'center',
+              alignItems:'center',
+              borderRadius:10,
+              borderWidth:2,
+            }
+          }
+          onPress={this._editInfo}>
+          <Text style={{fontSize:20,color:'black',fontWeight: 'bold'}}>
             {editTitle}
           </Text>
-        </TouchableOpacity>
-          {editOrDisplay}
-        <TouchableOpacity  onPress={this._signOutAsync}>
-          <Text>Logout this amazing App :)</Text>
         </TouchableOpacity>
       </View>
     );
@@ -70,40 +118,126 @@ export default class ProfileScreen extends React.Component {
     let addNewPlaceHolder = `New ${type}`;
 
     if (this.state.displayInfo) {
+
+      let contentGenre  = null;
+      let contentArtist = null;
+      let contentSong   = null;
+
+      let opacityGenre  = 0.3;
+      let opacityArtist = 0.3;
+      let opacitySong   = 0.3;
+
+      switch (type) {
+        case "Genre":
+          contentGenre  = favoriteInfo;
+          opacityGenre  = 1;
+          opacityArtist = 0.3;
+          opacitySong   = 0.3;
+          break;
+        case "Artist":
+          contentArtist = favoriteInfo;
+          opacityGenre  = 0.3;
+          opacityArtist = 1;
+          opacitySong   = 0.3;
+          break;
+        case "Song":
+          contentSong   = favoriteInfo;
+          opacityGenre  = 0.3;
+          opacityArtist = 0.3;
+          opacitySong   = 1;
+          break;
+      };
+
       return (
-        <View style={styles.container}>
-          <View>
-            <Text>Id: {this.state.userIdFromSpotify}</Text>
-            <Text>Email: {this.state.email}</Text>
-          </View>
-          <View style={styles.favoriteBtn}>
-            <TouchableOpacity style={{width: 130, height: 30, backgroundColor: 'powderblue'}} onPress={this._accessGenere}>
-              <Text style={styles.text}>Genre</Text>
-            </TouchableOpacity>
-            <TouchableOpacity style={{width: 130, height: 30, backgroundColor: 'skyblue'}} onPress={this._accessArtist}>
-              <Text style={styles.text}>Artist</Text>
-            </TouchableOpacity>
-            <TouchableOpacity style={{width: 130, height: 30, backgroundColor: 'steelblue'}} onPress={this._accessSong}>
-              <Text style={styles.text}>Song</Text>
-            </TouchableOpacity>
-          </View>
-          {favoriteInfo}
+      <View style={{flexDirection: 'row',}}>
+        <View style={{flexDirection: 'column',alignItems:'center',opacity: opacityGenre}}>
+          <TouchableOpacity
+            style={{
+             borderRadius:10,
+             borderWidth:2,
+             borderColor: "transparent",
+             alignItems:'center',
+             justifyContent:'center',
+             width:100,
+             height:30,
+             backgroundColor:'powderblue',
+           }}
+            onPress={this._accessGenere}>
+            <Text style={{fontSize:20,color:'black'}}>Genre</Text>
+          </TouchableOpacity>
+          {contentGenre}
         </View>
+        <Text>        </Text>
+        <View style={{flexDirection: 'column',alignItems:'center',opacity: opacityArtist}}>
+          <TouchableOpacity
+            style={{
+             borderRadius:10,
+             borderWidth:2,
+             borderColor: "transparent",
+             alignItems:'center',
+             justifyContent:'center',
+             width:100,
+             height:30,
+             backgroundColor:'skyblue',
+           }}
+            onPress={this._accessArtist}>
+            <Text style={{fontSize:20,color:'black'}}>Artist</Text>
+          </TouchableOpacity>
+          {contentArtist}
+        </View>
+        <Text>        </Text>
+        <View style={{flexDirection: 'column',alignItems:'center',opacity: opacitySong}}>
+          <TouchableOpacity
+            style={{
+             borderRadius:10,
+             borderWidth:2,
+             borderColor: "transparent",
+             alignItems:'center',
+             justifyContent:'center',
+             width:100,
+             height:30,
+             backgroundColor:'steelblue',
+           }}
+            onPress={this._accessSong}>
+            <Text style={{fontSize:20,color:'black'}}>Song</Text>
+          </TouchableOpacity>
+          {contentSong}
+        </View>
+      </View>
       );
     } else {
       return (
-        <View style={styles.AddNewcontainer}>
-          <TextInput style={
-            {
-              width: 120,
-              borderColor: 'gray',
-              borderWidth: 1,
+        <View>
+          <Text></Text>
+          <View style={{flexDirection: 'row',}}>
+            <TextInput style={
+              {
+                width: 125,
+                height: 30,
+                borderColor: 'gray',
+                borderWidth: 1,
+              }
             }
-          }
-          onChangeText={(text) => this.setState({favoriteContent: text})}
-          value={this.state.favoriteContent}
-          placeholder={addNewPlaceHolder} />
-        <Button title='Submit' onPress={this._addNewValue} />
+              onChangeText={(text) => this.setState({favoriteContent: text})}
+              value={this.state.favoriteContent}
+              placeholder={addNewPlaceHolder} />
+            <Text>   </Text>
+            <TouchableOpacity
+              style={
+                {
+                  borderRadius:10,
+                  borderWidth:1,
+                  width: 50,
+                  justifyContent: 'center',
+                  alignItems: 'center'
+                }
+              }
+              onPress={this._addNewValue}>
+              <Text style={{fontSize:12,}}>
+                Submit
+              </Text>
+            </TouchableOpacity>
+          </View>
         </View>
       );
     }
@@ -139,72 +273,85 @@ export default class ProfileScreen extends React.Component {
       console.log(updateData);
 
       this._updateFavoriteDb(this.state.favoriteType, updateData);
-
       this.setState({favoriteContent: ''});
       this._editInfo();
-
     }
   };
 
   _selectfavorite = (type) => {
     switch (type) {
       case "Genre":
-        if (this.state.favoriteGenres !== null) {
-          let genreList = [];
-          this.state.favoriteGenres.forEach(genre => {
-            genreList.push(
-              <Text style={{marginLeft:20}} key={genre} onLongPress={() =>
-                Alert.alert('Delete Genre', genre,
-                  [
-                    {text: 'Cancel', onPress: () => console.log('Cancel Pressed!')},
-                    {text: 'OK', onPress: () => this._deleteFavoriteItem("Genre", genre) },
-                  ]
-              )}>
-                {genre}
-              </Text>
-            );
-          });
-          return genreList;
-        }
-        break;
+        return (
+          <ScrollView style={{height:150}}>
+           {
+            this.state.favoriteGenres.map((item, index) => (
+              <View key = {index}>
+                <Text
+                  style={{fontSize:20}}
+                  onLongPress={() => Alert.alert(
+                    'Delete Genre',
+                    item,
+                    [
+                      {text: 'Cancel', onPress: () => console.log('Cancel Pressed!')},
+                      {text: 'OK', onPress: () => this._deleteFavoriteItem("Genre", item)},
+                    ]
+                  )}
+                >
+                {item}
+                </Text>
+              </View>
+            ))
+           }
+          </ScrollView>
+        );
       case "Artist":
-        if (this.state.favoriteArtists !== null) {
-          let artistList = [];
-          this.state.favoriteArtists.forEach(artist => {
-            artistList.push(
-              <Text style={{marginLeft:20}} key={artist} onLongPress={() =>
-                Alert.alert('Delete Artist', artist,
-                  [
-                    {text: 'Cancel', onPress: () => console.log('Cancel Pressed!')},
-                    {text: 'OK', onPress: () => this._deleteFavoriteItem("Artist", artist)},
-                  ]
-              )}>
-                {artist}
-              </Text>
-            );
-          });
-          return artistList;
-        }
-        break;
+        return (
+          <ScrollView style={{height:150}}>
+           {
+            this.state.favoriteArtists.map((item, index) => (
+               <View key = {index}>
+                <Text
+                  style={{fontSize:20}}
+                  onLongPress={() => Alert.alert(
+                    'Delete Artist',
+                    item,
+                    [
+                      {text: 'Cancel', onPress: () => console.log('Cancel Pressed!')},
+                      {text: 'OK', onPress: () => this._deleteFavoriteItem("Artist", item)},
+                    ]
+                  )}
+                >
+                {item}
+                </Text>
+              </View>
+            ))
+           }
+          </ScrollView>
+        );
       case "Song":
-        if (this.state.favoriteSongs !== null) {
-          let songList = [];
-          this.state.favoriteSongs.forEach(song => {
-            songList.push(
-              <Text style={{marginLeft:20}} key={song} onLongPress={() =>
-                Alert.alert('Delete Song', song,
-                  [
-                    {text: 'Cancel', onPress: () => console.log('Cancel Pressed!')},
-                    {text: 'OK', onPress: () => this._deleteFavoriteItem("Song", song)},
-                  ]
-              )}>
-                {song}
-              </Text>
-            );
-          });
-          return songList;
-        }
-        break;
+        return (
+          <ScrollView style={{height:150}}>
+           {
+            this.state.favoriteSongs.map((item, index) => (
+              <View key = {index}>
+                <Text
+                  style={{fontSize:20,}}
+                  onLongPress={() => Alert.alert(
+                    'Delete Song',
+                    item,
+                    [
+                      {text: 'Cancel', onPress: () => console.log('Cancel Pressed!')},
+                      {text: 'OK', onPress: () => this._deleteFavoriteItem("Song", item)},
+                    ]
+                  )}
+                >
+                {item}
+                </Text>
+              </View>
+            ))
+           }
+          </ScrollView>
+        );
     };
   };
 
@@ -223,7 +370,7 @@ export default class ProfileScreen extends React.Component {
       }),
     }).catch(function(error) {
       console.log('There has been a problem with your fetch operation: ' + error.message);
-      throw error;
+      this._signOutAsync();
     });
   };
 
@@ -301,6 +448,11 @@ export default class ProfileScreen extends React.Component {
      })
     .then((response) => response.json())
     .then((jsonData) => {
+
+      if (jsonData.avatar) {
+        this.setState({avatar: jsonData.avatar});
+      }
+
       if (jsonData.favoriteGenres) {
         this.setState({favoriteGenres: jsonData.favoriteGenres});
       }
@@ -315,7 +467,7 @@ export default class ProfileScreen extends React.Component {
     })
     .catch((error) => {
       console.error(error);
-      throw error;
+      this._signOutAsync();
     });
   };
 
@@ -326,29 +478,10 @@ export default class ProfileScreen extends React.Component {
 }
 
 const styles = StyleSheet.create({
-  container: {
-    height: 150,
-    backgroundColor: '#fff',
-    flexDirection: 'column',
-  },
-  favoriteBtn: {
-    flex: 1,
-    flexDirection: 'row',
-    height: 25,
-  },
-  favoriteText: {
-    backgroundColor: '#fff',
-  },
-  AddNewcontainer: {
-    alignItems: 'center',
-  },
-  name: {
-    fontSize: 50,
-    textAlign: 'center'
-  },
   text: {
     fontSize: 20,
     textAlign: 'center',
+    justifyContent: 'center',
     marginTop: 5,
   }
 });
