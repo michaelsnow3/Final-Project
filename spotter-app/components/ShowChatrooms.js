@@ -22,6 +22,7 @@ class ShowChatrooms extends React.Component {
           handleChatWithFriend={handleChatWithFriend} 
           key={i} 
           url={url}
+          avatar={chatroom.avatar}
         />
       )
     });
@@ -51,6 +52,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     flex: 1,
     justifyContent: 'space-between',
+    alignItems: 'center',
     height: 140,
   },
   name: {
@@ -63,9 +65,8 @@ const styles = StyleSheet.create({
     textAlign: 'center',
   },
   image:{
-    height: 40,
-    width: 40,
-    marginTop: 10,
+    height: 30,
+    width: 30,
     marginRight: 10,
   },
   chatroomList: {

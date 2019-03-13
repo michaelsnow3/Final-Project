@@ -39,7 +39,7 @@ module.exports = function returnQueries(knex) {
         // for each chatroom select other users id, name and the chatrooms id
         let chatrooms = [];
         for (let i = 0; i < userChatroomIds.length; i++) {
-          let chatroom = await knex.select('user_id', 'users.name', 'chatroom_id')
+          let chatroom = await knex.select('user_id', 'users.name', 'chatroom_id', 'avatar')
             .from('users')
             .innerJoin('user_chatroom', {'users.id': 'user_id'})
             .where({'chatroom_id': userChatroomIds[i].chatroom_id})
