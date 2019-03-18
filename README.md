@@ -37,7 +37,6 @@ people who are currently listening to the same music, chat with one another, and
 ## Getting Started
 - install expo app on mobile device
 - cd into spotter-app and run `npm install`
-- cd into spotter-server and run `npm install`
-- In spotter-server run command `node socket-server/socket-server.js`
 - In spotter-app run command `npm start` to start expo
 - Scan QR code on mobile device to open app
+- Login with Spotify account
