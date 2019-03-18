@@ -36,6 +36,7 @@ people who are currently listening to the same music, chat with one another, and
 
 ## Getting Started
 - install expo app on mobile device
+- clone git repo then cd into Final-Project
 - cd into spotter-app and run `npm install`
 - In spotter-app run command `npm start` to start expo
 - Scan QR code on mobile device to open app
