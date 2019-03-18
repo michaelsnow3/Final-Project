@@ -3,6 +3,11 @@ Spotter provides an enhanced social network for Spotify. Users can login with
 their spotify account, meet others who share their musical taste, find nearby 
 people who are currently listening to the same music, chat with one another, and suggest music to friends.
 
+## Group Members
+- [Yu-Ning Wang](https://github.com/wang790222)
+- [Stan Solo](https://github.com/Stan-Solo)
+- [Michael Snow](https://github.com/michaelsnow3)
+
 ## Built with
 - Front-End: react-native
 - Back-End: express, socket.io, Spotify API, postgres
