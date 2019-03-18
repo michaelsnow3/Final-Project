@@ -9,11 +9,11 @@ people who are currently listening to the same music, chat with one another, and
 
 ## Final Product
 !["Nearby feature"](https://github.com/michaelsnow3/Final-Project/blob/master/docs/Mar-18-2019%2013-24-02.gif?raw=true)
-&nbsp;
+<br/>
 !["Friends feature"](https://github.com/michaelsnow3/Final-Project/blob/master/docs/Mar-18-2019%2013-24-17.gif?raw=true)
-&nbsp;
+<br/>
 !["Chat feature"](https://github.com/michaelsnow3/Final-Project/blob/master/docs/Mar-18-2019%2013-23-31.gif?raw=true)
-&nbsp;
+<br/>
 !["Meet feature"](https://github.com/michaelsnow3/Final-Project/blob/master/docs/Mar-18-2019%2012-59-10.gif?raw=true)
 
 ## Dependencies
