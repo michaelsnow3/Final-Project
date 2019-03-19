@@ -23,8 +23,6 @@ people who are currently listening to the same music, chat with one another, and
 
 ## Dependencies
 ### Front-End
-- bluebird
-- expo
 - react
 - react-native
 - react-native-cli
@@ -33,6 +31,8 @@ people who are currently listening to the same music, chat with one another, and
 - react-native-webview
 - react-navigation
 - socket.io-client
+- expo
+- bluebird
 ### Back-End
 - algorithmia
 - body-parser
