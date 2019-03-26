@@ -1,15 +1,15 @@
 # Spotter
- Wouldn't it be cool, if you could listen to a song on Spotify, and then find someone else who is listening to the same artist, album or even song?
-  Wouldn't it be nice if you could chat with them? Maybe suggest a song or two?
-  Wouldn't it be awesome if you could find many others who share your musical tastes, and connect with them basing on your shared preferences?
+ 	Wouldn't it be cool, if you could listen to a song on Spotify, and then find someone else who is listening to the same artist, album or even song?<br/>
+  	Wouldn't it be nice if you could chat with them? Maybe suggest a song or two?<br/>
+  	Wouldn't it be awesome if you could find many others who share your musical tastes, and connect with them basing on your shared preferences?
   
 #### You can with Spotter.
-  Spotter solves the problem of a lack of social media features on Spotify. Although Spotify does integrate with Facebook and Twitter, it seems to provide little to no incentive to connect with others and meet new people. We solve this problem by providing these features within our App.
-	Our users are able to login into the app with their Spotify account. They are be able to see their friends and their profiles within our system. Our two main features, Meet and Nearby, let users connect with others who share their musical tastes.
-  Firstly, the Nearby feature connects a user with one person. It would be a person that is in close physical proximity to user's current location, as determined by GPS. Connected users would need to be listening to a song on their Spotify, as the connection criteria takes into account the song and artist currently playing. The users can then view each others' profiles, and add one another as friends.
-  Once both users have friended each other, they can initiate a chat. The chat window will contain previous messages history (if there is any), as well as the suggested songs history.
-	Suggest a song is a feature that allows a user to search for a song on Spotify through our app, and then send it as a link to another user via the chat window.
-	Last but not least, our Meet feature provides a list of people that our user can view and connect with. We want to unite people who share similar musical taste, and hence our matching algorithm works solely on common musical preferences.
+	Spotter solves the problem of a lack of social media features on Spotify. Although Spotify does integrate with Facebook and Twitter, it seems to provide little to no incentive to connect with others and meet new people. We solve this problem by providing these features within our App.<br/>
+	Our users are able to login into the app with their Spotify account. They are be able to see their friends and their profiles within our system. Our two main features, Meet and Nearby, let users connect with others who share their musical tastes.<br/>
+  	Firstly, the Nearby feature connects a user with one person. It would be a person that is in close physical proximity to user's current location, as determined by GPS. Connected users would need to be listening to a song on their Spotify, as the connection criteria takes into account the song and artist currently playing. The users can then view each others' profiles, and add one another as friends.<br/>
+  	Once both users have friended each other, they can initiate a chat. The chat window will contain previous messages history (if there is any), as well as the suggested songs history.<br/>
+	Suggest a song is a feature that allows a user to search for a song on Spotify through our app, and then send it as a link to another user via the chat window.<br/>
+	Last but not least, our Meet feature provides a list of people that our user can view and connect with. We want to unite people who share similar musical taste, and hence our matching algorithm works solely on common musical preferences.<br/>
 ## Group Members
 - [Yu-Ning Wang](https://github.com/wang790222)
 - [Stan Solo](https://github.com/Stan-Solo)
